@@ -155,6 +155,10 @@ const TRANSLATIONS = {
     xp_gained: "XP gagnés",
     level: "Niv.",
     badge_unlocked: "BADGE DÉBLOQUÉ",
+    inventif_desc: "Celui qui utilise les mots les plus longs et rares",
+    fastest_desc: "Celui qui a trouvé le plus de réponses uniques",
+    shuffle_teams: "Mélanger les équipes",
+    choose_teams: "Choisir les équipes",
     unlock_pro: "Débloquer PRO",
     en_ligne: "En ligne",
     vs_bots: "vs Bots",
@@ -458,6 +462,10 @@ const TRANSLATIONS = {
     xp_gained: "XP earned",
     level: "Lv.",
     badge_unlocked: "BADGE UNLOCKED",
+    inventif_desc: "Player using the longest and rarest words",
+    fastest_desc: "Player with most unique answers",
+    shuffle_teams: "Shuffle teams",
+    choose_teams: "Choose teams",
     unlock_pro: "Unlock PRO",
     en_ligne: "Online",
     vs_bots: "vs Bots",
@@ -761,6 +769,10 @@ const TRANSLATIONS = {
     xp_gained: "XP ganados",
     level: "Niv.",
     badge_unlocked: "INSIGNIA DESBLOQUEADA",
+    inventif_desc: "Jugador con palabras más largas y raras",
+    fastest_desc: "Jugador con más respuestas únicas",
+    shuffle_teams: "Mezclar equipos",
+    choose_teams: "Elegir equipos",
     unlock_pro: "Desbloquear PRO",
     en_ligne: "En línea",
     vs_bots: "vs Bots",
@@ -1007,258 +1019,48 @@ function getTournamentWeek() {
   const start = new Date(now.getFullYear(), 0, 1);
   const week = Math.floor((now - start) / (7 * 24 * 60 * 60 * 1000));
   const letters = "ABCDEFGHIJKLMNOPRSTV";
+
+  // Calculer le temps exact jusqu'à la fin de la semaine (lundi prochain à 00:00)
+  const dayOfWeek = now.getDay(); // 0=dim, 1=lun, ..., 6=sam
+  const daysUntilMonday = dayOfWeek === 0 ? 1 : (8 - dayOfWeek);
+  const nextMonday = new Date(now);
+  nextMonday.setDate(now.getDate() + daysUntilMonday);
+  nextMonday.setHours(0, 0, 0, 0);
+  const msLeft = nextMonday - now;
+  const daysLeft = Math.floor(msLeft / 86400000);
+  const hoursLeft = Math.floor((msLeft % 86400000) / 3600000);
+  const minsLeft = Math.floor((msLeft % 3600000) / 60000);
+  const secsLeft = Math.floor((msLeft % 60000) / 1000);
+
   return {
     letter: letters[week % letters.length],
     weekNum: week,
-    endsIn: 7 - now.getDay(),
+    endsIn: daysLeft,
+    msLeft, daysLeft, hoursLeft, minsLeft, secsLeft,
   };
 }
-
-// ─── DÉFI QUOTIDIEN ─────────────────────────────────────────────
-// 4 catégories originales rotatives jour par jour
-const DAILY_CAT_POOL = [
-  { id: "dc_emotion",   label: "Émotion",       emoji: "😤" },
-  { id: "dc_super",     label: "Super-héros",   emoji: "🦸" },
-  { id: "dc_mythologie",label: "Mythologie",    emoji: "⚡" },
-  { id: "dc_espace",    label: "Espace",        emoji: "🚀" },
-  { id: "dc_sport_star",label: "Sportif célèbre",emoji:"⚽" },
-  { id: "dc_film_perso",label: "Personnage de film",emoji:"🎬" },
-  { id: "dc_couleur_rare",label:"Couleur rare", emoji: "🎨" },
-  { id: "dc_oceane",    label: "Vie marine",    emoji: "🐠" },
-  { id: "dc_medievale", label: "Moyen Âge",     emoji: "⚔️" },
-  { id: "dc_cuisine_monde",label:"Plat du monde",emoji:"🌍" },
-  { id: "dc_danse",     label: "Danse",         emoji: "💃" },
-  { id: "dc_meteo",     label: "Météo",         emoji: "⛈️" },
-  { id: "dc_architecture",label:"Architecture", emoji: "🏰" },
-  { id: "dc_technologie",label:"Technologie",   emoji: "💻" },
-];
-
-const DAILY_CAT_WORDS = {
-  dc_emotion:{
-    A:["amour","angoisse","admiration","allegresse","affection","ardeur","amertume"],
-    B:["bonheur","beaute","bonte","bienveillance"],C:["colere","crainte","curiosite","compassion"],
-    D:["desespoir","desir","deception","desarroi","detresse"],E:["enthousiasme","euphorie","effroi","ennui"],
-    F:["fierte","frustration","frayeur","fierete"],G:["gratitude","gene","genie"],
-    H:["honte","horreur","humilite","haine"],I:["inquietude","impatience","indignation"],
-    J:["jalousie","joie","jubile"],K:["kinesthesie"],
-    L:["larmes","lassitude","liberte"],M:["melancolie","mepris","malaise","melancolie"],
-    N:["nostalgie","nervosité"],P:["peur","pitie","panique","paix"],
-    R:["rage","rancune","regret"],S:["souffrance","satisfaction","stupeur","solitude"],
-    T:["terreur","tendresse","timidite","tristesse"],V:["vengeance","vertige","vexation"]
-  },
-  dc_super:{
-    A:["aquaman","antman","arrow"],B:["batman","black widow","black panther"],
-    C:["captain america","captain marvel","cyclops"],D:["deadpool","daredevil","doctor strange"],
-    E:["electra"],F:["flash","fantastic four"],G:["green lantern","groot","gamora"],
-    H:["hulk","hawkeye","hyperion"],I:["ironman","iceman"],J:["jean grey"],
-    K:["kilowog"],L:["logan","luna"],M:["magneto","manhunter","mystique"],
-    N:["nightcrawler"],P:["punisher","professor x","pym"],R:["robin","rogue","reed richards"],
-    S:["spider man","superman","scarlet witch","storm","silver surfer"],
-    T:["thor","thanos"],V:["vision","venom","valkyrie"],W:["wolverine","wasp"]
-  },
-  dc_mythologie:{
-    A:["apollo","aphrodite","ares","artemis","athena","achille"],
-    B:["bacchus","bellerophon"],C:["calypso","cerere","cronos","circe"],
-    D:["dionysos","dedale"],E:["europe","echo"],F:["faune"],
-    G:["gaia","gorgone"],H:["heracles","hermes","hades","hera","hydre","helios","hercule"],
-    I:["icare","iris"],J:["jason"],K:["kronos"],L:["lachesis"],
-    M:["meduse","midas","minotaure","medee"],N:["neptune","nike"],
-    O:["orphee","odyssee"],P:["poseidon","pandore","persee","pegase","pluton","promethee"],
-    R:["romulus"],S:["saturne","sphinx","sisyphe"],T:["titans","thesee"],
-    V:["venus","vulcain"]
-  },
-
-  dc_espace:{
-    A:["asteroi","astres","aurora","apogee"],B:["big bang","binar"],
-    C:["comete","cosmos","ceinture de kuiper"],D:["deimos","dwarf planet"],
-    E:["eclipse","exoplanete"],F:["fusee"],G:["galaxie","gravite","geante rouge"],
-    H:["horizon des evenements"],I:["iss"],J:["jupiter"],
-    K:["kepler"],L:["lune","lumiere","laser"],M:["mars","meteore","milky way"],
-    N:["nebuleuse","neutron","nasa"],P:["pluton","planete","pulsar"],
-    R:["rover"],S:["saturne","soleil","supernova"],T:["telescope","trou noir"],
-    V:["venus","voie lactee"],
-  },
-  dc_sport_star:{
-    A:["ali","alcaraz"],B:["bolt","benzema"],C:["cristiano","curry"],
-    D:["djokovic","durant"],E:["eusebio"],F:["federer","figo"],
-    G:["griezmann","gasquet","guardiola"],H:["hamilton","henry"],
-    I:["ibrahimovic"],J:["james lebron","jordan"],K:["kylian","kobe"],
-    L:["lebron","lin","lewis"],M:["messi","mayweather","maldini","maradona"],
-    N:["nadal","neymar"],P:["pele","pogba","platini"],
-    R:["ronaldo","rafael","robinson"],S:["schumacher","serena","salah"],
-    T:["tyson","totti"],V:["vieira","van basten"],Z:["zidane"]
-  },
-  dc_film_perso:{
-    A:["anakin","aragorn","alien"],B:["batman","bond"],C:["copain","coco"],
-    D:["darth vader","dumbledore","dory"],E:["elsa","ethan hunt"],
-    F:["forrest","frodo"],G:["gandalf","groot"],H:["harry potter","hermione","hulk"],
-    I:["iron man"],J:["james bond","joker"],K:["king kong","katniss"],
-    L:["leia","luke","legolas"],M:["matrice","moana","magneto"],
-    N:["nemo","neo"],P:["potter","padme","pinnocchio"],
-    R:["rocky","rapunzel"],S:["simba","sherlock","scar"],
-    T:["thanos","thor","terminator"],V:["vaiana","voldemort"]
-  },
-  dc_oceane:{
-    A:["anemonee","algue","anguille","anchois"],B:["baleine","barracuda","benitier"],
-    C:["calamar","corail","crabe","crevette","coquillage"],D:["dauphin","dugong"],
-    E:["epaulard","espadon","etoile de mer"],F:["flet","fletan"],
-    G:["gobie","grand requin"],H:["homard","hippocampe"],I:["iridescent"],
-    J:["jelly fish","jeune requin"],K:["krill"],L:["langouste","lion de mer","lamproie"],
-    M:["maquereau","meduse","murene","morse"],N:["narval","nautile"],
-    P:["pieuvre","phoque","poisson clown","pingouin"],R:["raie","requin","rascasse"],
-    S:["sardine","saumon","seiche","sole"],T:["thon","tortue marine","turbot"],
-    V:["vive"]
-  },
-  dc_medievale:{
-    A:["armure","arbalete","abbaye","alchimiste"],B:["banneret","beffroi","bouclier"],
-    C:["cathedrale","chevalier","chatelain","cle de voute"],D:["donjon","drac","druide"],
-    E:["ecuyer","epee","ecu"],F:["feodalite","fort","faucon"],
-    G:["guildes","glaive"],H:["heraut","haubert"],I:["impot"],J:["joute","jeanne darc"],
-    K:["keep"],L:["lance","lutrin","luth"],M:["merlin","manoir","maitre"],
-    N:["noble","nef"],P:["palefroi","parchemin","page","pont levis"],
-    R:["rempart","roi","roi arthur"],S:["seigneur","serf","scribe"],
-    T:["tour","templier","trone"],V:["vassal","vitrail","vicomte"]
-  },
-  dc_technologie:{
-    A:["algorithme","api","application","arduino"],B:["bluetooth","blockchain","base de donnees"],
-    C:["cloud","code","cpu","crypto"],D:["donnees","drone","debug"],
-    E:["encryption","email"],F:["firewall","fibre optique"],
-    G:["gps","gpu"],H:["hack","html","http"],I:["interface","intelligence artificielle"],
-    J:["javascript","java"],K:["kotlin","kubernetes"],
-    L:["linux","logiciel","langage"],M:["machine learning","microprocesseur","mongodb"],
-    N:["navigation","network","nuage"],P:["python","pixel","protocole","programmation"],
-    R:["reseaux","reactjs","ram"],S:["serveur","smartphone","sql","systeme"],
-    T:["technologie","terminal","transistor"],V:["virtual reality","virus"]
-  }
-};
-
 function getDailyChallenge() {
   const now = new Date();
   const dayOfYear = Math.floor((now - new Date(now.getFullYear(), 0, 0)) / (1000 * 60 * 60 * 24));
-  // Pick 4 categories based on day
   const pool = DAILY_CAT_POOL;
   const cats = [];
   for (let i = 0; i < 4; i++) {
     cats.push(pool[(dayOfYear * 4 + i) % pool.length]);
   }
-  // Pick letter based on day
   const letters = "ABCDEFGHIJKLMNOPRSTV";
   const letter = letters[dayOfYear % letters.length];
-  // Check if already played today
   const todayKey = `daily_${now.getFullYear()}_${dayOfYear}`;
-  return { cats, letter, todayKey, dayOfYear };
+
+  // Calculer le temps restant jusqu'à minuit
+  const midnight = new Date(now);
+  midnight.setHours(24, 0, 0, 0);
+  const msLeft = midnight - now;
+  const hoursLeft = Math.floor(msLeft / 3600000);
+  const minsLeft = Math.floor((msLeft % 3600000) / 60000);
+  const secsLeft = Math.floor((msLeft % 60000) / 1000);
+
+  return { cats, letter, todayKey, dayOfYear, msLeft, hoursLeft, minsLeft, secsLeft };
 }
-
-// ─── SONS (Web Audio API) ─────────────────────────────────────────
-const SoundFX = {
-  ctx: null,
-  getCtx() {
-    if (!this.ctx) { try { this.ctx = new (window.AudioContext || window.webkitAudioContext)(); } catch(e){} }
-    return this.ctx;
-  },
-  play(type) {
-    const ctx = this.getCtx(); if (!ctx) return;
-    try {
-      const o = ctx.createOscillator();
-      const g = ctx.createGain();
-      o.connect(g); g.connect(ctx.destination);
-      const now = ctx.currentTime;
-      if (type === "tick") {
-        o.frequency.setValueAtTime(800, now);
-        g.gain.setValueAtTime(0.08, now);
-        g.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
-        o.start(now); o.stop(now + 0.05);
-      } else if (type === "lock") {
-        o.frequency.setValueAtTime(523, now);
-        o.frequency.setValueAtTime(659, now + 0.1);
-        o.frequency.setValueAtTime(784, now + 0.2);
-        g.gain.setValueAtTime(0.15, now);
-        g.gain.exponentialRampToValueAtTime(0.001, now + 0.4);
-        o.start(now); o.stop(now + 0.4);
-      } else if (type === "valid") {
-        o.frequency.setValueAtTime(440, now);
-        o.frequency.setValueAtTime(660, now + 0.05);
-        g.gain.setValueAtTime(0.1, now);
-        g.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
-        o.start(now); o.stop(now + 0.15);
-      } else if (type === "invalid") {
-        o.type = "sawtooth";
-        o.frequency.setValueAtTime(200, now);
-        o.frequency.setValueAtTime(150, now + 0.1);
-        g.gain.setValueAtTime(0.1, now);
-        g.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
-        o.start(now); o.stop(now + 0.2);
-      } else if (type === "stop") {
-        [523,659,784,1047].forEach((f,i) => {
-          const o2 = ctx.createOscillator(); const g2 = ctx.createGain();
-          o2.connect(g2); g2.connect(ctx.destination);
-          o2.frequency.setValueAtTime(f, now + i*0.07);
-          g2.gain.setValueAtTime(0.12, now + i*0.07);
-          g2.gain.exponentialRampToValueAtTime(0.001, now + i*0.07 + 0.12);
-          o2.start(now + i*0.07); o2.stop(now + i*0.07 + 0.15);
-        });
-        return;
-      } else if (type === "win") {
-        [523,659,784,1047,1319].forEach((f,i) => {
-          const o2 = ctx.createOscillator(); const g2 = ctx.createGain();
-          o2.connect(g2); g2.connect(ctx.destination);
-          o2.frequency.setValueAtTime(f, now + i*0.1);
-          g2.gain.setValueAtTime(0.13, now + i*0.1);
-          g2.gain.exponentialRampToValueAtTime(0.001, now + i*0.1 + 0.18);
-          o2.start(now + i*0.1); o2.stop(now + i*0.1 + 0.2);
-        });
-        return;
-      } else if (type === "eliminate") {
-        o.type = "sawtooth";
-        o.frequency.setValueAtTime(300, now);
-        o.frequency.exponentialRampToValueAtTime(60, now + 0.5);
-        g.gain.setValueAtTime(0.15, now);
-        g.gain.exponentialRampToValueAtTime(0.001, now + 0.5);
-        o.start(now); o.stop(now + 0.5);
-      }
-    } catch(e) {}
-  }
-};
-
-// ─── CONSTANTS ───────────────────────────────────────────────────
-const ALPHABET = "ABCDEFGHIJKLMNOPRSTV".split("");
-const TIER = { FREE: "free", PRO: "pro", VIP: "vip" };
-
-const CAT_LABELS = {
-  // FR / EN / ES
-  prenom:     { fr:"Prénom",        en:"First name",     es:"Nombre" },
-  nom:        { fr:"Nom",           en:"Surname",        es:"Apellido" },
-  pays:       { fr:"Pays",          en:"Country",        es:"País" },
-  ville:      { fr:"Ville",         en:"City",           es:"Ciudad" },
-  animal:     { fr:"Animal",        en:"Animal",         es:"Animal" },
-  fruit:      { fr:"Fruit/Légume",  en:"Fruit/Vegetable",es:"Fruta/Verdura" },
-  metier:     { fr:"Métier",        en:"Job",            es:"Profesión" },
-  celebrite:  { fr:"Célébrité",     en:"Celebrity",      es:"Celebridad" },
-  sport:      { fr:"Sport",         en:"Sport",          es:"Deporte" },
-  objet:      { fr:"Objet",         en:"Object",         es:"Objeto" },
-  film:       { fr:"Film/Série",    en:"Film/Series",    es:"Película/Serie" },
-  marque:     { fr:"Marque",        en:"Brand",          es:"Marca" },
-  anatomie:   { fr:"Anatomie",      en:"Anatomy",        es:"Anatomía" },
-  musique:    { fr:"Musique",       en:"Music",          es:"Música" },
-  cuisine:    { fr:"Cuisine",       en:"Food",           es:"Comida" },
-  vehicule:   { fr:"Véhicule",      en:"Vehicle",        es:"Vehículo" },
-  capital:    { fr:"Capitale",      en:"Capital city",   es:"Capital" },
-  monument:   { fr:"Monument",      en:"Monument",       es:"Monumento" },
-  langue:     { fr:"Langue",        en:"Language",       es:"Idioma" },
-  instrument: { fr:"Instrument",    en:"Instrument",     es:"Instrumento" },
-  vetement:   { fr:"Vêtement",      en:"Clothing",       es:"Ropa" },
-  emotion:    { fr:"Émotion",       en:"Emotion",        es:"Emoción" },
-  mythologie: { fr:"Mythologie",    en:"Mythology",      es:"Mitología" },
-  espace:     { fr:"Espace",        en:"Space",          es:"Espacio" },
-  oceane:     { fr:"Vie marine",    en:"Sea life",       es:"Vida marina" },
-  medievale:  { fr:"Moyen Âge",     en:"Middle Ages",    es:"Edad Media" },
-  technologie:{ fr:"Technologie",   en:"Technology",     es:"Tecnología" },
-  danse:      { fr:"Danse",         en:"Dance",          es:"Danza" },
-  architecture:{fr:"Architecture",  en:"Architecture",   es:"Arquitectura" },
-  sport_star: { fr:"Sportif célèbre",en:"Sports star",   es:"Estrella del deporte" },
-  personnage: { fr:"Personnage fictif",en:"Fictional character",es:"Personaje ficticio" },
-};
-
 function getCatLabel(catId, lang) {
   // D'abord dans CAT_LABELS (catégories standards)
   if (CAT_LABELS[catId]) {
@@ -3976,14 +3778,16 @@ export default function App() {
     return "fr";
   });
   const t = useT(lang);
-  const [settings, setSettings] = useState({
-    difficulty: "medium",
-    categories: FREE_CATS.map(c => c.id),
-    customCategories: [],
-    playerName: "",
-    country: "France",
-    totalRounds: 5,
-    soundEnabled: true,
+  const [settings, setSettings] = useState(() => {
+    try {
+      const saved = localStorage.getItem("pb_settings");
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        return { difficulty:"medium", categories:FREE_CATS.map(c=>c.id), customCategories:[], playerName:"", country:"France", totalRounds:5, soundEnabled:true, ...parsed };
+      }
+    } catch(e) {}
+    const savedName = localStorage.getItem("pb_name") || "";
+    return { difficulty:"medium", categories:FREE_CATS.map(c=>c.id), customCategories:[], playerName:savedName, country:"France", totalRounds:5, soundEnabled:true };
   });
   const [gameState, setGameState] = useState(null);
   const [stats, setStats] = useState({
@@ -4025,6 +3829,16 @@ export default function App() {
     } catch(e) {}
     try { document.documentElement.lang = lang; } catch(e) {}
   }, [lang]);
+
+  // Sauvegarder settings (nom, pays, difficulté...) à chaque changement
+  useEffect(() => {
+    try {
+      if (typeof localStorage !== "undefined") {
+        localStorage.setItem("pb_settings", JSON.stringify(settings));
+        if (settings.playerName) localStorage.setItem("pb_name", settings.playerName);
+      }
+    } catch(e) {}
+  }, [settings]);
 
   useEffect(() => {
     try {
@@ -4225,6 +4039,11 @@ function HomeScreen({ onSolo, onOnline, on2v2, onMort, onOnline2v2, onOnlineMort
   const bl = tier === TIER.VIP ? t("vip_label") : tier === TIER.PRO ? t("pro_label") : "◇";
   const initials = (playerName || "J").charAt(0).toUpperCase();
   const canPro = tier === TIER.PRO || tier === TIER.VIP;
+  const [, setTick] = useState(0);
+  useEffect(() => {
+    const timerId = setInterval(() => setTick(n => n + 1), 1000);
+    return () => clearInterval(timerId);
+  }, []);
   const daily = getDailyChallenge();
   const alreadyPlayed = dailyPlayed?.todayKey === daily.todayKey;
 
@@ -4333,7 +4152,7 @@ function HomeScreen({ onSolo, onOnline, on2v2, onMort, onOnline2v2, onOnlineMort
                 <div>
                   <div style={{ fontSize: 10, opacity: .8, letterSpacing: 1, textTransform: "uppercase", marginBottom: 2 }}>{t("tournament_label2")}</div>
                   <div style={{ fontSize: 15, fontWeight: 700, marginBottom: 2 }}>{t("tournament_title2")}</div>
-                  <div style={{ fontSize: 11, opacity: .85 }}>{t("tournament_ends")} {tournament.endsIn} {t("tournament_days")}</div>
+                  <div style={{ fontSize: 11, opacity: .85 }}>{tournament.daysLeft > 0 ? `${tournament.daysLeft}j ` : ""}{String(tournament.hoursLeft).padStart(2,"0")}:{String(tournament.minsLeft).padStart(2,"0")}:{String(tournament.secsLeft).padStart(2,"0")}</div>
                 </div>
                 <div className="tournament-letter">{tournament.letter}</div>
               </div>
@@ -4608,6 +4427,7 @@ function OnlineScreen({
   const [roomCode, setRoomCode] = useState(null);
   const [joinCode, setJoinCode] = useState("");
   const [roomData, setRoomData] = useState(null);
+  const [customTeams, setCustomTeams] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const unsubRef = useRef(null);
@@ -5537,6 +5357,36 @@ function FinalResultsScreen({ gameState, onPlayAgain, onHome, uid, lang }) {
   }
 
   const awards = computeAwards();
+
+  // ── Classements spéciaux ───────────────────────────────────
+  const rankingFastest = [...players]
+    .filter(p => !p.eliminated)
+    .map(p => {
+      // Plus rapide = celui qui a appelé STOP (le plus de réponses uniques = proxy)
+      const uniqueCount = (rounds || []).reduce((sum, r) => {
+        return sum + Object.entries(r.validity || {}).filter(([, cv]) => cv?.[p.id] === 2).length;
+      }, 0);
+      return { ...p, uniqueCount };
+    })
+    .sort((a, b) => b.uniqueCount - a.uniqueCount);
+
+  const rankingInventif = [...players]
+    .filter(p => !p.eliminated)
+    .map(p => {
+      // Plus inventif = mots les plus longs en moyenne
+      const answers = (rounds || []).flatMap(r =>
+        Object.values(r.answers || {}).map(ca => ca?.[p.id] || "")
+      ).filter(a => a.trim());
+      const avgLen = answers.length ? answers.reduce((s, a) => s + a.length, 0) / answers.length : 0;
+      return { ...p, avgLen: Math.round(avgLen * 10) / 10 };
+    })
+    .sort((a, b) => b.avgLen - a.avgLen);
+
+  const rankingScore = [...players]
+    .map(p => ({ ...p, score: gameState.cumulativeScores[p.id] || 0 }))
+    .sort((a, b) => b.score - a.score);
+
+  const [activeTab, setActiveTab] = useState("scores");
   const podium = sorted.slice(0, 3);
 
   return (
@@ -5566,11 +5416,24 @@ function FinalResultsScreen({ gameState, onPlayAgain, onHome, uid, lang }) {
           </div>
         )}
 
-        {/* ── PODIUM ── */}
-        {podium.length >= 2 && (
+        {/* ── ONGLETS CLASSEMENTS ── */}
+        <div style={{ display:"flex", gap:4, marginBottom:12, background:"var(--sf2)", borderRadius:"var(--rs)", padding:4 }}>
+          {[["scores","🏆"],["fastest","⚡"],["inventif","🎨"],["awards","🥇"]].map(([id, icon]) => (
+            <button key={id} onClick={() => setActiveTab(id)} style={{
+              flex:1, padding:"8px 4px", fontSize:12, fontWeight: activeTab===id?700:500,
+              background: activeTab===id?"var(--sf)":"transparent",
+              color: activeTab===id?"var(--ac)":"var(--txm)",
+              border:"none", borderRadius:"var(--rs)", cursor:"pointer",
+              boxShadow: activeTab===id?"var(--s1)":"none",
+              transition:"all var(--tr)",
+            }}>{icon}</button>
+          ))}
+        </div>
+
+        {/* ── PODIUM (scores) ── */}
+        {activeTab === "scores" && podium.length >= 2 && (
           <div className="card" style={{ padding: "20px 16px 16px" }}>
-            <div className="ctitle" style={{ textAlign: "center" }}>{t("podium")}</div>
-            <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "center", gap: 8, marginBottom: 16 }}>
+            <div className="ctitle" style={{ textAlign: "center" }}>{t("podium")}</div><div style={{ display: "flex", alignItems: "flex-end", justifyContent: "center", gap: 8, marginBottom: 16 }}>
               {/* 2nd place */}
               {podium[1] && (
                 <div style={{ textAlign: "center", flex: 1 }}>
@@ -5673,6 +5536,90 @@ function FinalResultsScreen({ gameState, onPlayAgain, onHome, uid, lang }) {
           </div>
         )}
 
+        {/* ── CLASSEMENT SCORES ── */}
+        {activeTab === "scores" && (
+          <div className="card">
+            <div className="ctitle" style={{ marginBottom:10 }}>🏆 {t("leaderboard_title","Classement")}</div>
+            <div style={{ display:"flex", flexDirection:"column", gap:6 }}>
+              {rankingScore.map((p, i) => (
+                <div key={p.id} style={{ display:"flex", alignItems:"center", gap:10, padding:"10px 12px", borderRadius:"var(--rs)", background: p.id===myId?"var(--acs)":"var(--sf2)", border: p.id===myId?"1.5px solid var(--ac-border)":"1px solid var(--br)" }}>
+                  <div style={{ width:28, textAlign:"center", fontWeight:800, fontSize:15, color:i===0?"#fbbf24":i===1?"#94a3b8":i===2?"#cd7f32":"var(--txm)" }}>
+                    {i===0?"🥇":i===1?"🥈":i===2?"🥉":`#${i+1}`}
+                  </div>
+                  <div style={{ flex:1, fontWeight: p.id===myId?700:500 }}>{p.name}{p.id===myId?` ${t("its_you_paren","(toi)")}`:""}  {p.eliminated?"💀":""}</div>
+                  <div style={{ fontWeight:800, color:"var(--ac)", fontFamily:"monospace" }}>{p.score} pts</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* ── CLASSEMENT RAPIDITÉ ── */}
+        {activeTab === "fastest" && (
+          <div className="card">
+            <div className="ctitle" style={{ marginBottom:6 }}>⚡ {t("award_fastest","Le plus rapide")}</div>
+            <div style={{ fontSize:12, color:"var(--txm)", marginBottom:10 }}>{t("fastest_desc","Celui qui a trouvé le plus de réponses uniques")}</div>
+            <div style={{ display:"flex", flexDirection:"column", gap:6 }}>
+              {rankingFastest.map((p, i) => (
+                <div key={p.id} style={{ display:"flex", alignItems:"center", gap:10, padding:"10px 12px", borderRadius:"var(--rs)", background: p.id===myId?"var(--acs)":"var(--sf2)" }}>
+                  <div style={{ width:28, textAlign:"center", fontWeight:800, fontSize:16, color:i===0?"#fbbf24":i===1?"#94a3b8":"var(--txm)" }}>{i===0?"⚡":i===1?"🔥":`#${i+1}`}</div>
+                  <div style={{ flex:1, fontWeight: p.id===myId?700:500 }}>{p.name}</div>
+                  <div style={{ fontWeight:700, color:"var(--ac)", fontFamily:"monospace" }}>{p.uniqueCount} uniques</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* ── CLASSEMENT CRÉATIVITÉ ── */}
+        {activeTab === "inventif" && (
+          <div className="card">
+            <div className="ctitle" style={{ marginBottom:6 }}>🎨 {t("award_inventif","Le plus inventif")}</div>
+            <div style={{ fontSize:12, color:"var(--txm)", marginBottom:10 }}>{t("inventif_desc","Celui qui utilise les mots les plus longs et rares")}</div>
+            <div style={{ display:"flex", flexDirection:"column", gap:6 }}>
+              {rankingInventif.map((p, i) => (
+                <div key={p.id} style={{ display:"flex", alignItems:"center", gap:10, padding:"10px 12px", borderRadius:"var(--rs)", background: p.id===myId?"var(--acs)":"var(--sf2)" }}>
+                  <div style={{ width:28, textAlign:"center", fontWeight:800, fontSize:16, color:i===0?"#fbbf24":i===1?"#94a3b8":"var(--txm)" }}>{i===0?"🎨":i===1?"✨":`#${i+1}`}</div>
+                  <div style={{ flex:1, fontWeight: p.id===myId?700:500 }}>{p.name}</div>
+                  <div style={{ fontWeight:700, color:"var(--ac)", fontFamily:"monospace" }}>∅ {p.avgLen} lettres</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* ── AWARDS ── */}
+        {activeTab === "awards" && awards.length > 0 && (
+          <div className="card">
+            <div className="ctitle">{t("trophies2")}</div>
+            <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+              {awards.map((a, i) => {
+                const isMe = a.player.id === myId;
+                return (
+                  <div key={i} style={{
+                    display: "flex", alignItems: "center", gap: 12,
+                    padding: "12px 14px",
+                    background: isMe ? "var(--acs)" : "var(--sf2)",
+                    border: `1.5px solid ${isMe ? "rgba(67,56,202,0.25)" : "var(--br)"}`,
+                    borderRadius: "var(--rm)",
+                  }}>
+                    <div style={{ width:44, height:44, borderRadius:12, fontSize:22, display:"flex", alignItems:"center", justifyContent:"center", background:"var(--sf)", border:"1.5px solid var(--br)", flexShrink:0 }}>{a.icon}</div>
+                    <div style={{ flex:1 }}>
+                      <div style={{ fontWeight:700, fontSize:13, color: isMe?"var(--ac)":"var(--tx)" }}>{a.title}</div>
+                      <div style={{ fontSize:11, color:"var(--txm)", marginTop:1 }}>{a.desc}</div>
+                    </div>
+                    <div style={{ textAlign:"right" }}>
+                      <div style={{ fontWeight:700, fontSize:13 }}>{a.player.isBot?"🤖":"👤"} {a.player.name.split(" ")[0]}</div>
+                      {isMe && <div style={{ fontSize:10, color:"var(--ac)", fontWeight:600 }}>{t("its_you")}</div>}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        
         {/* ── Historique rounds ── */}
         <div className="card">
           <div className="ctitle">{t("round_history")}</div>
