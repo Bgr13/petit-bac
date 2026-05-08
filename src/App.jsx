@@ -155,6 +155,16 @@ const TRANSLATIONS = {
     xp_gained: "XP gagnés",
     level: "Niv.",
     badge_unlocked: "BADGE DÉBLOQUÉ",
+    unlock_pro: "Débloquer PRO",
+    en_ligne: "En ligne",
+    vs_bots: "vs Bots",
+    team_wins: "L'équipe gagne !",
+    last_survivor: "Dernier survivant !",
+    enemy_team: "Adversaires",
+    your_team: "Ton équipe",
+    eliminated: "éliminé(s)",
+    room_not_found: "Salon introuvable. Vérifie le code.",
+    firebase_connected: "Firebase connecté — multijoueur actif",
     stripe_test_mode: "Mode démo : abonnement activé pour la présentation !",
     tier_vip_f4: "Badge exclusif ★",
     tier_vip_f3: "Tournois VIP",
@@ -448,6 +458,16 @@ const TRANSLATIONS = {
     xp_gained: "XP earned",
     level: "Lv.",
     badge_unlocked: "BADGE UNLOCKED",
+    unlock_pro: "Unlock PRO",
+    en_ligne: "Online",
+    vs_bots: "vs Bots",
+    team_wins: "Team wins!",
+    last_survivor: "Last survivor!",
+    enemy_team: "Opponents",
+    your_team: "Your team",
+    eliminated: "eliminated",
+    room_not_found: "Room not found. Check the code.",
+    firebase_connected: "Firebase connected — multiplayer active",
     stripe_test_mode: "Demo mode: subscription activated for the presentation!",
     tier_vip_f4: "Exclusive badge ★",
     tier_vip_f3: "VIP tournaments",
@@ -741,6 +761,16 @@ const TRANSLATIONS = {
     xp_gained: "XP ganados",
     level: "Niv.",
     badge_unlocked: "INSIGNIA DESBLOQUEADA",
+    unlock_pro: "Desbloquear PRO",
+    en_ligne: "En línea",
+    vs_bots: "vs Bots",
+    team_wins: "¡El equipo gana!",
+    last_survivor: "¡Último superviviente!",
+    enemy_team: "Adversarios",
+    your_team: "Tu equipo",
+    eliminated: "eliminado(s)",
+    room_not_found: "Sala no encontrada. Verifica el código.",
+    firebase_connected: "Firebase conectado — multijugador activo",
     stripe_test_mode: "Modo demo: ¡suscripción activada para la presentación!",
     stripe_secure: "Pago seguro por Stripe • Cancela cuando quieras",
     per_month: "/mes",
@@ -3852,8 +3882,16 @@ const FB = (() => {
 
     async getRoom(code) {
       if (db) {
-        const snap = await db.ref("rooms/" + code).once("value");
-        return snap.val();
+        try {
+          const snap = await db.ref("rooms/" + code).once("value");
+          return snap.val();
+        } catch(e) {
+          console.error("Firebase getRoom error:", e);
+          if (e.code === "PERMISSION_DENIED") {
+            throw new Error("Accès Firebase refusé. Configure les règles: rules > rooms > .read: true");
+          }
+          throw e;
+        }
       }
       return local.rooms[code] ? JSON.parse(JSON.stringify(local.rooms[code])) : null;
     },
@@ -3995,6 +4033,7 @@ export default function App() {
   }, [theme]);
 
   function goSetup(mode) { setGameState({ mode }); setScreen("setup"); }
+  function goOnline(mode) { setGameState({ mode }); setScreen("online"); }
 
   function startDailyChallenge() {
     const { cats, letter } = getDailyChallenge();
@@ -4031,13 +4070,37 @@ export default function App() {
     const activeCats = cfg.categories.map(id =>
       [...ALL_BASE, ...cfg.customCategories].find(c => c.id === id)
     ).filter(Boolean);
-    const players = [
-      { id: uid || "human", name: cfg.playerName, isBot: false, answers: {}, done: false },
-      { id: "bot0", name: AI_NAMES[0], isBot: true, answers: {}, done: false },
-      { id: "bot1", name: AI_NAMES[1], isBot: true, answers: {}, done: false },
+    const humanId = uid || "human";
+    const is2v2 = cfg.mode === "2v2";
+    const isMort = cfg.mode === "mort";
+
+    // Mort subite: 4 joueurs (plus de challenge)
+    // 2v2: 4 joueurs en 2 équipes
+    // Noms des bots supplémentaires
+    const BOT_NAMES = [...AI_NAMES, "Bot Sam", "Bot Léa", "Bot Tom"];
+
+    const players = is2v2 || isMort ? [
+      { id: humanId, name: cfg.playerName, isBot: false, answers: {}, done: false, eliminated: false },
+      { id: "bot0", name: BOT_NAMES[0], isBot: true, answers: {}, done: false, eliminated: false },
+      { id: "bot1", name: BOT_NAMES[1], isBot: true, answers: {}, done: false, eliminated: false },
+      { id: "bot2", name: BOT_NAMES[2], isBot: true, answers: {}, done: false, eliminated: false },
+      { id: "bot3", name: BOT_NAMES[3], isBot: true, answers: {}, done: false, eliminated: false },
+      { id: "bot4", name: BOT_NAMES[4], isBot: true, answers: {}, done: false, eliminated: false },
+    ] : [
+      { id: humanId, name: cfg.playerName, isBot: false, answers: {}, done: false },
+      { id: "bot0", name: BOT_NAMES[0], isBot: true, answers: {}, done: false },
+      { id: "bot1", name: BOT_NAMES[1], isBot: true, answers: {}, done: false },
     ];
+
+    // Équipes 2v2: 3 joueurs par équipe
+    const teams = is2v2 ? {
+      team0: [humanId, "bot0", "bot1"],
+      team1: ["bot2", "bot3", "bot4"],
+    } : null;
+
+
     setGameState({
-      mode: "solo",
+      mode: cfg.mode || "solo",
       difficulty: cfg.difficulty,
       totalTime: DIFFICULTY[cfg.difficulty].time,
       timeLeft: DIFFICULTY[cfg.difficulty].time,
@@ -4051,7 +4114,8 @@ export default function App() {
       answers: Object.fromEntries(activeCats.map(c => [c.id, ""])),
       phase: "roulette",
       cumulativeScores: Object.fromEntries(players.map(p => [p.id, 0])),
-      myId: uid || "human",
+      myId: humanId,
+      teams: teams,
       lang: lang,
     });
     setScreen("game");
@@ -4063,7 +4127,7 @@ export default function App() {
       ALL_BASE.find(c => c.id === id)
     ).filter(Boolean);
     setGameState({
-      mode: "online",
+      mode: roomData.settings?.gameMode || "online",
       roomCode,
       difficulty: roomData.settings.difficulty || "medium",
       totalTime: DIFFICULTY[roomData.settings.difficulty || "medium"].time,
@@ -4079,6 +4143,11 @@ export default function App() {
       phase: "roulette",
       cumulativeScores: roomData.cumulativeScores || {},
       myId: uid,
+      teams: roomData.settings?.gameMode === "2v2" ? (() => {
+        const playerIds = Object.keys(roomData.players || {});
+        const half = Math.ceil(playerIds.length / 2);
+        return { team0: playerIds.slice(0, half), team1: playerIds.slice(half) };
+      })() : null,
       isHost: roomData.hostId === uid,
     });
     setScreen("game");
@@ -4090,9 +4159,11 @@ export default function App() {
       <div className="app">
         {screen === "home"    && <HomeScreen
           onSolo={() => goSetup("solo")}
-          onOnline={() => setScreen("online")}
+          onOnline={() => goOnline("solo")}
           on2v2={() => goSetup("2v2")}
           onMort={() => goSetup("mort")}
+          onOnline2v2={() => goOnline("2v2")}
+          onOnlineMort={() => goOnline("mort")}
           onDaily={startDailyChallenge}
           stats={stats} tier={tier} xp={xp}
           onTier={() => setShowTier(true)}
@@ -4148,7 +4219,7 @@ export default function App() {
 }
 
 // ─── HOME ─────────────────────────────────────────────────────────
-function HomeScreen({ onSolo, onOnline, on2v2, onMort, onDaily, stats, tier, onTier, onProfile, onSettings, playerName, xp, dailyPlayed, profilePhoto, onShare, lang }) {
+function HomeScreen({ onSolo, onOnline, on2v2, onMort, onOnline2v2, onOnlineMort, onDaily, stats, tier, onTier, onProfile, onSettings, playerName, xp, dailyPlayed, profilePhoto, onShare, lang }) {
   const t = useT(lang || "fr");
   const bc = tier === TIER.VIP ? "bvipbadge" : tier === TIER.PRO ? "bprobadge" : "bfree";
   const bl = tier === TIER.VIP ? t("vip_label") : tier === TIER.PRO ? t("pro_label") : "◇";
@@ -4293,14 +4364,29 @@ function HomeScreen({ onSolo, onOnline, on2v2, onMort, onDaily, stats, tier, onT
           </button>
 
           {/* 2v2 */}
-          <button className="game-mode-card gmc-2v2" onClick={canPro ? on2v2 : onTier}>
-            <div className="gmc-icon">🤝</div>
-            <div>
-              <div className="gmc-title">{t("mode_2v2")}</div>
-              <div className="gmc-desc">{t("mode_2v2_desc2")}</div>
+          <div className="game-mode-card gmc-2v2" style={{ cursor:"default" }}>
+            <div style={{ display:"flex", alignItems:"center", gap:10, marginBottom:8 }}>
+              <div className="gmc-icon">🤝</div>
+              <div style={{ flex:1 }}>
+                <div className="gmc-title">{t("mode_2v2")}</div>
+                <div className="gmc-desc">{t("mode_2v2_desc2")}</div>
+              </div>
             </div>
-            {!canPro && <span className="gmc-badge">{t("pro_label")}</span>}
-          </button>
+            {canPro ? (
+              <div style={{ display:"flex", gap:6 }}>
+                <button className="btn bs" style={{ flex:1, fontSize:11, padding:"7px 4px", background:"rgba(255,255,255,0.15)", border:"1px solid rgba(255,255,255,0.3)", color:"#fff" }} onClick={on2v2}>
+                  🤖 {t("vs_bots","vs Bots")}
+                </button>
+                <button className="btn bp" style={{ flex:1, fontSize:11, padding:"7px 4px", background:"rgba(255,255,255,0.25)", border:"1px solid rgba(255,255,255,0.5)", color:"#fff" }} onClick={onOnline2v2}>
+                  🌍 {t("en_ligne","En ligne")}
+                </button>
+              </div>
+            ) : (
+              <button className="btn bs" style={{ width:"100%", fontSize:11, padding:"6px", background:"rgba(255,255,255,0.15)", border:"1px solid rgba(255,255,255,0.3)", color:"#fff" }} onClick={onTier}>
+                🔒 {t("unlock_pro","Débloquer PRO")}
+              </button>
+            )}
+          </div>
 
           {/* Mort subite */}
           <button className="game-mode-card gmc-mort" onClick={canPro ? onMort : onTier}>
@@ -4513,7 +4599,7 @@ function ProfilePanel({ stats, playerName, wordHistory, catHistory, tier, onClos
 
 // ─── ONLINE SCREEN ────────────────────────────────────────────────
 function OnlineScreen({
-  uid, settings, setSettings, onEnterGame, onBack, tier, lang
+  uid, settings, setSettings, onEnterGame, onBack, tier, lang, gameMode
 }) {
   const t = useT(lang || "fr");
   const [step, setStep] = useState("choose");   // choose | matchmaking | private_create | private_join | waiting
@@ -4551,7 +4637,7 @@ function OnlineScreen({
         const newRoom = {
           code, type: "public", country,
           hostId: uid, status: "waiting",
-          settings: { difficulty: settings.difficulty, categories: settings.categories, totalRounds: settings.totalRounds },
+          settings: { difficulty: settings.difficulty, categories: settings.categories, totalRounds: settings.totalRounds, gameMode: gameMode || "solo" },
           players: { [uid]: { uid, name: playerName, country, isHost: true, ready: true, connected: true } },
           currentRound: 0, spinnerIndex: 0, phase: "waiting",
           cumulativeScores: { [uid]: 0 },
@@ -4585,7 +4671,7 @@ function OnlineScreen({
       const newRoom = {
         code, type: "private", country,
         hostId: uid, status: "waiting",
-        settings: { difficulty: settings.difficulty, categories: settings.categories, totalRounds: settings.totalRounds },
+        settings: { difficulty: settings.difficulty, categories: settings.categories, totalRounds: settings.totalRounds, gameMode: gameMode || "solo" },
         players: { [uid]: { uid, name: playerName, country, isHost: true, ready: true, connected: true } },
         currentRound: 0, spinnerIndex: 0, phase: "waiting",
         cumulativeScores: { [uid]: 0 },
@@ -4602,23 +4688,32 @@ function OnlineScreen({
   }
 
   async function joinPrivate() {
-    if (joinCode.length < 4) return;
+    const code = joinCode.trim().toUpperCase();
+    if (code.length < 4) return;
     setLoading(true); setError("");
     try {
-      const room = await FB.getRoom(joinCode);
-      if (!room) throw new Error("Salon introuvable");
-      if (room.status !== "waiting") throw new Error(t("game_in_progress"));
-      await FB.updateRoom(joinCode, {
-        players: { ...room.players, [uid]: { uid, name: playerName, country, isHost: false, ready: true, connected: true } },
+      const room = await FB.getRoom(code);
+      if (!room) {
+        throw new Error(t("room_not_found", "Salon introuvable. Vérifie le code."));
+      }
+      if (room.status !== "waiting") {
+        throw new Error(t("game_in_progress", "La partie a déjà commencé."));
+      }
+      const myPlayer = { uid, name: playerName || settings.playerName || "Joueur", country, isHost: false, ready: true, connected: true };
+      await FB.updateRoom(code, {
+        players: { ...room.players, [uid]: myPlayer },
         cumulativeScores: { ...(room.cumulativeScores || {}), [uid]: 0 },
       });
-      setRoomCode(joinCode);
+      setRoomCode(code);
       setStep("waiting");
-      unsubRef.current = FB.listenRoom(joinCode, rd => {
+      unsubRef.current = FB.listenRoom(code, rd => {
+        if (!rd) return;
         setRoomData(rd);
-        if (rd.status === "playing") { cleanup(); onEnterGame(joinCode, rd); }
+        if (rd.status === "playing") { cleanup(); onEnterGame(code, rd); }
       });
-    } catch (e) { setError(e.message); }
+    } catch (e) {
+      setError(e.message || t("room_not_found", "Impossible de rejoindre. Réessaie."));
+    }
     setLoading(false);
   }
 
@@ -4645,6 +4740,11 @@ function OnlineScreen({
           <div className="fb-banner">
             <div className="fb-title">{t("firebase_demo")}</div>
             <div className="fb-desc">{t("firebase_demo_desc")}</div>
+          </div>
+        )}
+        {FIREBASE_READY && (
+          <div style={{ padding:"8px 12px", background:"rgba(74,222,128,0.1)", border:"1px solid rgba(74,222,128,0.25)", borderRadius:"var(--rs)", marginBottom:10, fontSize:11, color:"var(--gn)", display:"flex", alignItems:"center", gap:6 }}>
+            <span>🟢</span> {t("firebase_connected","Firebase connecté — multijoueur actif")}
           </div>
         )}
         <div className="card">
@@ -4748,7 +4848,7 @@ function OnlineScreen({
     <div style={{ display: "flex", flexDirection: "column", height: "100vh" }}>
       <div className="hdr">
         <button className="btn bs bsm" onClick={() => { cleanup(); setStep("choose"); }} style={{ width: "auto" }}>✕</button>
-        <span style={{ fontWeight: 700, fontSize: 14 }}>{t("salon_label")} {roomData?.type === "private" ? t("private_room") : "🌍 Public"}</span>
+        <span style={{ fontWeight: 700, fontSize: 14 }}>{t("salon_label")} {roomData?.type === "private" ? t("private_room") : "🌍 Public"} · {gameMode === "2v2" ? "🤝 2v2" : gameMode === "mort" ? "💀 Mort Subite" : "⚔️ Solo"}</span>
         <div style={{ width: 40 }} />
       </div>
       <div className="cnt">
@@ -4761,7 +4861,7 @@ function OnlineScreen({
         )}
         <div className="card">
           <div className="ctitle row jb" style={{ display: "flex", justifyContent: "space-between" }}>
-            <span>{t("players_count")} ({players.length}/8)</span>
+            <span>{t("players_count")} ({players.length}/6)</span>
             {!isHost && <span className="pulse txm">{t("waiting_host")}</span>}
           </div>
           {players.map(p => (
@@ -5012,7 +5112,8 @@ function GameScreen({
     const roundScores = {};
     gs.players.forEach(p => { roundScores[p.id] = 0; });
     const roundAnswers = {};
-    const roundValidity = {}; // catId -> { playerId: pts }
+    const roundValidity = {};
+
     gs.categories.forEach(cat => {
       const allAns = gs.players.map(p => p.isBot ? (p.answers?.[cat.id] || "") : (gs.answers?.[cat.id] || ""));
       roundAnswers[cat.id] = {};
@@ -5020,21 +5121,83 @@ function GameScreen({
       gs.players.forEach(p => {
         const mine = p.isBot ? (p.answers?.[cat.id] || "") : (gs.answers?.[cat.id] || "");
         const pts = scoreAnswer(mine, allAns, cat.id, gs.letter, gs.lang || "fr");
-        roundScores[p.id] += pts > 0 ? pts : 0; // invalid (-1) counts as 0
+        roundScores[p.id] += pts > 0 ? pts : 0;
         roundAnswers[cat.id][p.id] = mine;
-        roundValidity[cat.id][p.id] = pts; // -1=invalid, 0=empty, 1=shared, 2=unique
+        roundValidity[cat.id][p.id] = pts;
       });
     });
+
+    // ── Mode Mort Subite ─────────────────────────────────────
+    // Joueurs qui ont 0 point ET au moins une réponse invalide → éliminés
+    let eliminatedIds = [];
+    if (gs.mode === "mort") {
+      gs.players.forEach(p => {
+        if (p.eliminated) return; // déjà éliminé
+        const hasInvalid = gs.categories.some(cat => {
+          const v = roundValidity[cat.id]?.[p.id];
+          return v === -1; // réponse invalide
+        });
+        const hasEmpty = gs.categories.every(cat => {
+          const ans = roundAnswers[cat.id]?.[p.id] || "";
+          return !ans.trim();
+        });
+        if (hasInvalid || hasEmpty) {
+          eliminatedIds.push(p.id);
+        }
+      });
+    }
+
+    // ── Mode 2v2 ─────────────────────────────────────────────
+    // Équipes dynamiques: moitié gauche vs moitié droite
+    let teamScores = null;
+    if (gs.mode === "2v2") {
+      const playerIds = gs.players.map(p => p.id);
+      const half = Math.ceil(playerIds.length / 2);
+      const teams = gs.teams || {
+        team0: playerIds.slice(0, half),
+        team1: playerIds.slice(half),
+      };
+      teamScores = {};
+      Object.entries(teams).forEach(([teamId, memberIds]) => {
+        teamScores[teamId] = memberIds.reduce((sum, pid) => sum + (roundScores[pid] || 0), 0);
+      });
+    }
+
     const newCumulative = {};
-    gs.players.forEach(p => { newCumulative[p.id] = (gs.cumulativeScores[p.id] || 0) + roundScores[p.id]; });
-    const isLast = gs.currentRound >= gs.totalRounds;
-    const roundData = { letter: gs.letter, answers: roundAnswers, scores: roundScores, validity: roundValidity };
+    gs.players.forEach(p => {
+      newCumulative[p.id] = (gs.cumulativeScores[p.id] || 0) + roundScores[p.id];
+    });
+
+    // Joueurs restants en mort subite
+    const activePlayers = gs.mode === "mort"
+      ? gs.players.filter(p => !p.eliminated && !eliminatedIds.includes(p.id))
+      : gs.players;
+
+    const isLast = gs.currentRound >= gs.totalRounds
+      || (gs.mode === "mort" && activePlayers.length <= 1);
+
+    const updatedPlayers = gs.players.map(p => ({
+      ...p,
+      eliminated: p.eliminated || eliminatedIds.includes(p.id),
+    }));
+
+    const roundData = {
+      letter: gs.letter,
+      answers: roundAnswers,
+      scores: roundScores,
+      validity: roundValidity,
+      eliminated: eliminatedIds,
+      teamScores,
+    };
+
     const newGs = {
-      ...gs, players: gs.players,
+      ...gs,
+      players: updatedPlayers,
       rounds: [...gs.rounds, roundData],
       cumulativeScores: newCumulative,
       currentRoundData: roundData,
       phase: isLast ? "final_results" : "round_results",
+      teamScores: teamScores || gs.teamScores,
     };
     setGameState(newGs);
     if (isLast) setTimeout(() => onEndGame(newGs), 0);
