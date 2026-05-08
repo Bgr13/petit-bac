@@ -155,6 +155,25 @@ const TRANSLATIONS = {
     xp_gained: "XP gagnés",
     level: "Niv.",
     badge_unlocked: "BADGE DÉBLOQUÉ",
+    stripe_test_mode: "Mode démo : abonnement activé pour la présentation !",
+    tier_vip_f4: "Badge exclusif ★",
+    tier_vip_f3: "Tournois VIP",
+    tier_vip_f2: "12 thèmes exclusifs",
+    tier_vip_f1: "Tout PRO +",
+    tier_pro_f4: "Défi quotidien",
+    tier_pro_f3: "Multijoueur illimité",
+    tier_pro_f2: "10 thèmes",
+    tier_pro_f1: "30 catégories",
+    tier_free_f3: "Solo vs IA",
+    tier_free_f2: "2 thèmes",
+    tier_free_f1: "6 catégories",
+    stripe_secure: "Paiement sécurisé par Stripe • Annulable à tout moment",
+    per_month: "/mois",
+    subscribe_btn: "S'abonner",
+    privacy_title: "Politique de confidentialité",
+    cgu_title: "Conditions d'utilisation",
+    no_players: "Sois le premier à jouer !",
+    leaderboard_title: "Classement Mondial",
     letter_chosen: "Lettre : {0} 🚀",
     spinner_rolling: "{0} tourne…",
     stop_btn2: "STOP !",
@@ -429,6 +448,25 @@ const TRANSLATIONS = {
     xp_gained: "XP earned",
     level: "Lv.",
     badge_unlocked: "BADGE UNLOCKED",
+    stripe_test_mode: "Demo mode: subscription activated for the presentation!",
+    tier_vip_f4: "Exclusive badge ★",
+    tier_vip_f3: "VIP tournaments",
+    tier_vip_f2: "12 exclusive themes",
+    tier_vip_f1: "All PRO +",
+    tier_pro_f4: "Daily challenge",
+    tier_pro_f3: "Unlimited multiplayer",
+    tier_pro_f2: "10 themes",
+    tier_pro_f1: "30 categories",
+    tier_free_f3: "Solo vs AI",
+    tier_free_f2: "2 themes",
+    tier_free_f1: "6 categories",
+    stripe_secure: "Secure payment by Stripe • Cancel anytime",
+    per_month: "/month",
+    subscribe_btn: "Subscribe",
+    privacy_title: "Privacy Policy",
+    cgu_title: "Terms of Service",
+    no_players: "Be the first to play!",
+    leaderboard_title: "World Rankings",
     letter_chosen: "Letter: {0} 🚀",
     spinner_rolling: "{0} is spinning…",
     stop_btn2: "STOP!",
@@ -703,6 +741,14 @@ const TRANSLATIONS = {
     xp_gained: "XP ganados",
     level: "Niv.",
     badge_unlocked: "INSIGNIA DESBLOQUEADA",
+    stripe_test_mode: "Modo demo: ¡suscripción activada para la presentación!",
+    stripe_secure: "Pago seguro por Stripe • Cancela cuando quieras",
+    per_month: "/mes",
+    subscribe_btn: "Suscribirse",
+    privacy_title: "Política de privacidad",
+    cgu_title: "Términos de uso",
+    no_players: "¡Sé el primero en jugar!",
+    leaderboard_title: "Clasificación Mundial",
     letter_chosen: "Letra: {0} 🚀",
     spinner_rolling: "{0} girando…",
     stop_btn2: "¡STOP!",
@@ -1265,7 +1311,7 @@ const VALID_WORDS = {
     L:["lucas","lucie","lea","louise","lola","leon","laurie","laurent","laure","ludovic","lydia","laetitia","lana","lancelot","lara","larissa","lassana","laureline","leandro","lena","leo","leonce","leopold","lila","lilou","lina","lisa","lise","lisette","livia","loic","lorena","lorie","lorraine","lou","louisa","luca","lucette","lucian","lucile","luna","ladislava","ladislave","laela","laila","laina","laini","lais","lakshmi","lala"],
     M:["marie","maxime","mathieu","margot","marine","mathilde","manon","marc","melanie","melissa","michel","muriel","maeva","magali","malo","manoel","manuel","marceau","marco","margaux","mariana","marilyn","mario","marjorie","marlene","martial","martin","martine","maud","maxence","maximilien","maya","melodie","mia","mickael","mika","mikael","mila","milena","mireille","miriam","mona","morgane","moussa","mabel","mabeline","mabella","mabelle","mac","macaela"],
     N:["noa","noe","noel","noemie","nicolas","noemie","nathan","nathalie","nina","nadege","noe","nadine","nadia","naomi","nassim","nassima","natalia","natasha","nayla","noah","nolan","nora","norbert","noura","nabiha","nabil","nabila","nabou","nachida","nada","nadal","nadir","nadiege","nadim","nadima","nadjia","nadka","nady","naemi","nagib","nahel","nahid","naida","naika","naila","naima","naira","nairi","nais","naiyah","naja","najat","najib","najiba","najma","nakia","nakita","nalani","nalia","nalida","nalini","namiko","nana","nane","nanee","nani","nanna","naouelle","nara","narayan","narcisa","narciso","narcisse","narda","natali","nathael","nathanael","nathania","naum","nava","naveah","nayara","nazanin","nazarena","nazareno","nazim","nazima","neha","neil","nel","nelda","neli","nelia","nelin","nell","nella","nellie","nelly","nelvin","nena","nenia","nesta","neva","nevada","nevena","neville","nia","niall","niamh","nicabar","niceta","nichola","nichole","nicola","nicolai","nicolaj","nicolaos","nicolasa","nicolo","nika","nikhil","nikita","nikki","niko","nikolaj","nikolaos","nikoletta","nikoline","nikos","nila","nilde","nilda","nilou","nils","ninette","nino","nior","nis","nisa","nives","noach","noel","noela","noelie","noeline","noella","noelle","nohemy","noin","nolita","nona","nonette","noni","nonie","norah","noreen","norma","normann","norris","nour","nouredine","nourin","noury","noushin"],
-    O:[],
+    O:["oscar","olivier","odile","omar","ophelie","octave","olympe","oriane","ottilie","orlando"],
     P:["pierre","pauline","philippe","paul","patricia","pascal","perrine","priscilla","penelope","pablo","pamela","paola","patricio","patrice","paulette","pedro","peggy","phedre","philippa","philomene","pierrette","priya","prudence","pace","padma","paige","palmira","pam","pamelina","pascale","pascaline","pascalino","pascalito","pastor","patrizia","patrona","paula","paulina","paulino","paulo","pax","paxon","paxton","payal","paz","pegasus","penina","perla","permelia","pero","petra","petronela","petronella","petronille","phaedra","phillipa","phillippe","phillo","philomen","philomena","pia","pier","piera","pierce","piero","pietrina","pietrino","pilar","pippa","placid","placida","placide","placido","poldo","poli","polina","polixena","polly","polyxena","pompea","pompeo","poppy","pora","portia","praxede","praxedis","precious","prima","prisciliana","prisciliano","prosperine","protais"],
     R:["romain","raphael","rachel","remi","renaud","regine","rose","roxane","roland","rachid","raissa","rakia","rama","randa","raoul","raymond","rebecca","regis","reina","remy","rene","richard","rita","robert","roberto","robin","rodrigo","romeo","romuald","rosalie","rosine","roxanne","ruben","ruth","radek","radovan","raed","raelene","raelynn","raffaela","raffaele","rainer","raisa","rajan","rakesh","ralf","ramona","rangi","raquel","rascha","rashid","rasmus","ravi","ray","rayna","raynard","rayne","raynelle","raza","rebekah","reed","reeve","reid","reiko","renata","renate","renato","rende","renilde","renita","renke","rennard","reuben","reva","rex","rhea","rhiannon","rhianon","rhona","rhonda","rian","rico","rider","riley","rinat","rino","rio","ritchie","riva","rivka","rob","robbie","robbin","roberta","robine","robino","robison","robyn","rocco","rochelle","rocky","rod","roderick","rodolfo","rodrigue","roeland","roel","roger","rohan","roisi","roisin","rolando","romaine","romano","romantilde","ron","rona","ronald","ronaldo","roni","ronit","ronie","ronja","ronni","rosa","rosalba","rosalia","rosalind","rosaline","rosalinda","rosalinde","rosalita","rosalva","rosana","rosane","rosanna","rosario","roswitha","rowena","roxana","roxanna","roxi","roxy"],
     S:["sophie","simon","sarah","samuel","sebastien","salome","sandrine","stephane","stephanie","sylvie","sabrina","sacha","safia","salima","sami","samira","sandra","sandro","santiago","sara","sasha","selena","serge","serine","soline","solange","solenn","sonia","souad","stanislas","stella","sylvain","sabela","sabena","sabina","sabine","sabino","sabira","sachiko","sade","sadie","sadiku","sadika","saemundo","safi","safiya","saida","saif","saira","sakari","sakina","sakura","sala","salah","salam","salama","saleem","salem","sallie","salomea","salomee","salomeja","salomona","salone","saloni","samantha","samara","samaria","samaris","samba","sameh","sameera","samela","samella","samia","samiha","samiya","sanaa","sancia","sandie","sane","sanee","sanel","sangria","sannie","santana","santina","santino","santos","sanya","sarafina","saraina","saray","sari","sarika","sarina","sarita","sariya","saskia","satine","saul","saura","savannah","saverio","savina","savino","saviola","savitri","sawsan","seah","seana","sebastiana","sebastiano","selene","selima","selina","selinda","selita","selma","sema","semaj","sena","senan","sendoa","senna","septimia","seraphina","seraphine","serena","serina","sevim","seydi","seyhan","seyi","shahin","shahira","shahla","shahzad","shalini","shamara","shana","shanelle","shanie","shaniqua","shaniya","shanna","shannah","shannen","shannon","shantalle","shantanu","shantelle","shantel","sharia","sharifa","sharline","sharmaine","sharon","shawnda","shaylee","sheila","shelby","shell","shellie","shelly","shenan","sherin","sherri","sherry","sheyla","shirin","shirley","shola","sian","sianna","sibille","sibylle","sigrid","sigrun","sila","silke","silvana","silvano","silvia","silvio","simba","simeon","simona","sirena","sirine","siri","sissi","sky","skylar","sloane","sofi","sofia","sofian","sofiane","sofiya","soledad","sonja","sonny","sora","soraya","sorin","sorina","sorrel","soto","soukeyna","soumia","soumya","swann","sybille","sybil","sylvester","sylvia"],
@@ -3271,6 +3317,145 @@ if (typeof document !== "undefined") {
   mv.content = "width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no";
 }
 
+// ─── THÈMES ─────────────────────────────────────────────────────────
+const THEMES = [
+  { id:"light",   name:"Papier",      emoji:"📄", desc:"Blanc chaud & épuré",         preview:["#fafaf8","#4338ca","#18171a"], free:true  },
+  { id:"dark",    name:"Minuit",       emoji:"🌑", desc:"Sombre & élégant",            preview:["#0c0c10","#818cf8","#e2e8f0"], free:true  },
+  { id:"sakura",  name:"Sakura",       emoji:"🌸", desc:"Rose nacré japonais",         preview:["#fff0f6","#e879a0","#4a0028"], free:false },
+  { id:"noir",    name:"Noir Absolu",  emoji:"🖤", desc:"AMOLED ultra sombre",         preview:["#000000","#facc15","#ffffff"], free:false },
+  { id:"neon",    name:"Neon",         emoji:"⚡", desc:"Néon fluo sur fond sombre",   preview:["#0d0d1a","#39ff14","#ff0090"], free:false },
+  { id:"sand",    name:"Sahara",       emoji:"🏜️", desc:"Sable doré & caramel",       preview:["#fef3c7","#d97706","#451a03"], free:false },
+  { id:"nord",    name:"Nordique",     emoji:"🧊", desc:"Glace arctique & acier",      preview:["#ecf4f8","#5e81ac","#2e3440"], free:false },
+  { id:"volcano", name:"Volcan",       emoji:"🌋", desc:"Magma rouge sang",            preview:["#1a0505","#ff3d00","#ffab40"], free:false },
+  { id:"forest",  name:"Forêt",        emoji:"🌿", desc:"Vert profond & nature",       preview:["#0d1f0d","#4ade80","#bbf7d0"], free:false },
+  { id:"ocean",   name:"Océan",        emoji:"🌊", desc:"Bleu abyssal & corail",       preview:["#020d18","#0ea5e9","#7dd3fc"], free:false },
+  { id:"sunset",  name:"Coucher",      emoji:"🌅", desc:"Orange & violet crépuscule",  preview:["#1a0a1a","#f97316","#fbbf24"], free:false },
+  { id:"galaxy",  name:"Galaxie",      emoji:"🌌", desc:"Violet cosmique étoilé",      preview:["#030014","#a855f7","#e879f9"], free:false },
+];
+
+const THEME_VARS = {
+  light:{
+    "--bg":"#fafaf8","--sf":"#ffffff","--sf2":"#f0eeea","--sf3":"#e6e4df","--br":"#dedad3","--brh":"#bbb8ae",
+    "--tx":"#18171a","--txm":"#6b6860","--txd":"#9b9890","--ac":"#4338ca","--acl":"#5b50d6",
+    "--acg":"rgba(67,56,202,0.1)","--acs":"rgba(67,56,202,0.07)","--ac-border":"rgba(67,56,202,0.22)",
+    "--pro":"#0c6e9e","--prog":"rgba(12,110,158,0.09)","--vip":"#8a3a0a","--vipg":"rgba(138,58,10,0.09)",
+    "--gn":"#166534","--gns":"rgba(22,101,52,0.09)","--yw":"#926208","--yws":"rgba(146,98,8,0.09)",
+    "--rd":"#991b1b","--rds":"rgba(153,27,27,0.07)","--or":"#c2410c",
+    "--r":"14px","--rs":"9px","--rm":"11px","--tr":"0.14s cubic-bezier(0.4,0,0.2,1)",
+    "--s1":"0 1px 4px rgba(0,0,0,0.06)","--s2":"0 3px 10px rgba(0,0,0,0.07)","--s3":"0 10px 28px rgba(0,0,0,0.09)"
+  },
+  dark:{
+    "--bg":"#0c0c10","--sf":"#16161d","--sf2":"#1e1e28","--sf3":"#26263a","--br":"#2e2e42","--brh":"#484870",
+    "--tx":"#e2e8f0","--txm":"#94a3b8","--txd":"#64748b","--ac":"#818cf8","--acl":"#a5b4fc",
+    "--acg":"rgba(129,140,248,0.18)","--acs":"rgba(129,140,248,0.1)","--ac-border":"rgba(129,140,248,0.3)",
+    "--pro":"#38bdf8","--prog":"rgba(56,189,248,0.12)","--vip":"#fbbf24","--vipg":"rgba(251,191,36,0.12)",
+    "--gn":"#4ade80","--gns":"rgba(74,222,128,0.12)","--yw":"#fbbf24","--yws":"rgba(251,191,36,0.12)",
+    "--rd":"#f87171","--rds":"rgba(248,113,113,0.12)","--or":"#fb923c",
+    "--r":"14px","--rs":"9px","--rm":"11px","--tr":"0.14s cubic-bezier(0.4,0,0.2,1)",
+    "--s1":"0 1px 4px rgba(0,0,0,0.3)","--s2":"0 3px 10px rgba(0,0,0,0.4)","--s3":"0 10px 28px rgba(0,0,0,0.5)"
+  },
+  sakura:{
+    "--bg":"#fff0f6","--sf":"#fff5f9","--sf2":"#ffe0ed","--sf3":"#ffc2d9","--br":"#ffadd2","--brh":"#f472b6",
+    "--tx":"#4a0028","--txm":"#9d174d","--txd":"#db2777","--ac":"#e879a0","--acl":"#f472b6",
+    "--acg":"rgba(232,121,160,0.15)","--acs":"rgba(232,121,160,0.08)","--ac-border":"rgba(232,121,160,0.3)",
+    "--pro":"#0c6e9e","--prog":"rgba(12,110,158,0.09)","--vip":"#8a3a0a","--vipg":"rgba(138,58,10,0.09)",
+    "--gn":"#166534","--gns":"rgba(22,101,52,0.09)","--yw":"#926208","--yws":"rgba(146,98,8,0.09)",
+    "--rd":"#991b1b","--rds":"rgba(153,27,27,0.07)","--or":"#c2410c",
+    "--r":"14px","--rs":"9px","--rm":"11px","--tr":"0.14s cubic-bezier(0.4,0,0.2,1)",
+    "--s1":"0 1px 4px rgba(219,39,119,0.06)","--s2":"0 3px 10px rgba(219,39,119,0.07)","--s3":"0 10px 28px rgba(219,39,119,0.09)"
+  },
+  noir:{
+    "--bg":"#000000","--sf":"#0a0a0a","--sf2":"#111111","--sf3":"#1a1a1a","--br":"#222222","--brh":"#333333",
+    "--tx":"#ffffff","--txm":"#a0a0a0","--txd":"#606060","--ac":"#facc15","--acl":"#fde047",
+    "--acg":"rgba(250,204,21,0.15)","--acs":"rgba(250,204,21,0.08)","--ac-border":"rgba(250,204,21,0.3)",
+    "--pro":"#38bdf8","--prog":"rgba(56,189,248,0.1)","--vip":"#facc15","--vipg":"rgba(250,204,21,0.1)",
+    "--gn":"#4ade80","--gns":"rgba(74,222,128,0.1)","--yw":"#facc15","--yws":"rgba(250,204,21,0.1)",
+    "--rd":"#f87171","--rds":"rgba(248,113,113,0.1)","--or":"#fb923c",
+    "--r":"14px","--rs":"9px","--rm":"11px","--tr":"0.14s cubic-bezier(0.4,0,0.2,1)",
+    "--s1":"0 1px 4px rgba(0,0,0,0.5)","--s2":"0 3px 10px rgba(0,0,0,0.6)","--s3":"0 10px 28px rgba(0,0,0,0.7)"
+  },
+  neon:{
+    "--bg":"#0d0d1a","--sf":"#111124","--sf2":"#16162e","--sf3":"#1c1c3a","--br":"#2a2a4a","--brh":"#39ff14",
+    "--tx":"#e0e0ff","--txm":"#8080c0","--txd":"#4040a0","--ac":"#39ff14","--acl":"#7fff00",
+    "--acg":"rgba(57,255,20,0.15)","--acs":"rgba(57,255,20,0.07)","--ac-border":"rgba(57,255,20,0.4)",
+    "--pro":"#00cfff","--prog":"rgba(0,207,255,0.1)","--vip":"#ff0090","--vipg":"rgba(255,0,144,0.1)",
+    "--gn":"#39ff14","--gns":"rgba(57,255,20,0.1)","--yw":"#ffe600","--yws":"rgba(255,230,0,0.1)",
+    "--rd":"#ff3860","--rds":"rgba(255,56,96,0.1)","--or":"#ff6600",
+    "--r":"14px","--rs":"9px","--rm":"11px","--tr":"0.14s cubic-bezier(0.4,0,0.2,1)",
+    "--s1":"0 0 8px rgba(57,255,20,0.15)","--s2":"0 0 16px rgba(57,255,20,0.2)","--s3":"0 0 32px rgba(57,255,20,0.25)"
+  },
+  sand:{
+    "--bg":"#fef3c7","--sf":"#fffbeb","--sf2":"#fde68a","--sf3":"#fcd34d","--br":"#f59e0b","--brh":"#d97706",
+    "--tx":"#451a03","--txm":"#92400e","--txd":"#b45309","--ac":"#d97706","--acl":"#f59e0b",
+    "--acg":"rgba(217,119,6,0.15)","--acs":"rgba(217,119,6,0.08)","--ac-border":"rgba(217,119,6,0.3)",
+    "--pro":"#0c6e9e","--prog":"rgba(12,110,158,0.09)","--vip":"#7c3aed","--vipg":"rgba(124,58,237,0.09)",
+    "--gn":"#166534","--gns":"rgba(22,101,52,0.09)","--yw":"#d97706","--yws":"rgba(217,119,6,0.09)",
+    "--rd":"#991b1b","--rds":"rgba(153,27,27,0.07)","--or":"#c2410c",
+    "--r":"14px","--rs":"9px","--rm":"11px","--tr":"0.14s cubic-bezier(0.4,0,0.2,1)",
+    "--s1":"0 1px 4px rgba(180,83,9,0.08)","--s2":"0 3px 10px rgba(180,83,9,0.1)","--s3":"0 10px 28px rgba(180,83,9,0.12)"
+  },
+  nord:{
+    "--bg":"#ecf4f8","--sf":"#ffffff","--sf2":"#ddeaf2","--sf3":"#c5dce9","--br":"#a8c8dd","--brh":"#5e81ac",
+    "--tx":"#2e3440","--txm":"#4c566a","--txd":"#7b88a1","--ac":"#5e81ac","--acl":"#81a1c1",
+    "--acg":"rgba(94,129,172,0.15)","--acs":"rgba(94,129,172,0.08)","--ac-border":"rgba(94,129,172,0.3)",
+    "--pro":"#0c6e9e","--prog":"rgba(12,110,158,0.09)","--vip":"#8a3a0a","--vipg":"rgba(138,58,10,0.09)",
+    "--gn":"#166534","--gns":"rgba(22,101,52,0.09)","--yw":"#926208","--yws":"rgba(146,98,8,0.09)",
+    "--rd":"#991b1b","--rds":"rgba(153,27,27,0.07)","--or":"#c2410c",
+    "--r":"14px","--rs":"9px","--rm":"11px","--tr":"0.14s cubic-bezier(0.4,0,0.2,1)",
+    "--s1":"0 1px 4px rgba(46,52,64,0.06)","--s2":"0 3px 10px rgba(46,52,64,0.08)","--s3":"0 10px 28px rgba(46,52,64,0.1)"
+  },
+  volcano:{
+    "--bg":"#1a0505","--sf":"#220a0a","--sf2":"#2d1010","--sf3":"#3d1515","--br":"#5c1a1a","--brh":"#ff3d00",
+    "--tx":"#ffccbc","--txm":"#ff8a65","--txd":"#d84315","--ac":"#ff3d00","--acl":"#ff6e40",
+    "--acg":"rgba(255,61,0,0.18)","--acs":"rgba(255,61,0,0.09)","--ac-border":"rgba(255,61,0,0.4)",
+    "--pro":"#ffab40","--prog":"rgba(255,171,64,0.1)","--vip":"#ffd740","--vipg":"rgba(255,215,64,0.1)",
+    "--gn":"#69f0ae","--gns":"rgba(105,240,174,0.1)","--yw":"#ffd740","--yws":"rgba(255,215,64,0.1)",
+    "--rd":"#ff5252","--rds":"rgba(255,82,82,0.1)","--or":"#ff6d00",
+    "--r":"14px","--rs":"9px","--rm":"11px","--tr":"0.14s cubic-bezier(0.4,0,0.2,1)",
+    "--s1":"0 1px 4px rgba(255,61,0,0.15)","--s2":"0 3px 10px rgba(255,61,0,0.2)","--s3":"0 10px 28px rgba(255,61,0,0.25)"
+  },
+  forest:{
+    "--bg":"#0d1f0d","--sf":"#122012","--sf2":"#173017","--sf3":"#1e401e","--br":"#2d5a2d","--brh":"#4ade80",
+    "--tx":"#bbf7d0","--txm":"#86efac","--txd":"#4ade80","--ac":"#4ade80","--acl":"#86efac",
+    "--acg":"rgba(74,222,128,0.18)","--acs":"rgba(74,222,128,0.09)","--ac-border":"rgba(74,222,128,0.4)",
+    "--pro":"#34d399","--prog":"rgba(52,211,153,0.1)","--vip":"#fbbf24","--vipg":"rgba(251,191,36,0.1)",
+    "--gn":"#4ade80","--gns":"rgba(74,222,128,0.12)","--yw":"#fbbf24","--yws":"rgba(251,191,36,0.1)",
+    "--rd":"#f87171","--rds":"rgba(248,113,113,0.1)","--or":"#fb923c",
+    "--r":"14px","--rs":"9px","--rm":"11px","--tr":"0.14s cubic-bezier(0.4,0,0.2,1)",
+    "--s1":"0 1px 4px rgba(74,222,128,0.1)","--s2":"0 3px 10px rgba(74,222,128,0.15)","--s3":"0 10px 28px rgba(74,222,128,0.2)"
+  },
+  ocean:{
+    "--bg":"#020d18","--sf":"#061220","--sf2":"#0a1a2e","--sf3":"#0e243e","--br":"#1a3a5c","--brh":"#0ea5e9",
+    "--tx":"#e0f2fe","--txm":"#7dd3fc","--txd":"#38bdf8","--ac":"#0ea5e9","--acl":"#38bdf8",
+    "--acg":"rgba(14,165,233,0.18)","--acs":"rgba(14,165,233,0.09)","--ac-border":"rgba(14,165,233,0.4)",
+    "--pro":"#22d3ee","--prog":"rgba(34,211,238,0.1)","--vip":"#f0abfc","--vipg":"rgba(240,171,252,0.1)",
+    "--gn":"#34d399","--gns":"rgba(52,211,153,0.1)","--yw":"#fbbf24","--yws":"rgba(251,191,36,0.1)",
+    "--rd":"#f87171","--rds":"rgba(248,113,113,0.1)","--or":"#fb923c",
+    "--r":"14px","--rs":"9px","--rm":"11px","--tr":"0.14s cubic-bezier(0.4,0,0.2,1)",
+    "--s1":"0 1px 4px rgba(14,165,233,0.15)","--s2":"0 3px 10px rgba(14,165,233,0.2)","--s3":"0 10px 28px rgba(14,165,233,0.25)"
+  },
+  sunset:{
+    "--bg":"#1a0a1a","--sf":"#220f22","--sf2":"#2e162e","--sf3":"#3d1f3d","--br":"#6b2d6b","--brh":"#f97316",
+    "--tx":"#fde8d0","--txm":"#fbbf24","--txd":"#f97316","--ac":"#f97316","--acl":"#fb923c",
+    "--acg":"rgba(249,115,22,0.18)","--acs":"rgba(249,115,22,0.09)","--ac-border":"rgba(249,115,22,0.4)",
+    "--pro":"#e879f9","--prog":"rgba(232,121,249,0.1)","--vip":"#fbbf24","--vipg":"rgba(251,191,36,0.1)",
+    "--gn":"#4ade80","--gns":"rgba(74,222,128,0.1)","--yw":"#fbbf24","--yws":"rgba(251,191,36,0.1)",
+    "--rd":"#f87171","--rds":"rgba(248,113,113,0.1)","--or":"#fb923c",
+    "--r":"14px","--rs":"9px","--rm":"11px","--tr":"0.14s cubic-bezier(0.4,0,0.2,1)",
+    "--s1":"0 1px 4px rgba(249,115,22,0.15)","--s2":"0 3px 10px rgba(249,115,22,0.2)","--s3":"0 10px 28px rgba(249,115,22,0.25)"
+  },
+  galaxy:{
+    "--bg":"#030014","--sf":"#080024","--sf2":"#0d0030","--sf3":"#120040","--br":"#2d1b69","--brh":"#a855f7",
+    "--tx":"#f3e8ff","--txm":"#d8b4fe","--txd":"#c084fc","--ac":"#a855f7","--acl":"#c084fc",
+    "--acg":"rgba(168,85,247,0.18)","--acs":"rgba(168,85,247,0.09)","--ac-border":"rgba(168,85,247,0.4)",
+    "--pro":"#e879f9","--prog":"rgba(232,121,249,0.12)","--vip":"#fbbf24","--vipg":"rgba(251,191,36,0.1)",
+    "--gn":"#4ade80","--gns":"rgba(74,222,128,0.1)","--yw":"#fbbf24","--yws":"rgba(251,191,36,0.1)",
+    "--rd":"#f87171","--rds":"rgba(248,113,113,0.1)","--or":"#fb923c",
+    "--r":"14px","--rs":"9px","--rm":"11px","--tr":"0.14s cubic-bezier(0.4,0,0.2,1)",
+    "--s1":"0 0 8px rgba(168,85,247,0.2)","--s2":"0 0 20px rgba(168,85,247,0.25)","--s3":"0 0 40px rgba(168,85,247,0.3)"
+  },
+};
+
 // Apply theme CSS variables dynamically
 function applyTheme(themeId) {
   const vars = THEME_VARS[themeId] || THEME_VARS.light;
@@ -3280,7 +3465,7 @@ function applyTheme(themeId) {
 }
 
 const css = `
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 
 /* ─── Mobile / iOS fixes ─── */
@@ -3330,26 +3515,28 @@ input,select,textarea{font-size:16px !important;touch-action:manipulation}
   --s2:0 3px 10px rgba(0,0,0,0.07),0 1px 3px rgba(0,0,0,0.04);
   --s3:0 10px 28px rgba(0,0,0,0.09),0 3px 6px rgba(0,0,0,0.05);
 }
-body{font-family:"Inter",sans-serif;background:var(--bg);color:var(--tx);min-height:100vh;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+body{font-family:"Inter",sans-serif;background:var(--bg);color:var(--tx);min-height:100vh;overflow-x:hidden;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-rendering:optimizeLegibility}
 .app{max-width:480px;margin:0 auto;min-height:100vh;display:flex;flex-direction:column;background:var(--bg)}
 
-.hdr{padding:16px 18px 14px;display:flex;align-items:center;justify-content:space-between;background:var(--sf);border-bottom:1px solid var(--br);flex-shrink:0}
-.logo{font-size:18px;font-weight:800;letter-spacing:-.6px;color:var(--tx)}.logo span{color:var(--ac)}
+.hdr{padding:16px 18px 14px;display:flex;align-items:center;justify-content:space-between;background:var(--sf);border-bottom:1px solid var(--br);flex-shrink:0;box-shadow:0 1px 8px rgba(0,0,0,0.04)}
+.logo{font-size:19px;font-weight:900;letter-spacing:-.8px;color:var(--tx)}.logo span{color:var(--ac);background:linear-gradient(135deg,var(--ac),var(--acl));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
 
 .bnav{display:flex;gap:3px;padding:8px 12px 18px;border-top:1px solid var(--br);background:var(--sf);margin-top:auto;flex-shrink:0}
 .nb{flex:1;padding:9px 4px;border:none;background:transparent;color:var(--txm);border-radius:var(--rm);font-family:inherit;font-size:11px;font-weight:500;cursor:pointer;transition:all var(--tr);display:flex;flex-direction:column;align-items:center;gap:3px}
-.nb.active{background:var(--acs);color:var(--ac);font-weight:600}.ni{font-size:17px}
+.nb.active{background:var(--acs);color:var(--ac);font-weight:700}
+.nb.active .ni{transform:scale(1.15);filter:drop-shadow(0 2px 4px rgba(67,56,202,0.3))}
+.ni{font-size:18px;transition:all var(--tr)}
 
 .cnt{flex:1;padding:16px;overflow-y:auto;padding-bottom:24px}
 
-.card{background:var(--sf);border:1px solid var(--br);border-radius:var(--r);padding:16px 18px;margin-bottom:12px;box-shadow:var(--s1)}
+.card{background:var(--sf);border:1px solid var(--br);border-radius:var(--r);padding:16px 18px;margin-bottom:12px;box-shadow:0 2px 12px rgba(0,0,0,0.06),0 1px 3px rgba(0,0,0,0.04);transition:box-shadow var(--tr)}
 .ctitle{font-size:10px;font-weight:700;color:var(--txm);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:14px}
 
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:13px 18px;border-radius:var(--rm);font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;transition:all var(--tr);border:none;width:100%}
-.bp{background:var(--ac);color:#fff;box-shadow:0 2px 8px rgba(79,70,229,0.25)}.bp:hover{background:var(--acl);box-shadow:0 4px 14px rgba(79,70,229,0.3);transform:translateY(-1px)}
+.bp{background:linear-gradient(135deg,var(--ac),var(--acl));color:#fff;box-shadow:0 4px 14px rgba(79,70,229,0.3)}.bp:hover{background:linear-gradient(135deg,var(--acl),#7c3aed);box-shadow:0 6px 20px rgba(79,70,229,0.38);transform:translateY(-2px)}
 .bpro{background:var(--pro);color:#fff;box-shadow:0 2px 8px rgba(3,105,161,0.2)}.bpro:hover{background:#0284c7;transform:translateY(-1px)}
 .bvip{background:linear-gradient(135deg,#92400e,#d97706);color:#fff;box-shadow:0 2px 8px rgba(146,64,14,0.2)}.bvip:hover{opacity:.92;transform:translateY(-1px)}
-.bs{background:var(--sf);color:var(--tx);border:1.5px solid var(--br);box-shadow:var(--s1)}.bs:hover{border-color:var(--brh);background:var(--sf2)}
+.bs{background:var(--sf);color:var(--tx);border:1.5px solid var(--br);box-shadow:0 1px 4px rgba(0,0,0,0.05)}.bs:hover{border-color:var(--brh);background:var(--sf2);box-shadow:0 2px 8px rgba(0,0,0,0.08)}
 .btn:disabled{opacity:.38;cursor:default;transform:none!important;box-shadow:none}
 .bsm{padding:8px 14px;font-size:12px;width:auto}
 
@@ -3373,8 +3560,8 @@ body{font-family:"Inter",sans-serif;background:var(--bg);color:var(--tx);min-hei
 .ct.pro-c{border-color:rgba(3,105,161,0.2)}.ct.pro-c.on{border-color:var(--pro);background:var(--prog);color:var(--pro)}
 .ct.vip-c{border-color:rgba(146,64,14,0.2)}.ct.vip-c.on{border-color:var(--vip);background:var(--vipg);color:var(--vip)}
 
-.inp{background:var(--sf2);border:1.5px solid var(--br);border-radius:var(--rm);padding:11px 13px;font-family:inherit;font-size:16px;color:var(--tx);width:100%;transition:all var(--tr);outline:none}
-.inp:focus{border-color:var(--ac);box-shadow:0 0 0 3px var(--acg);background:var(--sf)}.inp::placeholder{color:var(--txd)}
+.inp{background:var(--sf2);border:1.5px solid var(--br);border-radius:var(--rm);padding:12px 14px;font-family:inherit;font-size:16px;color:var(--tx);width:100%;transition:all var(--tr);outline:none}
+.inp:focus{border-color:var(--ac);box-shadow:0 0 0 4px var(--acg);background:var(--sf);transform:none}.inp::placeholder{color:var(--txd)}
 select.inp{appearance:none;cursor:pointer}
 
 .online-modes{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
@@ -3385,7 +3572,7 @@ select.inp{appearance:none;cursor:pointer}
 .mode-title{font-size:13px;font-weight:700;margin-bottom:3px;color:var(--tx)}
 .mode-desc{font-size:11px;color:var(--txm);line-height:1.4}
 
-.rc{font-family:"JetBrains Mono",monospace;font-size:34px;font-weight:600;text-align:center;letter-spacing:8px;color:var(--ac);padding:14px 0;background:var(--acs);border-radius:var(--rm);margin:8px 0}
+.rc{font-family:"JetBrains Mono",monospace;font-size:36px;font-weight:700;text-align:center;letter-spacing:10px;color:var(--ac);padding:16px 0;background:var(--acs);border-radius:var(--rm);margin:8px 0;border:2px dashed var(--ac-border)}
 .pi{display:flex;align-items:center;gap:11px;padding:11px 13px;background:var(--sf2);border-radius:var(--rm);border:1.5px solid var(--br);margin-bottom:8px}
 .pav{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;flex-shrink:0}
 .pav-human{background:var(--ac);color:#fff}.pav-guest{background:var(--sf3);color:var(--txm)}
@@ -3400,19 +3587,19 @@ select.inp{appearance:none;cursor:pointer}
 .mm-sub{font-size:13px;color:var(--txm)}
 .mm-country{font-size:12px;color:var(--ac);margin-top:8px;font-weight:600}
 
-.roul{position:fixed;inset:0;background:rgba(247,246,243,0.96);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:200;backdrop-filter:blur(16px)}
+.roul{position:fixed;inset:0;background:rgba(247,246,243,0.97);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:200;backdrop-filter:blur(20px)}
 .roul-title{font-size:15px;font-weight:700;color:var(--tx);margin-bottom:4px}
 .roul-turn{font-size:12px;color:var(--txm);margin-bottom:28px;text-align:center;padding:0 40px}
 .roul-drum{position:relative;width:160px;height:160px;display:flex;align-items:center;justify-content:center;margin-bottom:32px}
 .roul-ring{position:absolute;inset:0;border-radius:50%;border:2.5px solid var(--ac);opacity:.18}
 .roul-ring2{position:absolute;inset:14px;border-radius:50%;border:1.5px solid var(--ac);opacity:.1}
 .roul-bg{position:absolute;inset:8px;border-radius:50%;background:var(--acs)}
-.roul-l{font-family:"JetBrains Mono",monospace;font-size:80px;font-weight:600;color:var(--ac);line-height:1;user-select:none;position:relative;z-index:1}
+.roul-l{font-family:"JetBrains Mono",monospace;font-size:88px;font-weight:700;color:var(--ac);line-height:1;user-select:none;position:relative;z-index:1;text-shadow:0 4px 16px rgba(67,56,202,0.25)}
 .roul-l.spin{animation:rSpin .06s linear infinite}
 @keyframes rSpin{0%{opacity:.4;transform:scale(.88)}50%{opacity:1;transform:scale(1.1)}100%{opacity:.4;transform:scale(.88)}}
 .roul-l.lock{animation:rLock .4s cubic-bezier(.34,1.56,.64,1) forwards}
 @keyframes rLock{from{transform:scale(.3);opacity:0}to{transform:scale(1);opacity:1}}
-.roul-btn{padding:15px 48px;background:var(--ac);color:#fff;border:none;border-radius:50px;font-family:inherit;font-size:15px;font-weight:700;cursor:pointer;box-shadow:0 4px 16px rgba(79,70,229,0.28);transition:all var(--tr);letter-spacing:.5px;animation:pBtn 1.6s ease-in-out infinite}
+.roul-btn{padding:16px 52px;background:linear-gradient(135deg,var(--ac),var(--acl));color:#fff;border:none;border-radius:50px;font-family:inherit;font-size:16px;font-weight:800;cursor:pointer;box-shadow:0 6px 24px rgba(79,70,229,0.35);transition:all var(--tr);letter-spacing:.6px;animation:pBtn 1.6s ease-in-out infinite}
 @keyframes pBtn{0%,100%{box-shadow:0 4px 16px rgba(79,70,229,0.28)}50%{box-shadow:0 6px 24px rgba(79,70,229,0.42)}}
 .roul-btn:hover{background:var(--acl);transform:scale(1.03)}
 .roul-btn:disabled{opacity:.4;animation:none;cursor:default;transform:none}
@@ -3420,7 +3607,7 @@ select.inp{appearance:none;cursor:pointer}
 
 .gwrap{display:flex;flex-direction:column;height:100vh;overflow:hidden;background:var(--bg)}
 .ghdr{padding:12px 16px;border-bottom:1px solid var(--br);display:flex;align-items:center;gap:12px;flex-shrink:0;background:var(--sf)}
-.glbadge{font-family:"JetBrains Mono",monospace;font-size:22px;font-weight:700;color:var(--ac);background:var(--acs);border:1.5px solid rgba(79,70,229,0.2);border-radius:var(--rm);padding:4px 12px}
+.glbadge{font-family:"JetBrains Mono",monospace;font-size:24px;font-weight:800;color:var(--ac);background:var(--acs);border:2px solid rgba(79,70,229,0.25);border-radius:var(--rm);padding:5px 14px;box-shadow:0 2px 8px rgba(67,56,202,0.15)}
 .tbar-w{flex:1}.tbar{height:4px;background:var(--sf3);border-radius:4px;overflow:hidden}
 .tfill{height:100%;border-radius:4px;transition:width 1s linear,background-color .5s}
 .ttxt{font-family:"JetBrains Mono",monospace;font-size:11px;color:var(--txm);margin-top:4px;text-align:right}
@@ -3449,7 +3636,7 @@ select.inp{appearance:none;cursor:pointer}
 .past-answer.v2{color:var(--gn);font-weight:500}.past-answer.v1{color:var(--yw);font-weight:500}.past-answer.vm{color:var(--rd);text-decoration:line-through}.past-answer.v0{color:var(--txd);font-style:italic}
 
 .sbar{padding:10px 14px 18px;border-top:1px solid var(--br);background:var(--sf);flex-shrink:0}
-.sbtn{width:100%;padding:15px;background:var(--ac);color:#fff;border:none;border-radius:var(--rm);font-family:inherit;font-size:15px;font-weight:700;cursor:pointer;box-shadow:0 4px 16px rgba(79,70,229,0.25);transition:all var(--tr);letter-spacing:.5px;touch-action:manipulation}
+.sbtn{width:100%;padding:16px;background:linear-gradient(135deg,var(--ac),var(--acl));color:#fff;border:none;border-radius:var(--rm);font-family:inherit;font-size:16px;font-weight:800;cursor:pointer;box-shadow:0 6px 20px rgba(79,70,229,0.3);transition:all var(--tr);letter-spacing:.6px;touch-action:manipulation}
 .sbtn:hover{background:var(--acl)}.sbtn:active{opacity:.85}.sbtn:disabled{opacity:.3;cursor:default;box-shadow:none}
 
 .done-bar{display:flex;gap:6px;padding:8px 14px;border-bottom:1px solid var(--br);background:var(--sf2);flex-shrink:0;flex-wrap:wrap}
@@ -3474,14 +3661,14 @@ select.inp{appearance:none;cursor:pointer}
 .sname{flex:1;font-weight:600;font-size:14px}.spts{font-family:"JetBrains Mono",monospace;font-size:18px;font-weight:700;color:var(--ac)}
 
 .hero{text-align:center;padding:24px 0 18px}
-.htitle{font-size:28px;font-weight:800;letter-spacing:-1px;margin-bottom:6px}
+.htitle{font-size:30px;font-weight:900;letter-spacing:-1.2px;margin-bottom:6px}
 .hsub{color:var(--txm);font-size:14px;line-height:1.6}
 .sgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}
 .scard{background:var(--sf);border:1.5px solid var(--br);border-radius:var(--rm);padding:14px;text-align:center;box-shadow:var(--s1)}
-.snum{font-size:24px;font-weight:800;color:var(--ac)}.slbl{font-size:10px;color:var(--txm);margin-top:2px;font-weight:500;text-transform:uppercase;letter-spacing:.5px}
+.snum{font-size:26px;font-weight:900;color:var(--ac);font-family:"JetBrains Mono",monospace}.slbl{font-size:10px;color:var(--txm);margin-top:3px;font-weight:600;text-transform:uppercase;letter-spacing:.6px}
 
 .mov{position:fixed;inset:0;background:rgba(247,246,243,0.82);display:flex;align-items:flex-end;justify-content:center;z-index:100;backdrop-filter:blur(10px)}
-.modal{background:var(--sf);border:1.5px solid var(--br);border-radius:var(--r) var(--r) 0 0;padding:26px 20px 32px;width:100%;max-width:480px;animation:mUp .25s cubic-bezier(.34,1.2,.64,1);box-shadow:var(--s3)}
+.modal{background:var(--sf);border:1px solid var(--br);border-radius:22px 22px 0 0;padding:28px 20px 34px;width:100%;max-width:480px;animation:mUp .28s cubic-bezier(.34,1.15,.64,1);box-shadow:0 -4px 32px rgba(0,0,0,0.12),0 -1px 8px rgba(0,0,0,0.06)}
 @keyframes mUp{from{transform:translateY(100%);opacity:0}to{transform:translateY(0);opacity:1}}
 .mtitle{font-size:18px;font-weight:800;margin-bottom:5px}.msub{color:var(--txm);font-size:13px;margin-bottom:16px}
 .tcards{display:flex;flex-direction:column;gap:9px;margin-bottom:16px}
@@ -3502,10 +3689,10 @@ select.inp{appearance:none;cursor:pointer}
 .xp-bar-wrap{display:flex;align-items:center;gap:6px;padding:6px 14px 0;flex-shrink:0}
 .xp-label{font-size:10px;color:var(--txm);font-weight:600;white-space:nowrap}
 .xp-bar{flex:1;height:3px;background:var(--sf3);border-radius:3px;overflow:hidden}
-.xp-fill{height:100%;background:linear-gradient(90deg,var(--ac),var(--acl));border-radius:3px;transition:width 0.6s ease}
+.xp-fill{height:100%;background:linear-gradient(90deg,var(--ac),var(--acl),#7c3aed);border-radius:3px;transition:width 0.8s cubic-bezier(0.4,0,0.2,1);box-shadow:0 0 6px rgba(67,56,202,0.4)}
 
 /* LEVEL BADGE in header */
-.level-chip{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;background:var(--acs);border:1.5px solid var(--ac-border,rgba(67,56,202,0.2));border-radius:20px;font-size:11px;font-weight:700;color:var(--ac);cursor:pointer;white-space:nowrap}
+.level-chip{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;background:var(--acs);border:1.5px solid var(--ac-border,rgba(67,56,202,0.2));border-radius:20px;font-size:11px;font-weight:700;color:var(--ac);cursor:pointer;white-space:nowrap;box-shadow:0 1px 4px rgba(67,56,202,0.1)}
 
 /* ONBOARDING */
 @keyframes bounce{0%{transform:scale(0.5);opacity:0}60%{transform:scale(1.1)}100%{transform:scale(1);opacity:1}}
@@ -3518,18 +3705,18 @@ select.inp{appearance:none;cursor:pointer}
 .pts-pill-rd{background:var(--rds);color:var(--rd)}
 
 /* TOURNAMENT CARD on home */
-.tournament-card{border-radius:var(--r);padding:14px 16px;background:linear-gradient(135deg,#dc2626,#ef4444);color:#fff;margin-bottom:10px;cursor:pointer;transition:all var(--tr);border:none;width:100%;text-align:left}
+.tournament-card{border-radius:var(--r);padding:16px 18px;background:linear-gradient(150deg,#7f1d1d,#dc2626,#ef4444);color:#fff;margin-bottom:10px;cursor:pointer;transition:all var(--tr);border:none;width:100%;text-align:left;box-shadow:0 8px 24px rgba(220,38,38,0.3)}
 .tournament-card:hover{transform:translateY(-1px);filter:brightness(1.05)}
-.tournament-letter{font-family:"JetBrains Mono",monospace;font-size:36px;font-weight:700;line-height:1}
+.tournament-letter{font-family:"JetBrains Mono",monospace;font-size:42px;font-weight:900;line-height:1;text-shadow:0 2px 8px rgba(0,0,0,0.2)}
 
 /* AVATAR */
-.avatar-btn{width:38px;height:38px;border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;transition:all var(--tr);flex-shrink:0;background:linear-gradient(135deg,var(--ac),var(--acl));color:#fff;box-shadow:0 2px 8px rgba(79,70,229,0.3)}
+.avatar-btn{width:40px;height:40px;border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;transition:all var(--tr);flex-shrink:0;background:linear-gradient(135deg,var(--ac),#7c3aed);color:#fff;box-shadow:0 3px 12px rgba(79,70,229,0.35)}
 .avatar-btn:hover{transform:scale(1.06);box-shadow:0 4px 14px rgba(79,70,229,0.4)}
 
 /* PROFILE PANEL */
 .profile-ov{position:fixed;inset:0;background:rgba(28,25,23,0.55);z-index:200;backdrop-filter:blur(8px);display:flex;flex-direction:column;justify-content:flex-end}
 .profile-panel{background:var(--sf);border-radius:24px 24px 0 0;padding:0 0 32px;max-height:90vh;overflow-y:auto;animation:mUp .3s cubic-bezier(.34,1.1,.64,1)}
-.profile-hero{background:linear-gradient(135deg,#4338ca,#7c3aed);padding:28px 20px 24px;border-radius:24px 24px 0 0;color:#fff;display:flex;align-items:center;gap:16px}
+.profile-hero{background:linear-gradient(150deg,#2d2a8e,#4338ca,#7c3aed);padding:30px 20px 26px;border-radius:24px 24px 0 0;color:#fff;display:flex;align-items:center;gap:16px}
 .profile-avatar-lg{width:64px;height:64px;border-radius:50%;background:rgba(255,255,255,0.2);border:3px solid rgba(255,255,255,0.4);display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:800;flex-shrink:0}
 .profile-name{font-size:20px;font-weight:800;letter-spacing:-.3px}
 .profile-sub{font-size:13px;opacity:.75;margin-top:2px}
@@ -3549,14 +3736,14 @@ select.inp{appearance:none;cursor:pointer}
 /* MODE CARDS on home */
 .mode-grid{display:flex;flex-direction:column;gap:10px;margin-bottom:14px}
 .game-mode-card{border-radius:16px;padding:18px 16px;cursor:pointer;display:flex;align-items:center;gap:14px;border:none;width:100%;text-align:left;transition:all var(--tr);position:relative;overflow:hidden}
-.game-mode-card:hover{transform:translateY(-2px);filter:brightness(1.04)}
+.game-mode-card:hover{transform:translateY(-3px);filter:brightness(1.06);box-shadow:0 12px 32px rgba(0,0,0,0.2)}
 .game-mode-card:active{transform:translateY(0)}
-.gmc-solo{background:linear-gradient(135deg,#4338ca,#6d28d9);color:#fff;box-shadow:0 6px 20px rgba(67,56,202,0.3)}
-.gmc-online{background:linear-gradient(135deg,#0c6e9e,#0284c7);color:#fff;box-shadow:0 6px 20px rgba(12,110,158,0.3)}
-.gmc-2v2{background:linear-gradient(135deg,#d97706,#f59e0b);color:#fff;box-shadow:0 6px 20px rgba(217,119,6,0.3)}
-.gmc-mort{background:linear-gradient(135deg,#dc2626,#ef4444);color:#fff;box-shadow:0 6px 20px rgba(220,38,38,0.3)}
+.gmc-solo{background:linear-gradient(150deg,#3730a3,#4338ca,#6d28d9);color:#fff;box-shadow:0 8px 24px rgba(67,56,202,0.35)}
+.gmc-online{background:linear-gradient(150deg,#075985,#0c6e9e,#0284c7);color:#fff;box-shadow:0 8px 24px rgba(12,110,158,0.35)}
+.gmc-2v2{background:linear-gradient(150deg,#92400e,#d97706,#f59e0b);color:#fff;box-shadow:0 8px 24px rgba(217,119,6,0.35)}
+.gmc-mort{background:linear-gradient(150deg,#991b1b,#dc2626,#ef4444);color:#fff;box-shadow:0 8px 24px rgba(220,38,38,0.35)}
 .gmc-icon{font-size:32px;flex-shrink:0}
-.gmc-title{font-size:15px;font-weight:800;letter-spacing:-.2px;margin-bottom:3px}
+.gmc-title{font-size:16px;font-weight:800;letter-spacing:-.3px;margin-bottom:3px}
 .gmc-desc{font-size:12px;opacity:.82;line-height:1.4}
 .gmc-badge{position:absolute;top:12px;right:12px;background:rgba(255,255,255,0.25);border:1px solid rgba(255,255,255,0.35);border-radius:20px;padding:3px 9px;font-size:10px;font-weight:700;letter-spacing:.3px}
 .txm{color:var(--txm);font-size:11px}.tc{text-align:center}
@@ -3568,12 +3755,12 @@ select.inp{appearance:none;cursor:pointer}
 /* DAILY CHALLENGE */
 .daily-card{border-radius:var(--r);padding:16px;margin-bottom:12px;position:relative;overflow:hidden;border:none;width:100%;text-align:left;cursor:pointer;transition:all var(--tr)}
 .daily-card:hover{transform:translateY(-2px);filter:brightness(1.05)}
-.daily-card-bg{background:linear-gradient(135deg,#0f172a,#1e1b4b,#312e81);color:#fff}
+.daily-card-bg{background:linear-gradient(150deg,#0a0a1e,#0f172a,#1e1b4b,#312e81);color:#fff;box-shadow:0 8px 24px rgba(15,23,42,0.4)}
 .daily-card-done{background:var(--sf2);border:1.5px solid var(--br);cursor:default}
 .daily-card:hover.daily-card-done{transform:none;filter:none}
 .daily-star{position:absolute;top:10px;right:14px;font-size:28px;opacity:.18}
 .daily-label{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;opacity:.75;margin-bottom:4px}
-.daily-title{font-size:18px;font-weight:800;letter-spacing:-.3px;margin-bottom:3px}
+.daily-title{font-size:19px;font-weight:900;letter-spacing:-.4px;margin-bottom:3px}
 .daily-sub{font-size:12px;opacity:.8}
 .daily-cats{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap}
 .daily-cat-chip{background:rgba(255,255,255,0.15);border-radius:20px;padding:3px 9px;font-size:11px;font-weight:600}
@@ -3719,6 +3906,26 @@ const FB = (() => {
 })();
 
 // ─── APP ─────────────────────────────────────────────────────────
+// ─── ANALYTICS ──────────────────────────────────────────────────────
+function logEvent(eventName, params) {
+  try {
+    if (typeof firebase === "undefined") return;
+    if (!firebase.apps || firebase.apps.length === 0) return;
+    const db = firebase.database();
+    const date = new Date().toISOString().split("T")[0];
+    // Compteurs par jour
+    db.ref("analytics/events/" + date + "/" + eventName)
+      .transaction(val => (val || 0) + 1);
+    // Joueurs actifs
+    if (params && params.uid) {
+      db.ref("analytics/active/" + date + "/" + params.uid).set({
+        lastSeen: Date.now(),
+        ...(params.playerName ? { name: params.playerName } : {}),
+      });
+    }
+  } catch(e) {}
+}
+
 export default function App() {
   const [tab, setTab] = useState("home");
   const [screen, setScreen] = useState("home");
@@ -3750,7 +3957,7 @@ export default function App() {
   const [newBadges, setNewBadges] = useState([]); // badges just unlocked → show notification
   const [showTier, setShowTier] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
-  const [showOnboarding, setShowOnboarding] = useState(true);
+  const [showOnboarding, setShowOnboarding] = useState(() => { try { const n = localStorage.getItem('pb_name'); return !n || !n.trim(); } catch(e) { return true; } });
   const [showLeaderboard, setShowLeaderboard] = useState(false);
   const [showThemes, setShowThemes] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
@@ -3759,6 +3966,7 @@ export default function App() {
   const [showRateApp, setShowRateApp] = useState(false);
   const [showShare, setShowShare] = useState(false);
   const [showProfilePhoto, setShowProfilePhoto] = useState(false);
+  const [showLegal, setShowLegal] = useState(null); // "cgu" | "privacy" | null
   const [profilePhoto, setProfilePhoto] = useState(null); // { type, data/emoji, bg }
   const [uid, setUid] = useState(null);
   // Profile data
@@ -3847,6 +4055,7 @@ export default function App() {
       lang: lang,
     });
     setScreen("game");
+    logEvent("game_start", { uid, mode: cfg.mode, difficulty: cfg.difficulty });
   }
 
   function enterOnlineGame(roomCode, roomData) {
@@ -3917,6 +4126,7 @@ export default function App() {
         lang={lang} setLang={setLang}
         tier={tier} onTier={() => { setShowSettings(false); setShowTier(true); }}
         onClose={() => setShowSettings(false)}
+          onShowLegal={(type) => { setShowSettings(false); setShowLegal(type); }}
         onBugReport={() => { setShowSettings(false); setShowBugReport(true); }}
         onRateApp={() => { setShowSettings(false); setShowRateApp(true); }}
         onShare={() => { setShowSettings(false); setShowShare(true); }}
@@ -3925,6 +4135,7 @@ export default function App() {
       {showBugReport && <BugReportModal onClose={() => setShowBugReport(false)} lang={lang} />}
       {showRateApp && <RateAppModal onClose={() => setShowRateApp(false)} lang={lang} />}
       {showShare && <ShareModal onClose={() => setShowShare(false)} lang={lang} />}
+      {showLegal && <LegalModal onClose={() => setShowLegal(null)} lang={lang} type={showLegal} />}
       {showProfilePhoto && <ProfilePhotoModal
         onClose={() => setShowProfilePhoto(false)}
         onSave={p => setProfilePhoto(p)}
@@ -4729,6 +4940,36 @@ function GameScreen({
   const { letter, categories, difficulty, players, phase, currentRound, totalRounds, spinnerIndex, myId } = gameState;
   const dc = DIFFICULTY[difficulty];
 
+
+  // ── Listener Firebase pour sync lettre (mode online) ──────────
+  useEffect(() => {
+    if (gameState.mode !== "online" || !gameState.roomCode) return;
+    const unsubscribe = FB.listenRoom(gameState.roomCode, (room) => {
+      if (!room) return;
+      // Recevoir la lettre choisie par le host
+      if (room.letter && room.letter !== gameState.letter && room.phase === "playing") {
+        setGameState(g => ({
+          ...g,
+          letter: room.letter,
+          phase: "playing",
+          timeLeft: g.totalTime,
+        }));
+      }
+      // Recevoir les réponses des autres joueurs
+      if (room.playerAnswers) {
+        setGameState(g => ({
+          ...g,
+          players: g.players.map(p => ({
+            ...p,
+            answers: room.playerAnswers?.[p.id] || p.answers,
+            done: room.playerDone?.[p.id] || p.done,
+          }))
+        }));
+      }
+    });
+    return () => { if (unsubscribe) unsubscribe(); };
+  }, [gameState.mode, gameState.roomCode]);
+
   useEffect(() => { aiRef.current = false; doneRef.current = false; }, [currentRound]);
 
   useEffect(() => {
@@ -4809,7 +5050,20 @@ function GameScreen({
         players={players} spinnerIndex={spinnerIndex}
         spinnerOrder={gameState.spinnerOrder} currentRound={currentRound} totalRounds={totalRounds}
         myId={myId || uid}
-        onLetterChosen={l => { setGameState(g => ({ ...g, letter: l, phase: "playing", timeLeft: g.totalTime })); }}
+        onLetterChosen={async l => {
+          // Mettre à jour l'état local
+          setGameState(g => ({ ...g, letter: l, phase: "playing", timeLeft: g.totalTime }));
+          // En mode online: synchroniser la lettre sur Firebase pour tous les joueurs
+          if (gameState.mode === "online" && gameState.roomCode) {
+            try {
+              await FB.updateRoom(gameState.roomCode, {
+                letter: l,
+                phase: "playing",
+                letterChosenAt: Date.now(),
+              });
+            } catch(e) {}
+          }
+        }}
       lang={lang} />
     );
   }
@@ -5324,14 +5578,24 @@ function OnboardingScreen({ onDone, lang }) {
             onChange={e => setName(e.target.value)}
             placeholder={t("ob5_placeholder")}
             maxLength={20}
-            style={{ marginBottom: 16, textAlign: "center", fontSize: 18, fontWeight: 600 }}
+            style={{ marginBottom: 16, textAlign: "center", fontSize: 18, fontWeight: 600, border: name.trim() ? "1.5px solid var(--ac)" : "1.5px solid var(--rd)" }}
             autoFocus
           />
         )}
 
         <button
           className="btn bp"
-          onClick={() => { if (isLast) onDone(name); else setStep(s => s + 1); }}
+          onClick={() => {
+            if (isLast) {
+              if (!name.trim()) {
+                document.querySelector(".inp") && document.querySelector(".inp").focus();
+                return;
+              }
+              onDone(name.trim());
+            } else {
+              setStep(s => s + 1);
+            }
+          }}
           style={{ fontSize: 16, padding: "15px 32px" }}
         >
           {s.action}
@@ -5346,217 +5610,178 @@ function OnboardingScreen({ onDone, lang }) {
 }
 
 // ─── LEADERBOARD ──────────────────────────────────────────────────
-function LeaderboardScreen({
-  onClose, playerName, xp, stats, lang
-}) {
+function LeaderboardScreen({ onClose, xp, playerName, lang, uid, tier }) {
   const t = useT(lang || "fr");
-  const levelInfo = getLevelInfo(xp, lang);
-  // Simulated global leaderboard
-  const mockLeaderboard = [
-    { name: "Sophie L.", xp: 8420, country: "🇫🇷", badge: "🔥" },
-    { name: "Karim B.",  xp: 7650, country: "🇲🇦", badge: "👑" },
-    { name: "Lucas M.",  xp: 6890, country: "🇧🇪", badge: "💎" },
-    { name: "Marie D.",  xp: 5920, country: "🇫🇷", badge: "⭐" },
-    { name: "Amara S.",  xp: 5100, country: "🇨🇮", badge: "🏆" },
-    { name: "Thomas R.", xp: 4380, country: "🇨🇭", badge: "🏅" },
-    { name: "Lina K.",   xp: 3750, country: "🇩🇿", badge: "🎓" },
-    { name: "Julien F.", xp: 2900, country: "🇫🇷", badge: "✏️" },
-    { name: "Nadia O.",  xp: 2100, country: "🇹🇳", badge: "📖" },
-  ];
-
-  // Insert player
-  const playerEntry = { name: `${playerName} ${t("its_you_paren","(toi)")}`, xp, country: "🌍", badge: levelInfo.badge, isMe: true };
-  const allEntries = [...mockLeaderboard, playerEntry].sort((a, b) => b.xp - a.xp);
-  const myRank = allEntries.findIndex(e => e.isMe) + 1;
-
+  const [tab, setTab] = useState("global");
+  const [entries, setEntries] = useState([]);
+  const [loading, setLoading] = useState(true);
   const tournament = getTournamentWeek();
+  const levelInfo = getLevelInfo(xp || 0, lang);
+
+  // Charger le classement depuis Firebase
+  useEffect(() => {
+    if (!uid) return;
+
+    // Sauvegarder le joueur actuel
+    const savePlayer = async () => {
+      try {
+        if (typeof firebase !== "undefined" && firebase.apps && firebase.apps.length > 0) {
+          const db = firebase.database();
+          await db.ref("leaderboard/" + uid).set({
+            name: playerName || t("ob5_placeholder","Joueur"),
+            xp: xp || 0,
+            badge: levelInfo.badge,
+            country: "🌍",
+            updatedAt: Date.now(),
+          });
+        }
+      } catch(e) {}
+    };
+    savePlayer();
+
+    // Écouter le classement en temps réel
+    const loadLeaderboard = async () => {
+      setLoading(true);
+      try {
+        if (typeof firebase !== "undefined" && firebase.apps && firebase.apps.length > 0) {
+          const db = firebase.database();
+          const snap = await db.ref("leaderboard")
+            .orderByChild("xp")
+            .limitToLast(50)
+            .once("value");
+          const data = snap.val() || {};
+          const list = Object.entries(data)
+            .map(([id, v]) => ({ ...v, id, isMe: id === uid }))
+            .sort((a, b) => b.xp - a.xp);
+          setEntries(list);
+        } else {
+          // Fallback données simulées
+          setEntries(getMockLeaderboard(uid, playerName, xp, levelInfo));
+        }
+      } catch(e) {
+        setEntries(getMockLeaderboard(uid, playerName, xp, levelInfo));
+      }
+      setLoading(false);
+    };
+    loadLeaderboard();
+  }, [uid, xp]);
+
+  const myRank = entries.findIndex(e => e.isMe) + 1;
 
   return (
     <div className="profile-ov" onClick={onClose}>
-      <div className="profile-panel" style={{ maxHeight: "92vh" }} onClick={e => e.stopPropagation()}>
-        <div style={{ background: "linear-gradient(135deg,#1e1b4b,#4338ca)", padding: "24px 20px 20px", borderRadius: "24px 24px 0 0", color: "#fff" }}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
-            <div>
-              <div style={{ fontSize: 11, opacity: .7, letterSpacing: 1, textTransform: "uppercase", marginBottom: 4 }}>{t("nav_rank")}</div>
-              <div style={{ fontSize: 22, fontWeight: 800, letterSpacing: "-.5px" }}>{t("nav_rank")} 🌍</div>
+      <div className="profile-panel" onClick={e => e.stopPropagation()}>
+
+        {/* Header */}
+        <div style={{ background:"linear-gradient(135deg,var(--ac),var(--acl))", padding:"22px 20px 18px", borderRadius:"24px 24px 0 0", color:"#fff" }}>
+          <div style={{ fontSize:11, opacity:.7, letterSpacing:1, textTransform:"uppercase", marginBottom:4 }}>🏆 {t("nav_rank")}</div>
+          <div style={{ fontSize:20, fontWeight:800 }}>{t("leaderboard_title","Classement Mondial")}</div>
+          {myRank > 0 && (
+            <div style={{ fontSize:13, opacity:.85, marginTop:4 }}>
+              {t("your_rank","Ta position")} : #{myRank} • {(xp||0).toLocaleString()} XP
             </div>
-            <div style={{ textAlign: "right" }}>
-              <div style={{ fontSize: 12, opacity: .7 }}>{t("your_rank")}</div>
-              <div style={{ fontSize: 28, fontWeight: 800 }}>#{myRank}</div>
-            </div>
-          </div>
+          )}
+        </div>
+
+        {/* Tabs */}
+        <div style={{ display:"flex", borderBottom:"1px solid var(--br)", background:"var(--sf)" }}>
+          {[["global","🌍 Mondial"],["week","📅 Cette semaine"]].map(([id,label]) => (
+            <button key={id} onClick={() => setTab(id)} style={{
+              flex:1, padding:"12px 8px", fontSize:13, fontWeight: tab===id?700:500,
+              color: tab===id?"var(--ac)":"var(--txm)",
+              borderBottom: tab===id?"2px solid var(--ac)":"2px solid transparent",
+              background:"none", border:"none", borderBottom: tab===id?"2px solid var(--ac)":"2px solid transparent",
+              cursor:"pointer",
+            }}>{label}</button>
+          ))}
         </div>
 
         <div className="profile-body">
-          {/* Weekly tournament */}
-          <div style={{ background: "linear-gradient(135deg, #dc2626, #ef4444)", borderRadius: "var(--rm)", padding: "14px 16px", marginBottom: 16, color: "#fff" }}>
-            <div style={{ fontSize: 11, opacity: .8, textTransform: "uppercase", letterSpacing: 1, marginBottom: 4 }}>{t("tournament_label2")}</div>
-            <div style={{ fontSize: 17, fontWeight: 800 }}>{t("tournament_letter","Lettre du tournoi :")} <span style={{ fontSize: 28 }}>{tournament.letter}</span></div>
-            <div style={{ fontSize: 12, opacity: .85, marginTop: 4 }}>{t("tournament_ends")} {tournament.endsIn} {t("tournament_days")}</div>
-          </div>
 
-          {/* Leaderboard list */}
-          {allEntries.slice(0, 12).map((entry, i) => (
-            <div key={i} style={{
-              display: "flex", alignItems: "center", gap: 12, padding: "11px 14px",
-              background: entry.isMe ? "var(--acs)" : "var(--sf)",
-              border: `1.5px solid ${entry.isMe ? "rgba(67,56,202,0.3)" : "var(--br)"}`,
-              borderRadius: "var(--rm)", marginBottom: 7,
-              boxShadow: entry.isMe ? "0 2px 10px rgba(67,56,202,0.12)" : "var(--s1)",
-            }}>
-              <div style={{ fontFamily: "JetBrains Mono, monospace", fontWeight: 700, fontSize: 14, width: 28, color: i < 3 ? ["#f59e0b","#6b7280","#92400e"][i] : "var(--txm)" }}>
-                {i < 3 ? ["🥇","🥈","🥉"][i] : `#${i + 1}`}
+          {/* Tournoi de la semaine */}
+          {tab === "week" && (
+            <div className="card" style={{ marginBottom:14, background:"linear-gradient(135deg,rgba(99,102,241,.12),rgba(139,92,246,.08))", border:"1px solid rgba(99,102,241,.2)" }}>
+              <div style={{ fontSize:12, fontWeight:700, color:"var(--ac)", marginBottom:4 }}>
+                🎯 {t("tournament_title","Tournoi de la semaine")}
               </div>
-              <div style={{ fontSize: 18 }}>{entry.country}</div>
-              <div style={{ flex: 1 }}>
-                <div style={{ fontWeight: 600, fontSize: 13, color: entry.isMe ? "var(--ac)" : "var(--tx)" }}>{entry.name}</div>
+              <div style={{ display:"flex", alignItems:"center", gap:12 }}>
+                <div style={{ fontSize:36, fontWeight:900, fontFamily:"monospace", color:"var(--ac)" }}>{tournament.letter}</div>
+                <div>
+                  <div style={{ fontSize:14, fontWeight:700 }}>{t("tournament_letter","Lettre du tournoi :")} {tournament.letter}</div>
+                  <div style={{ fontSize:12, color:"var(--txm)" }}>{t("tournament_ends","Se termine dans")} {tournament.endsIn} {t("tournament_days","jours")}</div>
+                </div>
               </div>
-              <div style={{ fontSize: 16 }}>{entry.badge}</div>
-              <div style={{ fontFamily: "JetBrains Mono, monospace", fontWeight: 700, fontSize: 13, color: "var(--ac)" }}>{entry.xp.toLocaleString()}xp</div>
             </div>
-          ))}
+          )}
 
-          <button className="btn bs" onClick={onClose} style={{ marginTop: 8 }}>{t("close")}</button>
+          {/* Liste */}
+          {loading ? (
+            <div style={{ textAlign:"center", padding:"40px 0", color:"var(--txm)", fontSize:14 }}>
+              <div style={{ fontSize:32, marginBottom:8 }}>⏳</div>
+              {t("loading","Chargement...")}
+            </div>
+          ) : (
+            <div style={{ display:"flex", flexDirection:"column", gap:6 }}>
+              {entries.slice(0, 50).map((entry, i) => (
+                <div key={entry.id || i} style={{
+                  display:"flex", alignItems:"center", gap:10,
+                  padding:"10px 12px", borderRadius:"var(--r)",
+                  background: entry.isMe ? "var(--acs)" : i < 3 ? "var(--sf2)" : "var(--sf)",
+                  border: entry.isMe ? "1.5px solid var(--ac)" : "1px solid var(--br)",
+                }}>
+                  {/* Rang */}
+                  <div style={{ width:28, textAlign:"center", fontWeight:800, fontSize:14,
+                    color: i===0?"#fbbf24":i===1?"#94a3b8":i===2?"#cd7f32":"var(--txm)" }}>
+                    {i===0?"🥇":i===1?"🥈":i===2?"🥉":`#${i+1}`}
+                  </div>
+                  {/* Badge */}
+                  <div style={{ fontSize:20 }}>{entry.badge || "⭐"}</div>
+                  {/* Nom */}
+                  <div style={{ flex:1 }}>
+                    <div style={{ fontSize:14, fontWeight: entry.isMe?700:500, color:"var(--tx)" }}>
+                      {entry.name}{entry.isMe ? ` ${t("its_you_paren","(toi)")}` : ""}
+                    </div>
+                    <div style={{ fontSize:11, color:"var(--txm)" }}>{entry.country}</div>
+                  </div>
+                  {/* XP */}
+                  <div style={{ fontSize:13, fontWeight:700, color:"var(--ac)" }}>
+                    {(entry.xp||0).toLocaleString()} XP
+                  </div>
+                </div>
+              ))}
+
+              {entries.length === 0 && (
+                <div style={{ textAlign:"center", padding:"40px 0", color:"var(--txm)" }}>
+                  <div style={{ fontSize:40, marginBottom:8 }}>🌍</div>
+                  <div style={{ fontSize:14 }}>{t("no_players","Sois le premier à jouer !")}</div>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+
+        <div style={{ padding:"12px 16px", borderTop:"1px solid var(--br)" }}>
+          <button className="btn bs" onClick={onClose}>{t("close","Fermer")}</button>
         </div>
       </div>
     </div>
   );
 }
 
-// ─── THEMES ───────────────────────────────────────────────────────
-const THEMES = [
-  // Gratuit
-  { id: "light",   name: "Papier",     emoji: "📄", desc: "Blanc chaud & épuré",        preview: ["#fafaf8","#4338ca","#18171a"],  free: true },
-  { id: "dark",    name: "Minuit",      emoji: "🌑", desc: "Sombre & élégant",           preview: ["#0c0c10","#818cf8","#e2e8f0"],  free: true },
-  // PRO
-  { id: "sakura",  name: "Sakura",      emoji: "🌸", desc: "Rose nacré japonais",        preview: ["#fff0f6","#e879a0","#4a0028"],  free: false },
-  { id: "noir",    name: "Noir Absolu", emoji: "🖤", desc: "AMOLED ultra sombre",        preview: ["#000000","#facc15","#ffffff"],  free: false },
-  { id: "neon",    name: "Neon",        emoji: "⚡", desc: "Néon fluo sur fond sombre",  preview: ["#0d0d1a","#39ff14","#ff0090"],  free: false },
-  { id: "sand",    name: "Sahara",      emoji: "🏜️", desc: "Sable doré & caramel",      preview: ["#fef3c7","#d97706","#451a03"],  free: false },
-  { id: "nord",    name: "Nordique",    emoji: "🧊", desc: "Glace arctique & acier",     preview: ["#ecf4f8","#5e81ac","#2e3440"],  free: false },
-  { id: "volcano", name: "Volcan",      emoji: "🌋", desc: "Magma rouge sang",           preview: ["#1a0505","#ff3d00","#ffab40"],  free: false },
-];
-
-const THEME_VARS = {
-  light: {
-    "--bg":"#fafaf8","--sf":"#ffffff","--sf2":"#f0eeea","--sf3":"#e6e4df",
-    "--br":"#dedad3","--brh":"#bbb8ae","--tx":"#18171a","--txm":"#6b6860","--txd":"#9b9890",
-    "--ac":"#4338ca","--acl":"#5b50d6","--acg":"rgba(67,56,202,0.1)","--acs":"rgba(67,56,202,0.07)",
-    "--ac-border":"rgba(67,56,202,0.22)",
-    "--pro":"#0c6e9e","--prog":"rgba(12,110,158,0.09)",
-    "--vip":"#8a3a0a","--vipg":"rgba(138,58,10,0.09)",
-    "--gn":"#166534","--gns":"rgba(22,101,52,0.09)",
-    "--yw":"#926208","--yws":"rgba(146,98,8,0.09)",
-    "--rd":"#991b1b","--rds":"rgba(153,27,27,0.07)",
-    "--or":"#c2410c",
-    "--r":"14px","--rs":"9px","--rm":"11px","--tr":"0.14s cubic-bezier(0.4,0,0.2,1)",
-    "--s1":"0 1px 4px rgba(0,0,0,0.06),0 1px 2px rgba(0,0,0,0.04)",
-    "--s2":"0 3px 10px rgba(0,0,0,0.07),0 1px 3px rgba(0,0,0,0.04)",
-    "--s3":"0 10px 28px rgba(0,0,0,0.09),0 3px 6px rgba(0,0,0,0.05)"
-  },
-  dark: {
-    "--bg":"#0c0c10","--sf":"#16161d","--sf2":"#1e1e28","--sf3":"#26263a",
-    "--br":"#2e2e42","--brh":"#484870","--tx":"#e2e8f0","--txm":"#94a3b8","--txd":"#64748b",
-    "--ac":"#818cf8","--acl":"#a5b4fc","--acg":"rgba(129,140,248,0.18)","--acs":"rgba(129,140,248,0.1)",
-    "--ac-border":"rgba(129,140,248,0.3)",
-    "--pro":"#38bdf8","--prog":"rgba(56,189,248,0.12)",
-    "--vip":"#fbbf24","--vipg":"rgba(251,191,36,0.12)",
-    "--gn":"#4ade80","--gns":"rgba(74,222,128,0.12)",
-    "--yw":"#fbbf24","--yws":"rgba(251,191,36,0.12)",
-    "--rd":"#f87171","--rds":"rgba(248,113,113,0.12)",
-    "--or":"#fb923c",
-    "--r":"14px","--rs":"9px","--rm":"11px","--tr":"0.14s cubic-bezier(0.4,0,0.2,1)",
-    "--s1":"0 1px 4px rgba(0,0,0,0.3),0 1px 2px rgba(0,0,0,0.2)",
-    "--s2":"0 3px 10px rgba(0,0,0,0.4),0 1px 3px rgba(0,0,0,0.3)",
-    "--s3":"0 10px 28px rgba(0,0,0,0.5),0 3px 6px rgba(0,0,0,0.3)"
-  },
-  sakura: {
-    "--bg":"#fff0f6","--sf":"#fff5f9","--sf2":"#ffe0ed","--sf3":"#ffc2d9",
-    "--br":"#ffadd2","--brh":"#f472b6","--tx":"#4a0028","--txm":"#9d174d","--txd":"#db2777",
-    "--ac":"#e879a0","--acl":"#f472b6","--acg":"rgba(232,121,160,0.15)","--acs":"rgba(232,121,160,0.08)",
-    "--ac-border":"rgba(232,121,160,0.3)",
-    "--pro":"#0c6e9e","--prog":"rgba(12,110,158,0.09)",
-    "--vip":"#8a3a0a","--vipg":"rgba(138,58,10,0.09)",
-    "--gn":"#166534","--gns":"rgba(22,101,52,0.09)",
-    "--yw":"#926208","--yws":"rgba(146,98,8,0.09)",
-    "--rd":"#991b1b","--rds":"rgba(153,27,27,0.07)",
-    "--or":"#c2410c",
-    "--r":"14px","--rs":"9px","--rm":"11px","--tr":"0.14s cubic-bezier(0.4,0,0.2,1)",
-    "--s1":"0 1px 4px rgba(219,39,119,0.06),0 1px 2px rgba(219,39,119,0.04)",
-    "--s2":"0 3px 10px rgba(219,39,119,0.07),0 1px 3px rgba(219,39,119,0.04)",
-    "--s3":"0 10px 28px rgba(219,39,119,0.09),0 3px 6px rgba(219,39,119,0.05)"
-  },
-  noir: {
-    "--bg":"#000000","--sf":"#0a0a0a","--sf2":"#111111","--sf3":"#1a1a1a",
-    "--br":"#222222","--brh":"#333333","--tx":"#ffffff","--txm":"#a0a0a0","--txd":"#606060",
-    "--ac":"#facc15","--acl":"#fde047","--acg":"rgba(250,204,21,0.15)","--acs":"rgba(250,204,21,0.08)",
-    "--ac-border":"rgba(250,204,21,0.3)",
-    "--pro":"#38bdf8","--prog":"rgba(56,189,248,0.1)",
-    "--vip":"#facc15","--vipg":"rgba(250,204,21,0.1)",
-    "--gn":"#4ade80","--gns":"rgba(74,222,128,0.1)",
-    "--yw":"#facc15","--yws":"rgba(250,204,21,0.1)",
-    "--rd":"#f87171","--rds":"rgba(248,113,113,0.1)",
-    "--or":"#fb923c",
-    "--r":"14px","--rs":"9px","--rm":"11px","--tr":"0.14s cubic-bezier(0.4,0,0.2,1)",
-    "--s1":"0 1px 4px rgba(0,0,0,0.5)","--s2":"0 3px 10px rgba(0,0,0,0.6)","--s3":"0 10px 28px rgba(0,0,0,0.7)"
-  },
-  neon: {
-    "--bg":"#0d0d1a","--sf":"#111124","--sf2":"#16162e","--sf3":"#1c1c3a",
-    "--br":"#2a2a4a","--brh":"#39ff14","--tx":"#e0e0ff","--txm":"#8080c0","--txd":"#4040a0",
-    "--ac":"#39ff14","--acl":"#7fff00","--acg":"rgba(57,255,20,0.15)","--acs":"rgba(57,255,20,0.07)",
-    "--ac-border":"rgba(57,255,20,0.4)",
-    "--pro":"#00cfff","--prog":"rgba(0,207,255,0.1)",
-    "--vip":"#ff0090","--vipg":"rgba(255,0,144,0.1)",
-    "--gn":"#39ff14","--gns":"rgba(57,255,20,0.1)",
-    "--yw":"#ffe600","--yws":"rgba(255,230,0,0.1)",
-    "--rd":"#ff3860","--rds":"rgba(255,56,96,0.1)",
-    "--or":"#ff6600",
-    "--r":"14px","--rs":"9px","--rm":"11px","--tr":"0.14s cubic-bezier(0.4,0,0.2,1)",
-    "--s1":"0 0 8px rgba(57,255,20,0.15)","--s2":"0 0 16px rgba(57,255,20,0.2)","--s3":"0 0 32px rgba(57,255,20,0.25)"
-  },
-  sand: {
-    "--bg":"#fef3c7","--sf":"#fffbeb","--sf2":"#fde68a","--sf3":"#fcd34d",
-    "--br":"#f59e0b","--brh":"#d97706","--tx":"#451a03","--txm":"#92400e","--txd":"#b45309",
-    "--ac":"#d97706","--acl":"#f59e0b","--acg":"rgba(217,119,6,0.15)","--acs":"rgba(217,119,6,0.08)",
-    "--ac-border":"rgba(217,119,6,0.3)",
-    "--pro":"#0c6e9e","--prog":"rgba(12,110,158,0.09)",
-    "--vip":"#7c3aed","--vipg":"rgba(124,58,237,0.09)",
-    "--gn":"#166534","--gns":"rgba(22,101,52,0.09)",
-    "--yw":"#d97706","--yws":"rgba(217,119,6,0.09)",
-    "--rd":"#991b1b","--rds":"rgba(153,27,27,0.07)",
-    "--or":"#c2410c",
-    "--r":"14px","--rs":"9px","--rm":"11px","--tr":"0.14s cubic-bezier(0.4,0,0.2,1)",
-    "--s1":"0 1px 4px rgba(180,83,9,0.08)","--s2":"0 3px 10px rgba(180,83,9,0.1)","--s3":"0 10px 28px rgba(180,83,9,0.12)"
-  },
-  nord: {
-    "--bg":"#ecf4f8","--sf":"#ffffff","--sf2":"#ddeaf2","--sf3":"#c5dce9",
-    "--br":"#a8c8dd","--brh":"#5e81ac","--tx":"#2e3440","--txm":"#4c566a","--txd":"#7b88a1",
-    "--ac":"#5e81ac","--acl":"#81a1c1","--acg":"rgba(94,129,172,0.15)","--acs":"rgba(94,129,172,0.08)",
-    "--ac-border":"rgba(94,129,172,0.3)",
-    "--pro":"#0c6e9e","--prog":"rgba(12,110,158,0.09)",
-    "--vip":"#8a3a0a","--vipg":"rgba(138,58,10,0.09)",
-    "--gn":"#166534","--gns":"rgba(22,101,52,0.09)",
-    "--yw":"#926208","--yws":"rgba(146,98,8,0.09)",
-    "--rd":"#991b1b","--rds":"rgba(153,27,27,0.07)",
-    "--or":"#c2410c",
-    "--r":"14px","--rs":"9px","--rm":"11px","--tr":"0.14s cubic-bezier(0.4,0,0.2,1)",
-    "--s1":"0 1px 4px rgba(46,52,64,0.06)","--s2":"0 3px 10px rgba(46,52,64,0.08)","--s3":"0 10px 28px rgba(46,52,64,0.1)"
-  },
-  volcano: {
-    "--bg":"#1a0505","--sf":"#220a0a","--sf2":"#2d1010","--sf3":"#3d1515",
-    "--br":"#5c1a1a","--brh":"#ff3d00","--tx":"#ffccbc","--txm":"#ff8a65","--txd":"#d84315",
-    "--ac":"#ff3d00","--acl":"#ff6e40","--acg":"rgba(255,61,0,0.18)","--acs":"rgba(255,61,0,0.09)",
-    "--ac-border":"rgba(255,61,0,0.4)",
-    "--pro":"#ffab40","--prog":"rgba(255,171,64,0.1)",
-    "--vip":"#ffd740","--vipg":"rgba(255,215,64,0.1)",
-    "--gn":"#69f0ae","--gns":"rgba(105,240,174,0.1)",
-    "--yw":"#ffd740","--yws":"rgba(255,215,64,0.1)",
-    "--rd":"#ff5252","--rds":"rgba(255,82,82,0.1)",
-    "--or":"#ff6d00",
-    "--r":"14px","--rs":"9px","--rm":"11px","--tr":"0.14s cubic-bezier(0.4,0,0.2,1)",
-    "--s1":"0 1px 4px rgba(255,61,0,0.15)","--s2":"0 3px 10px rgba(255,61,0,0.2)","--s3":"0 10px 28px rgba(255,61,0,0.25)"
-  },
-};
+function getMockLeaderboard(uid, playerName, xp, levelInfo) {
+  const mock = [
+    { name:"Sophie L.", xp:8420, country:"🇫🇷", badge:"🔥", id:"m1" },
+    { name:"Karim B.",  xp:7650, country:"🇲🇦", badge:"👑", id:"m2" },
+    { name:"Lucas M.",  xp:6890, country:"🇧🇪", badge:"💎", id:"m3" },
+    { name:"Marie D.",  xp:5920, country:"🇫🇷", badge:"⭐", id:"m4" },
+    { name:"Amara S.",  xp:5100, country:"🇨🇮", badge:"🏆", id:"m5" },
+    { name:"Thomas R.", xp:4380, country:"🇨🇭", badge:"🏅", id:"m6" },
+    { name:"Lina K.",   xp:3750, country:"🇩🇿", badge:"🎓", id:"m7" },
+    { name:"Julien F.", xp:2900, country:"🇫🇷", badge:"✏️", id:"m8" },
+  ];
+  const player = { name: playerName||"Toi", xp: xp||0, country:"🌍", badge: levelInfo.badge, id: uid||"me", isMe:true };
+  return [...mock, player].sort((a,b) => b.xp - a.xp);
+}
 
 function ThemesScreen({
   current, onSelect, onClose, tier, onTier, lang
@@ -5639,7 +5864,7 @@ function BadgeNotification({
 }
 
 // ─── SETTINGS PANEL ──────────────────────────────────────────────
-function SettingsPanel({ settings, setSettings, theme, onThemeChange, lang, setLang, tier, onTier, onClose, onBugReport, onRateApp, onShare, onEditProfile }) {
+function SettingsPanel({ settings, setSettings, theme, onThemeChange, lang, setLang, tier, onTier, onClose, onBugReport, onRateApp, onShare, onEditProfile, onShowLegal }) {
   const t = useT(lang || "fr");
   const THEME_DOTS = [
     { id: "light",   color: "#4338ca", bg: "#fafaf8", label: "📄 Papier" },
@@ -5816,7 +6041,17 @@ function SettingsPanel({ settings, setSettings, theme, onThemeChange, lang, setL
             </div>
           </div>
 
-          <button className="btn bs" onClick={onClose}>{t("close")}</button>
+          <div style={{ marginTop: 16, paddingTop: 14, borderTop: "1px solid var(--br)" }}>
+            <div style={{ fontSize: 11, color: "var(--txd)", marginBottom: 8, textAlign: "center" }}>
+              Le Petit Bac v1.0.0
+            </div>
+            <div style={{ display: "flex", gap: 8, justifyContent: "center" }}>
+              <button onClick={() => onShowLegal("cgu")} style={{ background: "none", border: "none", fontSize: 11, color: "var(--txm)", cursor: "pointer", textDecoration: "underline" }}>{t("cgu_title","CGU")}</button>
+              <span style={{ color: "var(--txd)", fontSize: 11 }}>·</span>
+              <button onClick={() => onShowLegal("privacy")} style={{ background: "none", border: "none", fontSize: 11, color: "var(--txm)", cursor: "pointer", textDecoration: "underline" }}>{t("privacy_title","Confidentialité")}</button>
+            </div>
+          </div>
+          <button className="btn bs" style={{ marginTop: 12 }} onClick={onClose}>{t("close")}</button>
         </div>
       </div>
     </div>
@@ -6109,6 +6344,95 @@ function ProfilePhotoModal({ onClose, onSave, currentPhoto, playerName, lang }) 
 }
 
 // ─── BOTTOM NAV ───────────────────────────────────────────────────
+// ─── LEGAL MODAL ─────────────────────────────────────────────────
+function LegalModal({ onClose, lang, type }) {
+  const t = useT(lang || "fr");
+  const APP_NAME = "Le Petit Bac";
+  const EMAIL = "support@petitbac.app";
+  const DATE = "1er janvier 2025";
+
+  const cgu = `
+CONDITIONS GÉNÉRALES D'UTILISATION — ${APP_NAME}
+Dernière mise à jour : ${DATE}
+
+1. OBJET
+Les présentes CGU régissent l'utilisation de l'application ${APP_NAME}, jeu de mots multijoueur disponible sur le web.
+
+2. ACCÈS AU SERVICE
+L'accès est gratuit dans sa version de base. Des fonctionnalités supplémentaires sont disponibles via abonnement PRO (4,99€/mois) ou VIP (14,99€/mois), résiliables à tout moment.
+
+3. COMPTE UTILISATEUR
+Aucune création de compte n'est requise. Un identifiant anonyme est généré automatiquement à la première utilisation.
+
+4. RÈGLES D'UTILISATION
+Il est interdit d'utiliser le service pour diffuser des contenus illicites, haineux ou offensants. Tout comportement abusif entraîne la suspension du service.
+
+5. PROPRIÉTÉ INTELLECTUELLE
+L'application, son code, ses graphismes et son contenu sont la propriété exclusive de ${APP_NAME}. Toute reproduction est interdite sans autorisation.
+
+6. RESPONSABILITÉ
+Le service est fourni "tel quel". Nous ne garantissons pas une disponibilité ininterrompue.
+
+7. CONTACT
+${EMAIL}
+  `;
+
+  const privacy = `
+POLITIQUE DE CONFIDENTIALITÉ — ${APP_NAME}
+Dernière mise à jour : ${DATE}
+
+1. DONNÉES COLLECTÉES
+• Identifiant anonyme généré localement (aucun email, aucun mot de passe)
+• Pseudonyme choisi par l'utilisateur
+• Score XP et statistiques de jeu
+• Données de jeu (parties jouées, mots saisis)
+
+2. UTILISATION DES DONNÉES
+Les données sont utilisées uniquement pour :
+• Afficher le classement mondial
+• Sauvegarder la progression
+• Améliorer l'expérience de jeu
+
+3. STOCKAGE
+Les données sont stockées sur Firebase (Google Cloud, Europe) et en local sur votre appareil.
+
+4. PARTAGE
+Aucune donnée n'est vendue à des tiers. Le classement public affiche uniquement le pseudonyme et le score XP.
+
+5. VOS DROITS (RGPD)
+Vous pouvez demander la suppression de vos données à tout moment en contactant : ${EMAIL}
+
+6. COOKIES
+L'application utilise le stockage local (localStorage) pour sauvegarder vos préférences. Aucun cookie publicitaire.
+
+7. CONTACT DPO
+${EMAIL}
+  `;
+
+  const content_text = type === "cgu" ? cgu : privacy;
+  const title = type === "cgu" ? t("cgu_title","Conditions d'utilisation") : t("privacy_title","Politique de confidentialité");
+
+  return (
+    <div className="profile-ov" onClick={onClose}>
+      <div className="profile-panel" onClick={e => e.stopPropagation()}>
+        <div style={{ background: "var(--sf2)", padding: "20px 20px 16px", borderRadius: "24px 24px 0 0", borderBottom: "1px solid var(--br)" }}>
+          <div style={{ fontSize: 18, fontWeight: 800, color: "var(--tx)" }}>{title}</div>
+        </div>
+        <div className="profile-body">
+          <pre style={{
+            fontSize: 12, lineHeight: 1.7, color: "var(--txm)",
+            whiteSpace: "pre-wrap", wordBreak: "break-word",
+            fontFamily: "inherit",
+          }}>{content_text}</pre>
+        </div>
+        <div style={{ padding: "12px 16px", borderTop: "1px solid var(--br)" }}>
+          <button className="btn bp" onClick={onClose}>{t("close","Fermer")}</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function BottomNav({ tab, setTab, setScreen, onLeaderboard, lang }) {
   const t = useT(lang || "fr");
   const items = [
@@ -6136,31 +6460,109 @@ function TierModal({
 }) {
   const t = useT(lang || "fr");
   const [sel, setSel] = useState(current);
+  const [loading, setLoading] = useState(false);
+
   const tiers = [
-    { id: TIER.FREE, name: t("free_label","Gratuit"), price: "0€", cls: "tc-free", feat: t("tier_free_desc","◇ Free") },
-    { id: TIER.PRO,  name: "PRO ◆",  price: "4,99€/mois", cls: "tc-pro", feat: t("tier_pro_desc","◆ PRO") },
-    { id: TIER.VIP,  name: "VIP ★",  price: "14,99€/mois", cls: "tc-vip", feat: t("tier_vip_desc","★ VIP") },
+    {
+      id: TIER.FREE, name: t("free_label","Gratuit"), price: "0€",
+      cls: "tc-free", period: "",
+      features: [t("tier_free_f1","6 catégories"), t("tier_free_f2","2 thèmes"), t("tier_free_f3","Solo vs IA")],
+      stripe: null,
+    },
+    {
+      id: TIER.PRO, name: "PRO ◆", price: "4,99€",
+      cls: "tc-pro", period: t("per_month","/mois"),
+      features: [t("tier_pro_f1","30 catégories"), t("tier_pro_f2","10 thèmes"), t("tier_pro_f3","Multijoueur illimité"), t("tier_pro_f4","Défi quotidien")],
+      stripe: "https://buy.stripe.com/test_00waEW85F1dE1fZ7Wj6g800",
+    },
+    {
+      id: TIER.VIP, name: "VIP ★", price: "14,99€",
+      cls: "tc-vip", period: t("per_month","/mois"),
+      features: [t("tier_vip_f1","Tout PRO +"), t("tier_vip_f2","12 thèmes exclusifs"), t("tier_vip_f3","Tournois VIP"), t("tier_vip_f4","Badge exclusif ★")],
+      stripe: "https://buy.stripe.com/test_8x2dR8gCbbSi0bVdgD6g801",
+    },
   ];
+
+  function handleSelect(tier_item) {
+    if (tier_item.id === TIER.FREE) {
+      onSelect(TIER.FREE);
+      onClose();
+      return;
+    }
+    // Ouvrir Stripe dans un nouvel onglet
+    if (tier_item.stripe && tier_item.stripe.includes("buy.stripe.com") && !tier_item.stripe.includes("test_")) {
+      setLoading(true);
+      window.open(tier_item.stripe, "_blank");
+      // Simuler l'activation après 2s (mode démo)
+      setTimeout(() => { onSelect(tier_item.id); onClose(); }, 1500);;
+      setTimeout(() => { setLoading(false); }, 2000);
+    } else {
+      // Mode démo: activer directement
+      onSelect(tier_item.id);
+      onClose();
+    }
+    logEvent("subscription_click", { tier: tier_item.id });
+  }
+
   return (
     <div className="mov" onClick={onClose}>
-      <div className="modal" onClick={e => e.stopPropagation()}>
-        <div className="mtitle">{t("subscriptions")}</div>
-        <div className="msub">{t("tier_unlock")}</div>
-        <div className="tcards">
+      <div className="modal" onClick={e => e.stopPropagation()} style={{ maxWidth: 360, borderRadius: 20, overflow: "hidden" }}>
+
+        {/* Header */}
+        <div style={{ background: "linear-gradient(135deg,#7c3aed,#4338ca)", padding: "20px 20px 16px", color: "#fff" }}>
+          <div style={{ fontSize: 11, opacity: .7, letterSpacing: 1, textTransform: "uppercase", marginBottom: 4 }}>💎 {t("subscriptions","Abonnements")}</div>
+          <div style={{ fontSize: 20, fontWeight: 800 }}>{t("tier_unlock","Débloquer l'accès complet")}</div>
+        </div>
+
+        {/* Tiers */}
+        <div style={{ padding: "16px 16px 8px" }}>
           {tiers.map(tier_item => (
-            <div key={tier_item.id} className={`tcard ${tier_item.cls} ${sel === tier_item.id ? "tsel" : ""}`} onClick={() => setSel(tier_item.id)}>
-              <div className="row jb" style={{ display: "flex", justifyContent: "space-between", marginBottom: 3 }}>
-                <div className="tn" style={{ color: tier_item.id === TIER.PRO ? "var(--pro)" : tier_item.id === TIER.VIP ? "var(--vip)" : "var(--tx)" }}>{tier_item.name}</div>
-                <div className="tp" style={{ marginBottom: 0 }}>{tier_item.price}</div>
+            <div
+              key={tier_item.id}
+              onClick={() => setSel(tier_item.id)}
+              style={{
+                marginBottom: 10, padding: "14px 16px", borderRadius: 14, cursor: "pointer",
+                border: sel === tier_item.id ? "2px solid var(--ac)" : "1.5px solid var(--br)",
+                background: sel === tier_item.id ? "var(--acs)" : "var(--sf2)",
+                transition: "all 0.15s",
+              }}
+            >
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
+                <div style={{ fontSize: 16, fontWeight: 800,
+                  color: tier_item.id === TIER.VIP ? "var(--vip)" : tier_item.id === TIER.PRO ? "var(--pro)" : "var(--tx)"
+                }}>{tier_item.name}</div>
+                <div style={{ textAlign: "right" }}>
+                  <span style={{ fontSize: 18, fontWeight: 800, color: "var(--ac)" }}>{tier_item.price}</span>
+                  <span style={{ fontSize: 11, color: "var(--txm)" }}>{tier_item.period}</span>
+                </div>
               </div>
-              <div className="tf">{tier_item.feat}</div>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: 4 }}>
+                {tier_item.features.map((f, i) => (
+                  <span key={i} style={{ fontSize: 11, background: "var(--sf3)", padding: "2px 8px", borderRadius: 99, color: "var(--txm)" }}>✓ {f}</span>
+                ))}
+              </div>
             </div>
           ))}
         </div>
-        <button className={`btn ${sel === TIER.VIP ? "bvip" : sel === TIER.PRO ? "bpro" : "bp"} mb8`} style={{ marginBottom: 8 }} onClick={() => onSelect(sel)}>
-          {sel === current ? t("continue_btn") : sel === TIER.FREE ? t("stay_free") : `${t("activate")} ${sel === TIER.PRO ? "PRO" : "VIP"}`}
-        </button>
-        <button className="btn bs" onClick={onClose}>{t("cancel3")}</button>
+
+        {/* CTA */}
+        <div style={{ padding: "0 16px 20px" }}>
+          <button
+            className={`btn ${sel === TIER.VIP ? "bvip" : sel === TIER.PRO ? "bpro" : "bp"} mb8`}
+            style={{ marginBottom: 8 }}
+            onClick={() => handleSelect(tiers.find(ti => ti.id === sel))}
+            disabled={loading}
+          >
+            {loading ? "⏳ " + t("loading","Chargement...") :
+             sel === current ? t("continue_btn","Continuer") :
+             sel === TIER.FREE ? t("stay_free","Rester gratuit") :
+             t("subscribe_btn","S'abonner") + " " + (sel === TIER.PRO ? "PRO" : "VIP")}
+          </button>
+          <button className="btn bs" onClick={onClose}>{t("cancel3","Annuler")}</button>
+          <div style={{ textAlign: "center", marginTop: 10, fontSize: 10, color: "var(--txd)" }}>
+            {t("stripe_secure","Paiement sécurisé par Stripe • Annulable à tout moment")}
+          </div>
+        </div>
       </div>
     </div>
   );
