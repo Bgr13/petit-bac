@@ -1061,6 +1061,41 @@ function getDailyChallenge() {
 
   return { cats, letter, todayKey, dayOfYear, msLeft, hoursLeft, minsLeft, secsLeft };
 }
+// ─── CAT_LABELS — Traductions des catégories ─────────────────────────────
+const CAT_LABELS = {
+  prenom:       { fr:"Prénom",           en:"First Name",     es:"Nombre"          },
+  nom:          { fr:"Nom de famille",   en:"Last Name",      es:"Apellido"        },
+  pays:         { fr:"Pays",             en:"Country",        es:"País"            },
+  ville:        { fr:"Ville",            en:"City",           es:"Ciudad"          },
+  animal:       { fr:"Animal",           en:"Animal",         es:"Animal"          },
+  fruit:        { fr:"Fruit",            en:"Fruit",          es:"Fruta"           },
+  metier:       { fr:"Métier",           en:"Job",            es:"Profesión"       },
+  celebrite:    { fr:"Célébrité",        en:"Celebrity",      es:"Celebridad"      },
+  sport:        { fr:"Sport",            en:"Sport",          es:"Deporte"         },
+  objet:        { fr:"Objet",            en:"Object",         es:"Objeto"          },
+  film:         { fr:"Film",             en:"Movie",          es:"Película"        },
+  marque:       { fr:"Marque",           en:"Brand",          es:"Marca"           },
+  anatomie:     { fr:"Anatomie",         en:"Anatomy",        es:"Anatomía"        },
+  musique:      { fr:"Musique",          en:"Music",          es:"Música"          },
+  cuisine:      { fr:"Cuisine",          en:"Food",           es:"Comida"          },
+  vehicule:     { fr:"Véhicule",         en:"Vehicle",        es:"Vehículo"        },
+  capital:      { fr:"Capitale",         en:"Capital",        es:"Capital"         },
+  monument:     { fr:"Monument",         en:"Monument",       es:"Monumento"       },
+  langue:       { fr:"Langue",           en:"Language",       es:"Idioma"          },
+  instrument:   { fr:"Instrument",       en:"Instrument",     es:"Instrumento"     },
+  vetement:     { fr:"Vêtement",         en:"Clothing",       es:"Ropa"            },
+  emotion:      { fr:"Émotion",          en:"Emotion",        es:"Emoción"         },
+  mythologie:   { fr:"Mythologie",       en:"Mythology",      es:"Mitología"       },
+  espace:       { fr:"Espace",           en:"Space",          es:"Espacio"         },
+  oceane:       { fr:"Vie marine",       en:"Sea Life",       es:"Vida marina"     },
+  medievale:    { fr:"Moyen Âge",        en:"Middle Ages",    es:"Edad Media"      },
+  technologie:  { fr:"Technologie",      en:"Technology",     es:"Tecnología"      },
+  danse:        { fr:"Danse",            en:"Dance",          es:"Baile"           },
+  architecture: { fr:"Architecture",     en:"Architecture",   es:"Arquitectura"    },
+  sport_star:   { fr:"Sportif célèbre",  en:"Sports Star",    es:"Deportista"      },
+  personnage:   { fr:"Personnage",       en:"Character",      es:"Personaje"       },
+};
+
 function getCatLabel(catId, lang) {
   // D'abord dans CAT_LABELS (catégories standards)
   if (CAT_LABELS[catId]) {
@@ -3766,10 +3801,86 @@ function logEvent(eventName, params) {
   } catch(e) {}
 }
 
+// ─── TIERS ──────────────────────────────────────────────────────────────
+const TIER = { FREE: "free", PRO: "pro", VIP: "vip" };
+
+// ─── ALPHABET ─────────────────────────────────────────────────────────────
+const ALPHABET = "ABCDEFGHIJKLMNOPRSTV".split("");
+
+// ─── DAILY_CAT_POOL ───────────────────────────────────────────────────────
+const DAILY_CAT_POOL = [
+  { id: "dc_emotion",      label: "Émotion",            emoji: "😤" },
+  { id: "dc_super",        label: "Super-héros",         emoji: "🦸" },
+  { id: "dc_mythologie",   label: "Mythologie",          emoji: "⚡" },
+  { id: "dc_espace",       label: "Espace",              emoji: "🚀" },
+  { id: "dc_sport_star",   label: "Sportif célèbre",     emoji: "⚽" },
+  { id: "dc_film_perso",   label: "Personnage de film",  emoji: "🎬" },
+  { id: "dc_couleur_rare", label: "Couleur rare",        emoji: "🎨" },
+  { id: "dc_oceane",       label: "Vie marine",          emoji: "🐠" },
+  { id: "dc_medievale",    label: "Moyen Âge",           emoji: "⚔️" },
+  { id: "dc_cuisine_monde",label: "Plat du monde",       emoji: "🌍" },
+  { id: "dc_danse",        label: "Danse",               emoji: "💃" },
+  { id: "dc_meteo",        label: "Météo",               emoji: "⛈️" },
+  { id: "dc_architecture", label: "Architecture",        emoji: "🏛️" },
+  { id: "dc_personnage",   label: "Personnage BD",       emoji: "🦸" },
+  { id: "dc_informatique", label: "Informatique",        emoji: "💻" },
+  { id: "dc_mode",         label: "Mode & Luxe",         emoji: "👗" },
+  { id: "dc_science",      label: "Science",             emoji: "🔬" },
+  { id: "dc_religion",     label: "Religion",            emoji: "⛪" },
+  { id: "dc_art",          label: "Art & Peinture",      emoji: "🖼️" },
+  { id: "dc_histoire",     label: "Histoire",            emoji: "📜" },
+];
+
+// ─── SOUND FX ─────────────────────────────────────────────────────────────
+const SoundFX = {
+  play: (sound) => {
+    try {
+      if (typeof AudioContext === "undefined" && typeof webkitAudioContext === "undefined") return;
+      const ctx = new (window.AudioContext || window.webkitAudioContext)();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      const sounds = {
+        tick:  { freq: 800, dur: 0.05, type: "sine"    },
+        lock:  { freq: 523, dur: 0.15, type: "triangle" },
+        stop:  { freq: 392, dur: 0.3,  type: "square"  },
+        win:   { freq: 659, dur: 0.4,  type: "sine"    },
+        wrong: { freq: 200, dur: 0.2,  type: "sawtooth" },
+        badge: { freq: 880, dur: 0.3,  type: "sine"    },
+      };
+      const s = sounds[sound] || sounds.tick;
+      osc.type = s.type;
+      osc.frequency.setValueAtTime(s.freq, ctx.currentTime);
+      gain.gain.setValueAtTime(0.1, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + s.dur);
+      osc.start(ctx.currentTime);
+      osc.stop(ctx.currentTime + s.dur);
+    } catch(e) {}
+  }
+};
+
+// ─── THEME DOTS (pour SettingsPanel) ──────────────────────────────────────
+const THEME_DOTS = [
+  { id: "light",   color: "#4338ca", bg: "#fafaf8", label: "📄 Papier",   tier: "free"  },
+  { id: "dark",    color: "#818cf8", bg: "#0c0c10", label: "🌑 Minuit",   tier: "free"  },
+  { id: "sakura",  color: "#e879a0", bg: "#fff0f6", label: "🌸 Sakura",   tier: "pro"   },
+  { id: "noir",    color: "#facc15", bg: "#000000", label: "🖤 Noir",     tier: "pro"   },
+  { id: "neon",    color: "#39ff14", bg: "#0d0d1a", label: "⚡ Néon",    tier: "pro"   },
+  { id: "sand",    color: "#d97706", bg: "#fef3c7", label: "🏜️ Sahara",  tier: "pro"   },
+  { id: "nord",    color: "#5e81ac", bg: "#ecf4f8", label: "🧊 Nordique", tier: "pro"   },
+  { id: "volcano", color: "#ff3d00", bg: "#1a0505", label: "🌋 Volcan",   tier: "pro"   },
+  { id: "forest",  color: "#4ade80", bg: "#0d1f0d", label: "🌿 Forêt",   tier: "vip"   },
+  { id: "ocean",   color: "#0ea5e9", bg: "#020d18", label: "🌊 Océan",   tier: "vip"   },
+  { id: "sunset",  color: "#f97316", bg: "#1a0a1a", label: "🌅 Coucher", tier: "vip"   },
+  { id: "galaxy",  color: "#a855f7", bg: "#030014", label: "🌌 Galaxie", tier: "vip"   },
+];
+
+
 export default function App() {
   const [tab, setTab] = useState("home");
   const [screen, setScreen] = useState("home");
-  const [tier, setTier] = useState(TIER.FREE);
+  const [tier, setTier] = useState("free"); // TIER.FREE = "free"
   const [theme, setTheme] = useState(() => { try { return localStorage.getItem("pb_theme") || "light"; } catch(e) { return "light"; } });
   const [lang, setLang] = useState(() => {
     try {
