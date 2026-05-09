@@ -3678,20 +3678,29 @@ async function shareApp() {
 // ─── FIREBASE MOCK (used when config not set) ─────────────────────
 // In production, replace with real Firebase calls from firebase.js
 const FB = (() => {
-  // ── Initialisation Firebase réelle ──────────────────────────
   let db = null;
   let auth = null;
+  let initialized = false;
 
-  try {
-    if (typeof firebase !== "undefined" && FIREBASE_READY) {
-      if (!firebase.apps || firebase.apps.length === 0) {
-        firebase.initializeApp(FIREBASE_CONFIG);
+  // ── Initialisation lazy — attend que firebase SDK soit disponible ──
+  function init() {
+    if (initialized) return;
+    initialized = true;
+    try {
+      if (typeof window !== "undefined" && typeof window.firebase !== "undefined" && FIREBASE_READY) {
+        const fb = window.firebase;
+        if (!fb.apps || fb.apps.length === 0) {
+          fb.initializeApp(FIREBASE_CONFIG);
+        }
+        db   = fb.database();
+        auth = fb.auth();
+        console.log("Firebase initialisé ✓");
+      } else {
+        console.warn("Firebase SDK non disponible, mode local activé");
       }
-      db   = firebase.database();
-      auth = firebase.auth();
+    } catch(e) {
+      console.warn("Firebase init failed:", e.message);
     }
-  } catch(e) {
-    console.warn("Firebase init failed, using local mode:", e);
   }
 
   // ── Fallback local (même appareil) ──────────────────────────
@@ -3699,6 +3708,7 @@ const FB = (() => {
 
   return {
     async signIn() {
+      init();
       if (auth) {
         try {
           const r = await auth.signInAnonymously();
@@ -3709,6 +3719,7 @@ const FB = (() => {
     },
 
     async createRoom(code, data) {
+      init();
       if (db) {
         await db.ref("rooms/" + code).set(data);
         return code;
@@ -3718,6 +3729,7 @@ const FB = (() => {
     },
 
     async getRoom(code) {
+      init();
       if (db) {
         try {
           const snap = await db.ref("rooms/" + code).once("value");
@@ -3734,6 +3746,7 @@ const FB = (() => {
     },
 
     async updateRoom(code, updates) {
+      init();
       if (db) {
         await db.ref("rooms/" + code).update(updates);
         return;
@@ -3744,6 +3757,7 @@ const FB = (() => {
     },
 
     listenRoom(code, cb) {
+      init();
       if (db) {
         const ref = db.ref("rooms/" + code);
         ref.on("value", snap => { if (snap.val()) cb(snap.val()); });
@@ -3755,6 +3769,7 @@ const FB = (() => {
     },
 
     async findPublicRoom(country) {
+      init();
       if (db) {
         const snap = await db.ref("rooms")
           .orderByChild("status").equalTo("waiting")
@@ -4623,9 +4638,24 @@ function OnlineScreen({
     if (code.length < 4) return;
     setLoading(true); setError("");
     try {
-      const room = await FB.getRoom(code);
+      // Attendre que Firebase soit prêt (max 3s)
+      let room = null;
+      let attempts = 0;
+      while (attempts < 3) {
+        try {
+          room = await FB.getRoom(code);
+          break;
+        } catch(e) {
+          if (e.message && e.message.includes("PERMISSION_DENIED")) {
+            throw new Error("⚠️ Firebase: configure les règles sur firebase.google.com → Realtime Database → Rules → .read: true");
+          }
+          if (attempts === 2) throw e;
+          await new Promise(r => setTimeout(r, 1000));
+          attempts++;
+        }
+      }
       if (!room) {
-        throw new Error(t("room_not_found", "Salon introuvable. Vérifie le code."));
+        throw new Error(t("room_not_found", "Salon introuvable. Vérifie le code (4 lettres majuscules)."));
       }
       if (room.status !== "waiting") {
         throw new Error(t("game_in_progress", "La partie a déjà commencé."));
