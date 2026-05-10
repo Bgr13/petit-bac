@@ -6130,18 +6130,6 @@ function getMockLeaderboard(uid, playerName, xp, levelInfo) {
     { name:"Lucas M.",  xp:6890, country:"🇧🇪", badge:"💎", id:"m3" },
     { name:"Marie D.",  xp:5920, country:"🇫🇷", badge:"⭐", id:"m4" },
     { name:"Amara S.",  xp:5100, country:"🇨🇮", badge:"🏆", id:"m5" },
-  ];
-  const player = { name: playerName||"Toi", xp: xp||0, country:"🌍", badge: levelInfo?.badge||"⭐", id: uid||"me", isMe:true };
-  return [...mock, player].sort((a,b) => b.xp - a.xp);
-}
-
-function getMockLeaderboard(uid, playerName, xp, levelInfo) {
-  const mock = [
-    { name:"Sophie L.", xp:8420, country:"🇫🇷", badge:"🔥", id:"m1" },
-    { name:"Karim B.",  xp:7650, country:"🇲🇦", badge:"👑", id:"m2" },
-    { name:"Lucas M.",  xp:6890, country:"🇧🇪", badge:"💎", id:"m3" },
-    { name:"Marie D.",  xp:5920, country:"🇫🇷", badge:"⭐", id:"m4" },
-    { name:"Amara S.",  xp:5100, country:"🇨🇮", badge:"🏆", id:"m5" },
     { name:"Thomas R.", xp:4380, country:"🇨🇭", badge:"🏅", id:"m6" },
     { name:"Lina K.",   xp:3750, country:"🇩🇿", badge:"🎓", id:"m7" },
     { name:"Julien F.", xp:2900, country:"🇫🇷", badge:"✏️", id:"m8" },
