@@ -3736,7 +3736,6 @@ const FB = (() => {
 
   return {
     async signIn() {
-      init();
       if (auth) {
         try {
           const result = await signInAnonymously(auth);
@@ -3747,7 +3746,6 @@ const FB = (() => {
     },
 
     async createRoom(code, data) {
-      init();
       if (db) {
         await dbSet(dbRef(db, "rooms/" + code), data);
         return code;
@@ -3757,7 +3755,6 @@ const FB = (() => {
     },
 
     async getRoom(code) {
-      init();
       if (db) {
         try {
           const snap = await dbGet(dbRef(db, "rooms/" + code));
@@ -3773,7 +3770,6 @@ const FB = (() => {
     },
 
     async updateRoom(code, updates) {
-      init();
       if (db) {
         await dbUpdate(dbRef(db, "rooms/" + code), updates);
         return;
@@ -3784,7 +3780,6 @@ const FB = (() => {
     },
 
     listenRoom(code, cb) {
-      init();
       if (db) {
         const roomRef = dbRef(db, "rooms/" + code);
         const unsubscribe = dbOnValue(roomRef, snap => { if (snap.val()) cb(snap.val()); });
@@ -4729,7 +4724,9 @@ function OnlineScreen({
   const [country, setCountry] = useState(settings.country || "France");
   const [roomCode, setRoomCode] = useState(null);
   // Fallback uid si Firebase auth pas encore prête
-  const myUid = uid || ("local_" + Math.random().toString(36).substring(2, 9));
+  // Use useRef so the fallback ID is stable across re-renders
+  const myUidRef = useRef(uid || ("local_" + Math.random().toString(36).substring(2, 9)));
+  const myUid = uid || myUidRef.current;
   const [joinCode, setJoinCode] = useState("");
   const [roomData, setRoomData] = useState(null);
   const [customTeams, setCustomTeams] = useState(null);
