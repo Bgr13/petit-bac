@@ -155,6 +155,8 @@ const TRANSLATIONS = {
     xp_gained: "XP gagnés",
     level: "Niv.",
     badge_unlocked: "BADGE DÉBLOQUÉ",
+    tournament_rules_short: "Réponses uniques = +10pts • Faux = ❌ éliminé",
+    tournament_prize: "Gagnant = 1 mois VIP offert !",
     inventif_desc: "Celui qui utilise les mots les plus longs et rares",
     fastest_desc: "Celui qui a trouvé le plus de réponses uniques",
     shuffle_teams: "Mélanger les équipes",
@@ -462,6 +464,8 @@ const TRANSLATIONS = {
     xp_gained: "XP earned",
     level: "Lv.",
     badge_unlocked: "BADGE UNLOCKED",
+    tournament_rules_short: "Unique answers = +10pts • Wrong = ❌ eliminated",
+    tournament_prize: "Winner = 1 month VIP free!",
     inventif_desc: "Player using the longest and rarest words",
     fastest_desc: "Player with most unique answers",
     shuffle_teams: "Shuffle teams",
@@ -769,6 +773,8 @@ const TRANSLATIONS = {
     xp_gained: "XP ganados",
     level: "Niv.",
     badge_unlocked: "INSIGNIA DESBLOQUEADA",
+    tournament_rules_short: "Respuestas únicas = +10pts • Error = ❌ eliminado",
+    tournament_prize: "¡Ganador = 1 mes VIP gratis!",
     inventif_desc: "Jugador con palabras más largas y raras",
     fastest_desc: "Jugador con más respuestas únicas",
     shuffle_teams: "Mezclar equipos",
@@ -1019,9 +1025,18 @@ function getTournamentWeek() {
   const start = new Date(now.getFullYear(), 0, 1);
   const week = Math.floor((now - start) / (7 * 24 * 60 * 60 * 1000));
   const letters = "ABCDEFGHIJKLMNOPRSTV";
+  const letter = letters[week % letters.length];
 
-  // Calculer le temps exact jusqu'à la fin de la semaine (lundi prochain à 00:00)
-  const dayOfWeek = now.getDay(); // 0=dim, 1=lun, ..., 6=sam
+  // 7 catégories communes à tous les joueurs cette semaine
+  // Déterminées par le numéro de semaine → identiques pour tout le monde
+  const allCats = [...FREE_CATS, ...PRO_CATS];
+  const weekCats = [];
+  for (let i = 0; i < 7; i++) {
+    weekCats.push(allCats[(week * 7 + i) % allCats.length]);
+  }
+
+  // Timer jusqu'au lundi prochain à 00:00
+  const dayOfWeek = now.getDay();
   const daysUntilMonday = dayOfWeek === 0 ? 1 : (8 - dayOfWeek);
   const nextMonday = new Date(now);
   nextMonday.setDate(now.getDate() + daysUntilMonday);
@@ -1033,8 +1048,9 @@ function getTournamentWeek() {
   const secsLeft = Math.floor((msLeft % 60000) / 1000);
 
   return {
-    letter: letters[week % letters.length],
+    letter,
     weekNum: week,
+    cats: weekCats,
     endsIn: daysLeft,
     msLeft, daysLeft, hoursLeft, minsLeft, secsLeft,
   };
@@ -3163,6 +3179,22 @@ function getAiAnswer(id, l, lang) {
   return pool.length ? pool[Math.floor(Math.random() * pool.length)] : "";
 }
 
+// ─── SCORE TOURNOI ────────────────────────────────────────────────────────
+// Règles spéciales tournoi: unicité ++, vitesse ++, faux = disqualifié
+function scoreAnswerTournoi(answer, allAnswers, categoryId, letter, lang, timeBonus) {
+  if (!answer?.trim()) return { pts: -1, disqualified: true }; // vide = disqualifié
+  if (!isValidAnswer(answer, categoryId, letter, lang)) return { pts: -2, disqualified: true }; // invalide = disqualifié
+  const norm = normalizeWord(answer);
+  const filled = allAnswers.map(a => a?.trim() ? normalizeWord(a) : "").filter(Boolean);
+  const count = filled.filter(a => a === norm).length;
+  const total = filled.length;
+  // Unicité: seul à l'avoir = 10pts, 2 joueurs = 5pts, 3+ = 3pts
+  let pts = count === 1 ? 10 : count === 2 ? 5 : 3;
+  // Bonus vitesse: jusqu'à +5pts selon le temps restant
+  if (timeBonus > 0) pts += Math.min(5, Math.round(timeBonus / 10));
+  return { pts, disqualified: false };
+}
+
 function scoreAnswer(answer, allAnswers, categoryId, letter, lang) {
   if (!answer?.trim()) return 0;
   // Validate word belongs to category
@@ -3973,7 +4005,39 @@ export default function App() {
   }, [theme]);
 
   function goSetup(mode) { setGameState({ mode }); setScreen("setup"); }
-  function goOnline(mode) { setGameState({ mode }); setScreen("online"); }
+  function goOnline(mode) {
+    setGameState({ mode });
+    setScreen("online");
+  }
+
+  function startTournamentGame() {
+    const tournament = getTournamentWeek();
+    const activeCats = tournament.cats;
+    const players = [
+      { id: uid || "human", name: settings.playerName || "Joueur", isBot: false, answers: {}, done: false },
+    ];
+    setGameState({
+      mode: "tournoi",
+      difficulty: "hard",
+      totalTime: DIFFICULTY.hard.time,
+      timeLeft: DIFFICULTY.hard.time,
+      categories: activeCats,
+      players,
+      totalRounds: 1,
+      currentRound: 1,
+      spinnerIndex: 0,
+      rounds: [],
+      letter: tournament.letter,
+      answers: Object.fromEntries(activeCats.map(c => [c.id, ""])),
+      phase: "playing",
+      cumulativeScores: { [uid || "human"]: 0 },
+      myId: uid || "human",
+      isTournoi: true,
+      weekNum: tournament.weekNum,
+      lang: lang,
+    });
+    setScreen("game");
+  }
 
   function startDailyChallenge() {
     const { cats, letter } = getDailyChallenge();
@@ -4013,6 +4077,7 @@ export default function App() {
     const humanId = uid || "human";
     const is2v2 = cfg.mode === "2v2";
     const isMort = cfg.mode === "mort";
+    const isTournoi = cfg.mode === "tournoi";
 
     // Mort subite: 4 joueurs (plus de challenge)
     // 2v2: 4 joueurs en 2 équipes
@@ -4076,7 +4141,8 @@ export default function App() {
       players: Object.values(roomData.players || {}),
       totalRounds: roomData.settings.totalRounds || 5,
       currentRound: 1,
-      spinnerIndex: 0,
+      spinnerIndex: roomData.spinnerIndex || 0,
+      spinnerOrder: roomData.spinnerOrder || null,
       rounds: [],
       letter: null,
       answers: Object.fromEntries(activeCats.map(c => [c.id, ""])),
@@ -4105,6 +4171,7 @@ export default function App() {
           onOnline2v2={() => goOnline("2v2")}
           onOnlineMort={() => goOnline("mort")}
           onDaily={startDailyChallenge}
+          onTournoi={() => startTournamentGame()}
           stats={stats} tier={tier} xp={xp}
           onTier={() => setShowTier(true)}
           onProfile={() => setShowProfile(true)}
@@ -4116,7 +4183,7 @@ export default function App() {
           lang={lang}
         />}
         {screen === "setup"   && <SetupScreen mode={gameState?.mode} settings={settings} setSettings={setSettings} onStart={startSoloGame} onBack={() => setScreen("home")} tier={tier} onTier={() => setShowTier(true)} lang={lang} />}
-        {screen === "online"  && <OnlineScreen uid={uid} settings={settings} setSettings={setSettings} onEnterGame={enterOnlineGame} onBack={() => setScreen("home")} tier={tier} lang={lang} />}
+        {screen === "online"  && <OnlineScreen uid={uid} settings={settings} setSettings={setSettings} onEnterGame={enterOnlineGame} onBack={() => setScreen("home")} tier={tier} lang={lang} gameMode={gameState?.mode || "solo"} />}
         {screen === "game"    && gameState && <GameScreen gameState={gameState} setGameState={setGameState} uid={uid} lang={lang} onEndGame={(gs) => { setGameState(gs); setScreen("results"); }} />}
         {screen === "results" && gameState && <FinalResultsScreen gameState={gameState} onPlayAgain={() => setScreen("setup")} onHome={() => setScreen("home")} uid={uid} lang={lang} />}
         {screen !== "game" && <BottomNav tab={tab} setTab={setTab} setScreen={setScreen} onLeaderboard={() => setShowLeaderboard(true)} lang={lang} />}
@@ -4159,7 +4226,7 @@ export default function App() {
 }
 
 // ─── HOME ─────────────────────────────────────────────────────────
-function HomeScreen({ onSolo, onOnline, on2v2, onMort, onOnline2v2, onOnlineMort, onDaily, stats, tier, onTier, onProfile, onSettings, playerName, xp, dailyPlayed, profilePhoto, onShare, lang }) {
+function HomeScreen({ onSolo, onOnline, on2v2, onMort, onOnline2v2, onOnlineMort, onDaily, onTournoi, stats, tier, onTier, onProfile, onSettings, playerName, xp, dailyPlayed, profilePhoto, onShare, lang }) {
   const t = useT(lang || "fr");
   const bc = tier === TIER.VIP ? "bvipbadge" : tier === TIER.PRO ? "bprobadge" : "bfree";
   const bl = tier === TIER.VIP ? t("vip_label") : tier === TIER.PRO ? t("pro_label") : "◇";
@@ -4263,6 +4330,11 @@ function HomeScreen({ onSolo, onOnline, on2v2, onMort, onOnline2v2, onOnlineMort
                 </span>
               ))}
             </div>
+            {!alreadyPlayed && (
+              <div style={{ marginTop:6, fontSize:11, fontFamily:"monospace", opacity:.85, display:"flex", alignItems:"center", gap:4 }}>
+                ⏱ {String(daily.hoursLeft).padStart(2,"0")}:{String(daily.minsLeft).padStart(2,"0")}:{String(daily.secsLeft).padStart(2,"0")}
+              </div>
+            )}
             {!canPro && !alreadyPlayed && (
               <div style={{ marginTop: 8, fontSize: 11, opacity: .8 }}>{t("pro_required")}</div>
             )}
@@ -4273,15 +4345,24 @@ function HomeScreen({ onSolo, onOnline, on2v2, onMort, onOnline2v2, onOnlineMort
         {(() => {
           const tournament = getTournamentWeek();
           return (
-            <button className="tournament-card" onClick={onSolo}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <div>
+            <button className="tournament-card" onClick={canPro ? onTournoi : onTier}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+                <div style={{ flex:1 }}>
                   <div style={{ fontSize: 10, opacity: .8, letterSpacing: 1, textTransform: "uppercase", marginBottom: 2 }}>{t("tournament_label2")}</div>
                   <div style={{ fontSize: 15, fontWeight: 700, marginBottom: 2 }}>{t("tournament_title2")}</div>
-                  <div style={{ fontSize: 11, opacity: .85 }}>{tournament.daysLeft > 0 ? `${tournament.daysLeft}j ` : ""}{String(tournament.hoursLeft).padStart(2,"0")}:{String(tournament.minsLeft).padStart(2,"0")}:{String(tournament.secsLeft).padStart(2,"0")}</div>
+                  <div style={{ fontSize: 11, opacity: .85, marginBottom:6 }}>
+                    {tournament.daysLeft > 0 ? `${tournament.daysLeft} ${t("tournament_days","jours restants")}` : `${String(tournament.hoursLeft).padStart(2,"0")}h${String(tournament.minsLeft).padStart(2,"0")}m`}
+                  </div>
+                  <div style={{ fontSize:11, background:"rgba(255,255,255,0.15)", borderRadius:8, padding:"4px 8px", marginBottom:4 }}>
+                    🏆 {t("tournament_prize","Gagnant = 1 mois VIP offert !")}
+                  </div>
+                  <div style={{ fontSize:10, opacity:.75 }}>
+                    ⚡ {t("tournament_rules_short","Réponses uniques = +10pts • Faux = ❌ éliminé")}
+                  </div>
                 </div>
                 <div className="tournament-letter">{tournament.letter}</div>
               </div>
+              {!canPro && <div style={{ marginTop:8, fontSize:11, opacity:.8 }}>🔒 {t("pro_required")}</div>}
             </button>
           );
         })()}
@@ -4551,6 +4632,8 @@ function OnlineScreen({
   const [playerName, setPlayerName] = useState(settings.playerName);
   const [country, setCountry] = useState(settings.country || "France");
   const [roomCode, setRoomCode] = useState(null);
+  // Fallback uid si Firebase auth pas encore prête
+  const myUid = uid || ("local_" + Math.random().toString(36).substring(2, 9));
   const [joinCode, setJoinCode] = useState("");
   const [roomData, setRoomData] = useState(null);
   const [customTeams, setCustomTeams] = useState(null);
@@ -4569,7 +4652,7 @@ function OnlineScreen({
         // Join existing room
         const room = await FB.getRoom(existingCode);
         await FB.updateRoom(existingCode, {
-          players: { ...room.players, [uid]: { uid, name: playerName, country, isHost: false, ready: false, connected: true } },
+          players: { ...room.players, [myUid]: { uid: myUid, name: playerName, country, isHost: false, ready: false, connected: true } },
         });
         setRoomCode(existingCode);
         setStep("waiting");
@@ -4582,11 +4665,11 @@ function OnlineScreen({
         const code = genCode();
         const newRoom = {
           code, type: "public", country,
-          hostId: uid, status: "waiting",
+          hostId: myUid, status: "waiting",
           settings: { difficulty: settings.difficulty, categories: settings.categories, totalRounds: settings.totalRounds, gameMode: gameMode || "solo" },
-          players: { [uid]: { uid, name: playerName, country, isHost: true, ready: true, connected: true } },
+          players: { [myUid]: { uid: myUid, name: playerName, country, isHost: true, ready: true, connected: true } },
           currentRound: 0, spinnerIndex: 0, phase: "waiting",
-          cumulativeScores: { [uid]: 0 },
+          cumulativeScores: { [myUid]: 0 },
         };
         await FB.createRoom(code, newRoom);
         setRoomCode(code);
@@ -4595,16 +4678,7 @@ function OnlineScreen({
           setRoomData(rd);
           if (rd.status === "playing") { cleanup(); onEnterGame(code, rd); }
         });
-        // Simulate another player joining after 3s (demo)
-        setTimeout(async () => {
-          const r = await FB.getRoom(code);
-          if (!r || r.status !== "waiting") return;
-          const guestId = "guest_" + Math.random().toString(36).substring(2, 6);
-          await FB.updateRoom(code, {
-            players: { ...r.players, [guestId]: { uid: guestId, name: "Joueur " + country, country, isHost: false, ready: true, connected: true } },
-            cumulativeScores: { ...(r.cumulativeScores || {}), [guestId]: 0 },
-          });
-        }, 3000);
+        // Vrai matchmaking Firebase — pas de simulation
       }
     } catch (e) { setError(e.message); }
     setLoading(false);
@@ -4616,11 +4690,11 @@ function OnlineScreen({
       const code = genCode();
       const newRoom = {
         code, type: "private", country,
-        hostId: uid, status: "waiting",
+        hostId: myUid, status: "waiting",
         settings: { difficulty: settings.difficulty, categories: settings.categories, totalRounds: settings.totalRounds, gameMode: gameMode || "solo" },
-        players: { [uid]: { uid, name: playerName, country, isHost: true, ready: true, connected: true } },
+        players: { [myUid]: { uid: myUid, name: playerName, country, isHost: true, ready: true, connected: true } },
         currentRound: 0, spinnerIndex: 0, phase: "waiting",
-        cumulativeScores: { [uid]: 0 },
+        cumulativeScores: { [myUid]: 0 },
       };
       await FB.createRoom(code, newRoom);
       setRoomCode(code);
@@ -4660,10 +4734,10 @@ function OnlineScreen({
       if (room.status !== "waiting") {
         throw new Error(t("game_in_progress", "La partie a déjà commencé."));
       }
-      const myPlayer = { uid, name: playerName || settings.playerName || "Joueur", country, isHost: false, ready: true, connected: true };
+      const myPlayer = { uid: myUid, name: playerName || settings.playerName || "Joueur", country, isHost: false, ready: true, connected: true };
       await FB.updateRoom(code, {
-        players: { ...room.players, [uid]: myPlayer },
-        cumulativeScores: { ...(room.cumulativeScores || {}), [uid]: 0 },
+        players: { ...room.players, [myUid]: myPlayer },
+        cumulativeScores: { ...(room.cumulativeScores || {}), [myUid]: 0 },
       });
       setRoomCode(code);
       setStep("waiting");
@@ -4681,13 +4755,23 @@ function OnlineScreen({
   async function startGame() {
     if (!roomCode) return;
     const room = await FB.getRoom(roomCode);
+    if (!room) return;
     const playerIds = Object.keys(room.players || {});
-    const spinnerOrder = [...playerIds].sort(() => Math.random() - .5);
-    await FB.updateRoom(roomCode, { status: "playing", phase: "playing", spinnerOrder, spinnerIndex: 0, currentRound: 1, letter: null });
+    const spinnerOrder = [...playerIds].sort(() => Math.random() - 0.5);
+    // phase: "roulette" → déclenche la roulette de lettre
+    await FB.updateRoom(roomCode, {
+      status: "playing",
+      phase: "roulette",
+      spinnerOrder,
+      spinnerIndex: 0,
+      currentRound: 1,
+      letter: null,
+      startedAt: Date.now(),
+    });
   }
 
   const players = roomData ? Object.values(roomData.players || {}) : [];
-  const isHost = roomData?.hostId === uid;
+  const isHost = roomData?.hostId === myUid || roomData?.hostId === uid;
 
   if (step === "choose") return (
     <div style={{ display: "flex", flexDirection: "column", height: "100vh" }}>
@@ -4754,7 +4838,7 @@ function OnlineScreen({
             <div className="ctitle">{t("players_found")} ({players.length})</div>
             {players.map(p => (
               <div key={p.uid} className="pi">
-                <div className={`pav ${p.uid === uid ? "pav-human" : "pav-guest"}`}>{p.name[0]}</div>
+                <div className={`pav ${p.uid === myUid || p.uid === uid ? "pav-human" : "pav-guest"}`}>{p.name[0]}</div>
                 <div><div className="pn">{p.name}</div><div className="ps">{p.country}</div></div>
                 {p.isHost && <span className="hbadge">{t("host")}</span>}
                 {p.ready && !p.isHost && <span className="rbadge">{t("ready")}</span>}
@@ -4809,7 +4893,7 @@ function OnlineScreen({
     <div style={{ display: "flex", flexDirection: "column", height: "100vh" }}>
       <div className="hdr">
         <button className="btn bs bsm" onClick={() => { cleanup(); setStep("choose"); }} style={{ width: "auto" }}>✕</button>
-        <span style={{ fontWeight: 700, fontSize: 14 }}>{t("salon_label")} {roomData?.type === "private" ? t("private_room") : "🌍 Public"} · {gameMode === "2v2" ? "🤝 2v2" : gameMode === "mort" ? "💀 Mort Subite" : "⚔️ Solo"}</span>
+        <span style={{ fontWeight: 700, fontSize: 14 }}>{t("salon_label")} {roomData?.type === "private" ? t("private_room") : "🌍 Public"} · {gameMode === "2v2" ? "🤝 2v2" : gameMode === "mort" ? "💀 Mort Subite" : "🌍 Multijoueur"}</span>
         <div style={{ width: 40 }} />
       </div>
       <div className="cnt">
@@ -4827,8 +4911,8 @@ function OnlineScreen({
           </div>
           {players.map(p => (
             <div key={p.uid} className="pi">
-              <div className={`pav ${p.uid === uid ? "pav-human" : "pav-guest"}`}>{(p.name || "?")[0]}</div>
-              <div><div className="pn">{p.name}{p.uid === uid ? " " + t("its_you_paren","(toi)") : ""}</div><div className="ps">📍 {p.country}</div></div>
+              <div className={`pav ${p.uid === myUid || p.uid === uid ? "pav-human" : "pav-guest"}`}>{(p.name || "?")[0]}</div>
+              <div><div className="pn">{p.name}{p.uid === myUid || p.uid === uid ? " " + t("its_you_paren","(toi)") : ""}</div><div className="ps">📍 {p.country}</div></div>
               {p.isHost && <span className="hbadge">{t("host")}</span>}
               {!p.isHost && p.ready && <span className="rbadge">{t("ready")}</span>}
               {!p.isHost && !p.ready && <span className="wbadge pulse">…</span>}
@@ -5004,17 +5088,21 @@ function GameScreen({
 
   // ── Listener Firebase pour sync lettre (mode online) ──────────
   useEffect(() => {
-    if (gameState.mode !== "online" || !gameState.roomCode) return;
+    if (!gameState.roomCode) return; // S'active si room Firebase présent
     const unsubscribe = FB.listenRoom(gameState.roomCode, (room) => {
       if (!room) return;
+      // Sync phase depuis Firebase (roulette → playing → round_results)
+      if (room.phase && room.phase !== gameState.phase) {
+        if (room.phase === "roulette") {
+          setGameState(g => ({ ...g, phase: "roulette", spinnerOrder: room.spinnerOrder || g.spinnerOrder, spinnerIndex: room.spinnerIndex || 0 }));
+        }
+        if (room.phase === "playing" && room.letter) {
+          setGameState(g => ({ ...g, phase: "playing", letter: room.letter, timeLeft: g.totalTime }));
+        }
+      }
       // Recevoir la lettre choisie par le host
-      if (room.letter && room.letter !== gameState.letter && room.phase === "playing") {
-        setGameState(g => ({
-          ...g,
-          letter: room.letter,
-          phase: "playing",
-          timeLeft: g.totalTime,
-        }));
+      if (room.letter && room.letter !== gameState.letter) {
+        setGameState(g => ({ ...g, letter: room.letter }));
       }
       // Recevoir les réponses des autres joueurs
       if (room.playerAnswers) {
@@ -5178,7 +5266,7 @@ function GameScreen({
           // Mettre à jour l'état local
           setGameState(g => ({ ...g, letter: l, phase: "playing", timeLeft: g.totalTime }));
           // En mode online: synchroniser la lettre sur Firebase pour tous les joueurs
-          if (gameState.mode === "online" && gameState.roomCode) {
+          if (gameState.roomCode) { // Mode en ligne détecté via roomCode
             try {
               await FB.updateRoom(gameState.roomCode, {
                 letter: l,
@@ -5297,11 +5385,11 @@ function GameScreen({
       {/* Stop bar */}
       <div className="sbar">
         {allFilled ? (
-          <button className="sbtn" style={{ background: "var(--gn)", boxShadow: "0 0 24px rgba(74,222,128,0.35)", letterSpacing: 1 }} onClick={handleStop}>
+          <button className="sbtn" style={{ background: "var(--gn)", boxShadow: "0 0 24px rgba(74,222,128,0.35)", letterSpacing: 1 }} onClick={() => { doneRef.current = false; handleStop(); }}>
             {t("filled_all")}
           </button>
         ) : (
-          <button className="sbtn" onClick={handleStop}>{t("stop_btn")}</button>
+          <button className="sbtn" onClick={() => { doneRef.current = false; handleStop(); }}>{t("stop_btn")}</button>
         )}
       </div>
     </div>
@@ -5865,84 +5953,108 @@ function LeaderboardScreen({ onClose, xp, playerName, lang, uid, tier }) {
   const t = useT(lang || "fr");
   const [tab, setTab] = useState("global");
   const [entries, setEntries] = useState([]);
+  const [tournoiEntries, setTournoiEntries] = useState([]);
   const [loading, setLoading] = useState(true);
   const tournament = getTournamentWeek();
   const levelInfo = getLevelInfo(xp || 0, lang);
+  const [, setTick] = useState(0);
 
-  // Charger le classement depuis Firebase
+  // Timer temps réel
+  useEffect(() => {
+    const id = setInterval(() => setTick(n => n+1), 1000);
+    return () => clearInterval(id);
+  }, []);
+
+  // Charger classements Firebase
   useEffect(() => {
     if (!uid) return;
+    // Sauvegarder le joueur courant
+    try {
+      if (typeof firebase !== "undefined" && firebase.apps?.length > 0) {
+        firebase.database().ref("leaderboard/" + uid).set({
+          name: playerName || "Joueur",
+          xp: xp || 0,
+          badge: levelInfo.badge,
+          country: "🌍",
+          updatedAt: Date.now(),
+        });
+      }
+    } catch(e) {}
 
-    // Sauvegarder le joueur actuel
-    const savePlayer = async () => {
-      try {
-        if (typeof firebase !== "undefined" && firebase.apps && firebase.apps.length > 0) {
-          const db = firebase.database();
-          await db.ref("leaderboard/" + uid).set({
-            name: playerName || t("ob5_placeholder","Joueur"),
-            xp: xp || 0,
-            badge: levelInfo.badge,
-            country: "🌍",
-            updatedAt: Date.now(),
-          });
-        }
-      } catch(e) {}
-    };
-    savePlayer();
-
-    // Écouter le classement en temps réel
-    const loadLeaderboard = async () => {
+    const loadData = async () => {
       setLoading(true);
       try {
-        if (typeof firebase !== "undefined" && firebase.apps && firebase.apps.length > 0) {
+        if (typeof firebase !== "undefined" && firebase.apps?.length > 0) {
           const db = firebase.database();
-          const snap = await db.ref("leaderboard")
-            .orderByChild("xp")
-            .limitToLast(50)
-            .once("value");
+          // Classement global
+          const snap = await db.ref("leaderboard").orderByChild("xp").limitToLast(50).once("value");
           const data = snap.val() || {};
           const list = Object.entries(data)
             .map(([id, v]) => ({ ...v, id, isMe: id === uid }))
             .sort((a, b) => b.xp - a.xp);
           setEntries(list);
+          // Classement tournoi de la semaine
+          const weekKey = "week_" + tournament.weekNum;
+          const tSnap = await db.ref("tournoi/" + weekKey).orderByChild("score").limitToLast(50).once("value");
+          const tData = tSnap.val() || {};
+          const tList = Object.entries(tData)
+            .map(([id, v]) => ({ ...v, id, isMe: id === uid }))
+            .sort((a, b) => b.score - a.score);
+          setTournoiEntries(tList);
         } else {
-          // Fallback données simulées
           setEntries(getMockLeaderboard(uid, playerName, xp, levelInfo));
+          setTournoiEntries([]);
         }
       } catch(e) {
         setEntries(getMockLeaderboard(uid, playerName, xp, levelInfo));
       }
       setLoading(false);
     };
-    loadLeaderboard();
-  }, [uid, xp]);
+    loadData();
+    // Listener temps réel pour le tournoi
+    let unsub = null;
+    try {
+      if (typeof firebase !== "undefined" && firebase.apps?.length > 0) {
+        const weekKey = "week_" + tournament.weekNum;
+        const ref = firebase.database().ref("tournoi/" + weekKey);
+        ref.on("value", snap => {
+          const data = snap.val() || {};
+          const list = Object.entries(data)
+            .map(([id, v]) => ({ ...v, id, isMe: id === uid }))
+            .sort((a, b) => b.score - a.score);
+          setTournoiEntries(list);
+        });
+        unsub = () => ref.off("value");
+      }
+    } catch(e) {}
+    return () => { if (unsub) unsub(); };
+  }, [uid, xp, tab]);
 
   const myRank = entries.findIndex(e => e.isMe) + 1;
+  const myTournoiRank = tournoiEntries.findIndex(e => e.isMe) + 1;
 
   return (
     <div className="profile-ov" onClick={onClose}>
       <div className="profile-panel" onClick={e => e.stopPropagation()}>
-
-        {/* Header */}
         <div style={{ background:"linear-gradient(135deg,var(--ac),var(--acl))", padding:"22px 20px 18px", borderRadius:"24px 24px 0 0", color:"#fff" }}>
           <div style={{ fontSize:11, opacity:.7, letterSpacing:1, textTransform:"uppercase", marginBottom:4 }}>🏆 {t("nav_rank")}</div>
-          <div style={{ fontSize:20, fontWeight:800 }}>{t("leaderboard_title","Classement Mondial")}</div>
-          {myRank > 0 && (
-            <div style={{ fontSize:13, opacity:.85, marginTop:4 }}>
-              {t("your_rank","Ta position")} : #{myRank} • {(xp||0).toLocaleString()} XP
-            </div>
+          <div style={{ fontSize:20, fontWeight:800 }}>{t("leaderboard_title","Classement")}</div>
+          {myRank > 0 && tab === "global" && (
+            <div style={{ fontSize:13, opacity:.85, marginTop:4 }}>Ta position : #{myRank} • {(xp||0).toLocaleString()} XP</div>
+          )}
+          {myTournoiRank > 0 && tab === "tournoi" && (
+            <div style={{ fontSize:13, opacity:.85, marginTop:4 }}>Ta position tournoi : #{myTournoiRank}</div>
           )}
         </div>
 
-        {/* Tabs */}
+        {/* Onglets */}
         <div style={{ display:"flex", borderBottom:"1px solid var(--br)", background:"var(--sf)" }}>
-          {[["global","🌍 Mondial"],["week","📅 Cette semaine"]].map(([id,label]) => (
+          {[["global","🌍 Mondial"],["tournoi","🏆 Tournoi"]].map(([id,label]) => (
             <button key={id} onClick={() => setTab(id)} style={{
               flex:1, padding:"12px 8px", fontSize:13, fontWeight: tab===id?700:500,
               color: tab===id?"var(--ac)":"var(--txm)",
               borderBottom: tab===id?"2px solid var(--ac)":"2px solid transparent",
-              background:"none", border:"none", borderBottom: tab===id?"2px solid var(--ac)":"2px solid transparent",
-              cursor:"pointer",
+              background:"none", border:"none", cursor:"pointer",
             }}>{label}</button>
           ))}
         </div>
@@ -5950,61 +6062,53 @@ function LeaderboardScreen({ onClose, xp, playerName, lang, uid, tier }) {
         <div className="profile-body">
 
           {/* Tournoi de la semaine */}
-          {tab === "week" && (
-            <div className="card" style={{ marginBottom:14, background:"linear-gradient(135deg,rgba(99,102,241,.12),rgba(139,92,246,.08))", border:"1px solid rgba(99,102,241,.2)" }}>
-              <div style={{ fontSize:12, fontWeight:700, color:"var(--ac)", marginBottom:4 }}>
-                🎯 {t("tournament_title","Tournoi de la semaine")}
-              </div>
-              <div style={{ display:"flex", alignItems:"center", gap:12 }}>
-                <div style={{ fontSize:36, fontWeight:900, fontFamily:"monospace", color:"var(--ac)" }}>{tournament.letter}</div>
+          {tab === "tournoi" && (
+            <div className="card" style={{ background:"linear-gradient(135deg,rgba(99,102,241,.1),rgba(139,92,246,.06))", border:"1px solid rgba(99,102,241,.2)", marginBottom:12 }}>
+              <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center" }}>
                 <div>
-                  <div style={{ fontSize:14, fontWeight:700 }}>{t("tournament_letter","Lettre du tournoi :")} {tournament.letter}</div>
-                  <div style={{ fontSize:12, color:"var(--txm)" }}>{t("tournament_ends","Se termine dans")} {tournament.endsIn} {t("tournament_days","jours")}</div>
+                  <div style={{ fontSize:13, fontWeight:800 }}>🏆 Lettre : {tournament.letter}</div>
+                  <div style={{ fontSize:11, color:"var(--txm)", marginTop:2 }}>
+                    {tournament.daysLeft > 0 ? `${tournament.daysLeft} jours restants` : `${String(tournament.hoursLeft).padStart(2,"0")}h${String(tournament.minsLeft).padStart(2,"0")}m`}
+                  </div>
+                  <div style={{ fontSize:11, color:"var(--ac)", fontWeight:700, marginTop:4 }}>🎁 Gagnant = 1 mois VIP offert !</div>
                 </div>
+                <div style={{ fontSize:42, fontWeight:900, fontFamily:"monospace", color:"var(--ac)", opacity:.4 }}>{tournament.letter}</div>
               </div>
             </div>
           )}
 
-          {/* Liste */}
+          {/* Liste classement */}
           {loading ? (
-            <div style={{ textAlign:"center", padding:"40px 0", color:"var(--txm)", fontSize:14 }}>
-              <div style={{ fontSize:32, marginBottom:8 }}>⏳</div>
-              {t("loading","Chargement...")}
-            </div>
+            <div style={{ textAlign:"center", padding:"30px 0", color:"var(--txm)" }}>⏳ Chargement...</div>
           ) : (
             <div style={{ display:"flex", flexDirection:"column", gap:6 }}>
-              {entries.slice(0, 50).map((entry, i) => (
+              {(tab === "global" ? entries : tournoiEntries).map((entry, i) => (
                 <div key={entry.id || i} style={{
                   display:"flex", alignItems:"center", gap:10,
                   padding:"10px 12px", borderRadius:"var(--r)",
                   background: entry.isMe ? "var(--acs)" : i < 3 ? "var(--sf2)" : "var(--sf)",
                   border: entry.isMe ? "1.5px solid var(--ac)" : "1px solid var(--br)",
                 }}>
-                  {/* Rang */}
                   <div style={{ width:28, textAlign:"center", fontWeight:800, fontSize:14,
                     color: i===0?"#fbbf24":i===1?"#94a3b8":i===2?"#cd7f32":"var(--txm)" }}>
                     {i===0?"🥇":i===1?"🥈":i===2?"🥉":`#${i+1}`}
                   </div>
-                  {/* Badge */}
                   <div style={{ fontSize:20 }}>{entry.badge || "⭐"}</div>
-                  {/* Nom */}
                   <div style={{ flex:1 }}>
                     <div style={{ fontSize:14, fontWeight: entry.isMe?700:500, color:"var(--tx)" }}>
-                      {entry.name}{entry.isMe ? ` ${t("its_you_paren","(toi)")}` : ""}
+                      {entry.name}{entry.isMe ? " (toi)" : ""}
                     </div>
-                    <div style={{ fontSize:11, color:"var(--txm)" }}>{entry.country}</div>
+                    <div style={{ fontSize:11, color:"var(--txm)" }}>{entry.country || "🌍"}</div>
                   </div>
-                  {/* XP */}
-                  <div style={{ fontSize:13, fontWeight:700, color:"var(--ac)" }}>
-                    {(entry.xp||0).toLocaleString()} XP
+                  <div style={{ fontSize:13, fontWeight:700, color:"var(--ac)", fontFamily:"monospace" }}>
+                    {tab === "global" ? `${(entry.xp||0).toLocaleString()} XP` : `${entry.score||0} pts`}
                   </div>
                 </div>
               ))}
-
-              {entries.length === 0 && (
-                <div style={{ textAlign:"center", padding:"40px 0", color:"var(--txm)" }}>
-                  <div style={{ fontSize:40, marginBottom:8 }}>🌍</div>
-                  <div style={{ fontSize:14 }}>{t("no_players","Sois le premier à jouer !")}</div>
+              {(tab === "global" ? entries : tournoiEntries).length === 0 && (
+                <div style={{ textAlign:"center", padding:"30px 0", color:"var(--txm)" }}>
+                  <div style={{ fontSize:36, marginBottom:8 }}>🏆</div>
+                  <div>{tab === "tournoi" ? "Sois le premier à jouer ce tournoi !" : "Aucun joueur encore"}</div>
                 </div>
               )}
             </div>
@@ -6017,6 +6121,18 @@ function LeaderboardScreen({ onClose, xp, playerName, lang, uid, tier }) {
       </div>
     </div>
   );
+}
+
+function getMockLeaderboard(uid, playerName, xp, levelInfo) {
+  const mock = [
+    { name:"Sophie L.", xp:8420, country:"🇫🇷", badge:"🔥", id:"m1" },
+    { name:"Karim B.",  xp:7650, country:"🇲🇦", badge:"👑", id:"m2" },
+    { name:"Lucas M.",  xp:6890, country:"🇧🇪", badge:"💎", id:"m3" },
+    { name:"Marie D.",  xp:5920, country:"🇫🇷", badge:"⭐", id:"m4" },
+    { name:"Amara S.",  xp:5100, country:"🇨🇮", badge:"🏆", id:"m5" },
+  ];
+  const player = { name: playerName||"Toi", xp: xp||0, country:"🌍", badge: levelInfo?.badge||"⭐", id: uid||"me", isMe:true };
+  return [...mock, player].sort((a,b) => b.xp - a.xp);
 }
 
 function getMockLeaderboard(uid, playerName, xp, levelInfo) {
