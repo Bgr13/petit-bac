@@ -3171,6 +3171,8 @@ const AI_ANSWERS = {
   personnage:{A:["alice","ariel","anakin","aragorn"],B:["bond","belle","bambi","batman"],C:["conan","cendrillon","captain jack","capitaine haddock"],D:["dory","dumbledore","darth vader","don quichotte"],E:["elsa","ethan hunt","emma bovary"],F:["frodo","frollo","forrest"],G:["groot","gollum","gaston","gandalf"],H:["hulk","hamlet","hermione","harry potter"],I:["ironman"],J:["joker","james bond","jean valjean"],K:["katniss","king kong"],L:["leia","luke","lolita","lecter"],M:["moana","merlin","matrice","magneto"],N:["neo","nemo"],O:[],P:["padme","potter","pinocchio"],R:["rocky","romeo","rapunzel"],S:["scar","simba","sherlock","scarlett"],T:["thor","thanos","terminator"],V:["vaiana","voldemort"]},
 };
 
+const DAILY_CAT_WORDS = {};
+
 function getAiAnswer(id, l, lang) {
   const dailyPool = DAILY_CAT_WORDS[id]?.[l] || [];
   if (dailyPool.length) return dailyPool[Math.floor(Math.random() * dailyPool.length)];
