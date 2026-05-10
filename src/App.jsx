@@ -1,4 +1,8 @@
 import { useState, useEffect, useRef, useCallback } from "react";
+// BUG 1 FIX: Import Firebase npm modular API
+import { initializeApp, getApps } from "firebase/app";
+import { getDatabase, ref as dbRef, set as dbSet, get as dbGet, update as dbUpdate, onValue as dbOnValue, query as dbQuery, orderByChild, equalTo } from "firebase/database";
+import { getAuth, signInAnonymously } from "firebase/auth";
 
 // ═══════════════════════════════════════════════════════════════════
 //  LE PETIT BAC — Application mobile (App Store / Google Play)
@@ -21,17 +25,21 @@ import { useState, useEffect, useRef, useCallback } from "react";
 // ═══════════════════════════════════════════════════════════════════
 
 // ─── CONFIG ──────────────────────────────────────────────────────
-// Colle ici ta config Firebase (voir guide)
+// Voir .env.example pour les variables d'environnement requises
 const FIREBASE_CONFIG = {
-  apiKey:            "REMOVED_SEE_ENV_FILE",
-  authDomain:        "petit-bac-997f9.firebaseapp.com",
-  databaseURL:       "https://petit-bac-997f9-default-rtdb.europe-west1.firebasedatabase.app",
-  projectId:         "petit-bac-997f9",
-  storageBucket:     "petit-bac-997f9.firebasestorage.app",
-  messagingSenderId: "652899543007",
-  appId:             "1:652899543007:web:27db958412e2203cdcc66a",
+  apiKey:            import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain:        import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  databaseURL:       import.meta.env.VITE_FIREBASE_DATABASE_URL,
+  projectId:         import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket:     import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId:             import.meta.env.VITE_FIREBASE_APP_ID,
 };
-const FIREBASE_READY = FIREBASE_CONFIG.apiKey !== "VOTRE_API_KEY";
+const FIREBASE_READY = !!(
+  FIREBASE_CONFIG.apiKey &&
+  FIREBASE_CONFIG.apiKey !== "VOTRE_API_KEY" &&
+  FIREBASE_CONFIG.apiKey !== "undefined"
+);
 
 
 // ─── INTERNATIONALISATION ────────────────────────────────────────
@@ -3707,31 +3715,19 @@ async function shareApp() {
   } catch(e) { return false; }
 }
 
-// ─── FIREBASE MOCK (used when config not set) ─────────────────────
-// In production, replace with real Firebase calls from firebase.js
+// ─── FIREBASE (npm modular API — BUG 1 FIX) ──────────────────────
 const FB = (() => {
   let db = null;
   let auth = null;
   let initialized = false;
 
-  // ── Initialisation lazy — attend que firebase SDK soit disponible ──
-  function init() {
-    if (initialized) return;
-    initialized = true;
+  if (FIREBASE_READY) {
     try {
-      if (typeof window !== "undefined" && typeof window.firebase !== "undefined" && FIREBASE_READY) {
-        const fb = window.firebase;
-        if (!fb.apps || fb.apps.length === 0) {
-          fb.initializeApp(FIREBASE_CONFIG);
-        }
-        db   = fb.database();
-        auth = fb.auth();
-        console.log("Firebase initialisé ✓");
-      } else {
-        console.warn("Firebase SDK non disponible, mode local activé");
-      }
+      const app = getApps().length === 0 ? initializeApp(FIREBASE_CONFIG) : getApps()[0];
+      db   = getDatabase(app);
+      auth = getAuth(app);
     } catch(e) {
-      console.warn("Firebase init failed:", e.message);
+      console.warn("Firebase init failed, using local mode:", e);
     }
   }
 
@@ -3743,8 +3739,8 @@ const FB = (() => {
       init();
       if (auth) {
         try {
-          const r = await auth.signInAnonymously();
-          return { uid: r.user.uid };
+          const result = await signInAnonymously(auth);
+          return { uid: result.user.uid };
         } catch(e) {}
       }
       return { uid: "local_" + Math.random().toString(36).substring(2, 9) };
@@ -3753,7 +3749,7 @@ const FB = (() => {
     async createRoom(code, data) {
       init();
       if (db) {
-        await db.ref("rooms/" + code).set(data);
+        await dbSet(dbRef(db, "rooms/" + code), data);
         return code;
       }
       local.rooms[code] = JSON.parse(JSON.stringify(data));
@@ -3764,10 +3760,9 @@ const FB = (() => {
       init();
       if (db) {
         try {
-          const snap = await db.ref("rooms/" + code).once("value");
+          const snap = await dbGet(dbRef(db, "rooms/" + code));
           return snap.val();
         } catch(e) {
-          console.error("Firebase getRoom error:", e);
           if (e.code === "PERMISSION_DENIED") {
             throw new Error("Accès Firebase refusé. Configure les règles: rules > rooms > .read: true");
           }
@@ -3780,7 +3775,7 @@ const FB = (() => {
     async updateRoom(code, updates) {
       init();
       if (db) {
-        await db.ref("rooms/" + code).update(updates);
+        await dbUpdate(dbRef(db, "rooms/" + code), updates);
         return;
       }
       if (!local.rooms[code]) return;
@@ -3791,9 +3786,9 @@ const FB = (() => {
     listenRoom(code, cb) {
       init();
       if (db) {
-        const ref = db.ref("rooms/" + code);
-        ref.on("value", snap => { if (snap.val()) cb(snap.val()); });
-        return () => ref.off("value");
+        const roomRef = dbRef(db, "rooms/" + code);
+        const unsubscribe = dbOnValue(roomRef, snap => { if (snap.val()) cb(snap.val()); });
+        return unsubscribe;
       }
       local.listeners[code] = cb;
       if (local.rooms[code]) cb(JSON.parse(JSON.stringify(local.rooms[code])));
@@ -3801,11 +3796,10 @@ const FB = (() => {
     },
 
     async findPublicRoom(country) {
-      init();
       if (db) {
-        const snap = await db.ref("rooms")
-          .orderByChild("status").equalTo("waiting")
-          .once("value");
+        const roomsRef = dbRef(db, "rooms");
+        const waitingQuery = dbQuery(roomsRef, orderByChild("status"), equalTo("waiting"));
+        const snap = await dbGet(waitingQuery);
         const rooms = snap.val() || {};
         for (const [code, room] of Object.entries(rooms)) {
           if (room.type === "public" &&
@@ -3831,19 +3825,8 @@ const FB = (() => {
 // ─── ANALYTICS ──────────────────────────────────────────────────────
 function logEvent(eventName, params) {
   try {
-    if (typeof firebase === "undefined") return;
-    if (!firebase.apps || firebase.apps.length === 0) return;
-    const db = firebase.database();
-    const date = new Date().toISOString().split("T")[0];
-    // Compteurs par jour
-    db.ref("analytics/events/" + date + "/" + eventName)
-      .transaction(val => (val || 0) + 1);
-    // Joueurs actifs
-    if (params && params.uid) {
-      db.ref("analytics/active/" + date + "/" + params.uid).set({
-        lastSeen: Date.now(),
-        ...(params.playerName ? { name: params.playerName } : {}),
-      });
+    if (import.meta.env.DEV) {
+      console.log("[Analytics]", eventName, params);
     }
   } catch(e) {}
 }
@@ -3948,12 +3931,24 @@ export default function App() {
     return { difficulty:"medium", categories:FREE_CATS.map(c=>c.id), customCategories:[], playerName:savedName, country:"France", totalRounds:5, soundEnabled:true };
   });
   const [gameState, setGameState] = useState(null);
-  const [stats, setStats] = useState({
-    played: 0, won: 0, best: 0, total: 0,
-    streak: 0, totalWords: 0, uniqueWords: 0,
+  // BUG 3 FIX: Initialize from localStorage
+  const [stats, setStats] = useState(() => {
+    try {
+      const saved = localStorage.getItem("pb_stats");
+      return saved ? JSON.parse(saved) : { played: 0, won: 0, best: 0, total: 0, streak: 0, totalWords: 0, uniqueWords: 0 };
+    } catch(e) {
+      return { played: 0, won: 0, best: 0, total: 0, streak: 0, totalWords: 0, uniqueWords: 0 };
+    }
   });
-  const [xp, setXp] = useState(0);
-  const [unlockedBadges, setUnlockedBadges] = useState([]);
+  const [xp, setXp] = useState(() => {
+    try { return Number(localStorage.getItem("pb_xp")) || 0; } catch(e) { return 0; }
+  });
+  const [unlockedBadges, setUnlockedBadges] = useState(() => {
+    try {
+      const saved = localStorage.getItem("pb_badges");
+      return saved ? JSON.parse(saved) : [];
+    } catch(e) { return []; }
+  });
   const [newBadges, setNewBadges] = useState([]); // badges just unlocked → show notification
   const [showTier, setShowTier] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
@@ -3961,7 +3956,9 @@ export default function App() {
   const [showLeaderboard, setShowLeaderboard] = useState(false);
   const [showThemes, setShowThemes] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
-  const [dailyPlayed, setDailyPlayed] = useState(null);
+  const [dailyPlayed, setDailyPlayed] = useState(() => {
+    try { return JSON.parse(localStorage.getItem("pb_daily")); } catch(e) { return null; }
+  });
   const [showBugReport, setShowBugReport] = useState(false);
   const [showRateApp, setShowRateApp] = useState(false);
   const [showShare, setShowShare] = useState(false);
@@ -3970,8 +3967,12 @@ export default function App() {
   const [profilePhoto, setProfilePhoto] = useState(null); // { type, data/emoji, bg }
   const [uid, setUid] = useState(null);
   // Profile data
-  const [wordHistory, setWordHistory] = useState([]);
-  const [catHistory, setCatHistory] = useState({});
+  const [wordHistory, setWordHistory] = useState(() => {
+    try { return JSON.parse(localStorage.getItem("pb_words") || "[]"); } catch(e) { return []; }
+  });
+  const [catHistory, setCatHistory] = useState(() => {
+    try { return JSON.parse(localStorage.getItem("pb_cats") || "{}"); } catch(e) { return {}; }
+  });
 
   useEffect(() => {
     FB.signIn().then(u => setUid(u.uid));
@@ -4155,8 +4156,97 @@ export default function App() {
         return { team0: playerIds.slice(0, half), team1: playerIds.slice(half) };
       })() : null,
       isHost: roomData.hostId === uid,
+      lang: lang, // BUG 6 FIX: include lang in online game state
     });
     setScreen("game");
+  }
+
+  // BUG 2 FIX: handleGameEnd updates stats, XP, badges and persists to localStorage
+  function handleGameEnd(gs) {
+    setGameState(gs);
+    setScreen("results");
+
+    const myId = gs.myId || uid || "human";
+    const myScore = gs.cumulativeScores?.[myId] || 0;
+    const allScores = Object.values(gs.cumulativeScores || {});
+    const maxScore = Math.max(...allScores);
+    const won = myScore >= maxScore && allScores.filter(s => s === maxScore).length === 1;
+
+    // Collect words submitted this game
+    const newWords = [];
+    (gs.rounds || []).forEach(round => {
+      Object.entries(round.answers || {}).forEach(([catId, catAnswers]) => {
+        const a = catAnswers?.[myId];
+        if (a?.trim()) newWords.push(a.trim().toLowerCase());
+      });
+    });
+    const wordsThisGame = newWords.length;
+
+    // Update word history
+    setWordHistory(prev => {
+      const next = [...prev, ...newWords].slice(-200);
+      try { localStorage.setItem("pb_words", JSON.stringify(next)); } catch(e) {}
+      return next;
+    });
+
+    // Update category history
+    const catCounts = {};
+    (gs.categories || []).forEach(c => { catCounts[c.id] = (catCounts[c.id] || 0) + 1; });
+    setCatHistory(prev => {
+      const next = { ...prev };
+      Object.entries(catCounts).forEach(([id, n]) => { next[id] = (next[id] || 0) + n; });
+      try { localStorage.setItem("pb_cats", JSON.stringify(next)); } catch(e) {}
+      return next;
+    });
+
+    setStats(prev => {
+      const newStreak = won ? (prev.streak || 0) + 1 : 0;
+      const updated = {
+        played: (prev.played || 0) + 1,
+        won: (prev.won || 0) + (won ? 1 : 0),
+        best: Math.max(prev.best || 0, myScore),
+        total: (prev.total || 0) + myScore,
+        streak: newStreak,
+        totalWords: (prev.totalWords || 0) + wordsThisGame,
+        uniqueWords: prev.uniqueWords || 0,
+      };
+      try { localStorage.setItem("pb_stats", JSON.stringify(updated)); } catch(e) {}
+      return updated;
+    });
+
+    const xpGain = calcXpGain(myScore, won, gs.totalRounds || 1);
+    setXp(prev => {
+      const newXp = (prev || 0) + xpGain;
+      try { localStorage.setItem("pb_xp", String(newXp)); } catch(e) {}
+      return newXp;
+    });
+
+    // Check for new badges
+    setStats(currentStats => {
+      const newlyUnlocked = BADGE_DEFS.filter(b =>
+        !unlockedBadges.includes(b.id) && b.check(currentStats)
+      ).map(b => b.id);
+      if (newlyUnlocked.length > 0) {
+        setUnlockedBadges(prev => {
+          const updated = [...new Set([...prev, ...newlyUnlocked])];
+          try { localStorage.setItem("pb_badges", JSON.stringify(updated)); } catch(e) {}
+          return updated;
+        });
+        setNewBadges(newlyUnlocked);
+        setTimeout(() => setNewBadges([]), 4000);
+      }
+      return currentStats;
+    });
+
+    // Mark daily as played
+    if (gs.isDaily) {
+      const { todayKey } = getDailyChallenge();
+      const entry = { todayKey, score: myScore };
+      setDailyPlayed(entry);
+      try { localStorage.setItem("pb_daily", JSON.stringify(entry)); } catch(e) {}
+    }
+
+    logEvent("game_end", { uid, mode: gs.mode, score: myScore, won });
   }
 
   return (
@@ -4183,10 +4273,10 @@ export default function App() {
           lang={lang}
         />}
         {screen === "setup"   && <SetupScreen mode={gameState?.mode} settings={settings} setSettings={setSettings} onStart={startSoloGame} onBack={() => setScreen("home")} tier={tier} onTier={() => setShowTier(true)} lang={lang} />}
-        {screen === "online"  && <OnlineScreen uid={uid} settings={settings} setSettings={setSettings} onEnterGame={enterOnlineGame} onBack={() => setScreen("home")} tier={tier} lang={lang} gameMode={gameState?.mode || "solo"} />}
-        {screen === "game"    && gameState && <GameScreen gameState={gameState} setGameState={setGameState} uid={uid} lang={lang} onEndGame={(gs) => { setGameState(gs); setScreen("results"); }} />}
+        {screen === "online"  && <OnlineScreen uid={uid} settings={settings} setSettings={setSettings} onEnterGame={enterOnlineGame} onBack={() => setScreen("home")} tier={tier} lang={lang} />}
+        {screen === "game"    && gameState && <GameScreen gameState={gameState} setGameState={setGameState} uid={uid} lang={lang} onEndGame={handleGameEnd} />}
         {screen === "results" && gameState && <FinalResultsScreen gameState={gameState} onPlayAgain={() => setScreen("setup")} onHome={() => setScreen("home")} uid={uid} lang={lang} />}
-        {screen !== "game" && <BottomNav tab={tab} setTab={setTab} setScreen={setScreen} onLeaderboard={() => setShowLeaderboard(true)} lang={lang} />}
+        {screen !== "game" && <BottomNav tab={tab} setTab={setTab} setScreen={setScreen} setGameState={setGameState} onLeaderboard={() => setShowLeaderboard(true)} lang={lang} />}
       </div>
       {showTier && <TierModal current={tier} onSelect={t => { setTier(t); setShowTier(false); }} onClose={() => setShowTier(false)} lang={lang} />}
       {showProfile && <ProfilePanel stats={stats} xp={xp} playerName={settings.playerName} wordHistory={wordHistory} catHistory={catHistory} tier={tier} unlockedBadges={unlockedBadges} onClose={() => setShowProfile(false)} onLeaderboard={() => { setShowProfile(false); setShowLeaderboard(true); }} onThemes={() => { setShowProfile(false); setShowThemes(true); }} onEditProfile={() => { setShowProfile(false); setShowProfilePhoto(true); }}
@@ -4194,7 +4284,13 @@ export default function App() {
           onRateApp={() => { setShowProfile(false); setShowRateApp(true); }}
           onBugReport={() => { setShowProfile(false); setShowBugReport(true); }}
           lang={lang} />}
-      {showOnboarding && <OnboardingScreen onDone={(name) => { setSettings(s => ({ ...s, playerName: name || t("ob5_placeholder","Joueur") })); setShowOnboarding(false); }} lang={lang} />}
+      {showOnboarding && <OnboardingScreen onDone={(name) => {
+          const finalName = name || t("ob5_placeholder","Joueur");
+          setSettings(s => ({ ...s, playerName: finalName }));
+          // BUG 10 FIX: persist name to localStorage
+          try { localStorage.setItem("pb_name", finalName); } catch(e) {}
+          setShowOnboarding(false);
+        }} lang={lang} />}
       {showLeaderboard && <LeaderboardScreen onClose={() => setShowLeaderboard(false)} playerName={settings.playerName} xp={xp} stats={stats} lang={lang} />}
       {showThemes && <ThemesScreen current={theme} onSelect={t => { setTheme(t); applyTheme(t); setShowThemes(false); }} onClose={() => setShowThemes(false)} tier={tier} onTier={() => { setShowThemes(false); setShowTier(true); }} lang={lang} />}
       {newBadges.length > 0 && <BadgeNotification badges={newBadges} lang={lang} />}
@@ -4967,7 +5063,10 @@ function SetupScreen({
     <div style={{ display: "flex", flexDirection: "column", height: "100vh" }}>
       <div className="hdr">
         <button className="btn bs bsm" onClick={onBack} style={{ width: "auto" }}>{t("back_btn")}</button>
-        <span style={{ fontWeight: 700, fontSize: 14 }}>{t("solo_vs_ia2")}</span>
+        <span style={{ fontWeight: 700, fontSize: 14 }}>
+          {/* BUG 5 FIX: dynamic title based on mode */}
+          {({ solo: t("solo_vs_ia2"), "2v2": t("mode_2v2"), mort: t("mort_subite"), online: t("play_online") }[mode] || t("solo_vs_ia2"))}
+        </span>
         <div style={{ width: 55 }} />
       </div>
       <div className="cnt" style={{ overflowY: "auto" }}>
@@ -5164,11 +5263,20 @@ function GameScreen({
     const roundValidity = {};
 
     gs.categories.forEach(cat => {
-      const allAns = gs.players.map(p => p.isBot ? (p.answers?.[cat.id] || "") : (gs.answers?.[cat.id] || ""));
+      // BUG 4 FIX: each player's answer comes from p.answers for bots and online players,
+      // and from gs.answers only for the local human player
+      const myId = gs.myId;
+      const allAns = gs.players.map(p => {
+        if (p.isBot) return p.answers?.[cat.id] || "";
+        if (p.id === myId) return gs.answers?.[cat.id] || "";
+        return p.answers?.[cat.id] || ""; // other online human players
+      });
       roundAnswers[cat.id] = {};
       roundValidity[cat.id] = {};
       gs.players.forEach(p => {
-        const mine = p.isBot ? (p.answers?.[cat.id] || "") : (gs.answers?.[cat.id] || "");
+        const mine = (p.isBot || p.id !== myId)
+          ? (p.answers?.[cat.id] || "")
+          : (gs.answers?.[cat.id] || "");
         const pts = scoreAnswer(mine, allAns, cat.id, gs.letter, gs.lang || "fr");
         roundScores[p.id] += pts > 0 ? pts : 0;
         roundAnswers[cat.id][p.id] = mine;
@@ -5335,7 +5443,7 @@ function GameScreen({
                 value={val}
                 onChange={e => upd(cat.id, e.target.value)}
                 placeholder={`${letter}…`}
-                autoComplete="off" autoCorrect="off" autoCapitalize="none" spellCheck="false"
+                autoComplete="off" autoCorrect="off" autoCapitalize="characters" spellCheck="false"
                 onKeyDown={e => {
                   if (e.key === "Enter") {
                     const nx = categories[i + 1];
@@ -5470,8 +5578,9 @@ function RoundResultsOverlay({
             </div>
           );
         })()}
+        {/* BUG 8 FIX: use t("round_label") instead of hardcoded "Round" */}
         <button className="btn bp" style={{ marginTop: 8 }} onClick={onNext}>
-          ▶ Round {currentRound + 1} / {totalRounds}
+          ▶ {t("round_label")} {currentRound + 1} / {totalRounds}
         </button>
       </div>
     </div>
@@ -5523,7 +5632,8 @@ function FinalResultsScreen({ gameState, onPlayAgain, onHome, uid, lang }) {
     const inventifId = Object.entries(avgWordLen).sort((a,b) => b[1]-a[1])[0]?.[0];
     const inventif = players.find(p => p.id === inventifId);
     if (inventif && inventifId !== fastestId) {
-      awards.push({ player: inventif, icon: "🎨", title: t("award_creative"), desc: `Mots de ${avgWordLen[inventifId].toFixed(1)} lettres en moyenne` });
+      // BUG 9 FIX: use t("award_avglen_desc") instead of hardcoded French
+      awards.push({ player: inventif, icon: "🎨", title: t("award_creative"), desc: `${avgWordLen[inventifId].toFixed(1)} ${t("award_avglen_desc")}` });
     }
 
     // 4. 🦁 Le plus courageux → most answers submitted (never left blank)
@@ -6788,20 +6898,24 @@ ${EMAIL}
   );
 }
 
-function BottomNav({ tab, setTab, setScreen, onLeaderboard, lang }) {
+function BottomNav({ tab, setTab, setScreen, setGameState, onLeaderboard, lang }) {
   const t = useT(lang || "fr");
-  const items = [
-    ["home","🏠",t("nav_home"),"home"],
-    ["play","🎮",t("nav_play"),"setup"],
-    ["online","🌐",t("nav_online"),"online"]
-  ];
   return (
     <nav className="bnav">
-      {items.map(([id,icon,label,sc]) => (
-        <button key={id} className={`nb ${tab===id?"active":""}`} onClick={() => { setTab(id); setScreen(sc); }}>
-          <span className="ni">{icon}</span>{label}
-        </button>
-      ))}
+      <button className={`nb ${tab==="home"?"active":""}`} onClick={() => { setTab("home"); setScreen("home"); }}>
+        <span className="ni">🏠</span>{t("nav_home")}
+      </button>
+      {/* BUG 12 FIX: "play" sets gameState.mode to "solo" before going to setup */}
+      <button className={`nb ${tab==="play"?"active":""}`} onClick={() => {
+        setTab("play");
+        if (setGameState) setGameState(prev => ({ ...prev, mode: "solo" }));
+        setScreen("setup");
+      }}>
+        <span className="ni">🎮</span>{t("nav_play")}
+      </button>
+      <button className={`nb ${tab==="online"?"active":""}`} onClick={() => { setTab("online"); setScreen("online"); }}>
+        <span className="ni">🌐</span>{t("nav_online")}
+      </button>
       <button className={`nb ${tab==="rank"?"active":""}`} onClick={() => { setTab("rank"); onLeaderboard(); }}>
         <span className="ni">🏆</span>{t("nav_rank")}
       </button>
