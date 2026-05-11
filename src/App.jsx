@@ -169,6 +169,20 @@ const TRANSLATIONS = {
     fastest_desc: "Celui qui a trouvé le plus de réponses uniques",
     shuffle_teams: "Mélanger les équipes",
     choose_teams: "Choisir les équipes",
+    cats_per_round: "Catégories par manche",
+    team_red: "🔴 Équipe Rouge",
+    team_blue: "🔵 Équipe Bleu",
+    team_green: "🟢 Équipe Verte",
+    assign_teams: "Former les équipes",
+    vote_phase_title: "Vote — Catégorie perso",
+    vote_validate: "Valider ✓",
+    vote_reject: "Invalide ✗",
+    vote_waiting: "En attente des votes…",
+    vote_result_ok: "✅ Validée (majorité)",
+    vote_result_tie: "⚖️ Égalité — 1 pt",
+    vote_result_no: "❌ Refusée",
+    vote_submit: "Confirmer mes votes",
+    vote_info: "Votez pour valider les réponses des catégories créées par l'hôte",
     unlock_pro: "Débloquer PRO",
     en_ligne: "En ligne",
     vs_bots: "vs Bots",
@@ -478,6 +492,20 @@ const TRANSLATIONS = {
     fastest_desc: "Player with most unique answers",
     shuffle_teams: "Shuffle teams",
     choose_teams: "Choose teams",
+    cats_per_round: "Categories per round",
+    team_red: "🔴 Red Team",
+    team_blue: "🔵 Blue Team",
+    team_green: "🟢 Green Team",
+    assign_teams: "Form teams",
+    vote_phase_title: "Vote — Custom category",
+    vote_validate: "Valid ✓",
+    vote_reject: "Invalid ✗",
+    vote_waiting: "Waiting for votes…",
+    vote_result_ok: "✅ Validated (majority)",
+    vote_result_tie: "⚖️ Tie — 1 pt",
+    vote_result_no: "❌ Rejected",
+    vote_submit: "Submit my votes",
+    vote_info: "Vote to validate answers for host's custom categories",
     unlock_pro: "Unlock PRO",
     en_ligne: "Online",
     vs_bots: "vs Bots",
@@ -787,6 +815,20 @@ const TRANSLATIONS = {
     fastest_desc: "Jugador con más respuestas únicas",
     shuffle_teams: "Mezclar equipos",
     choose_teams: "Elegir equipos",
+    cats_per_round: "Categorías por ronda",
+    team_red: "🔴 Equipo Rojo",
+    team_blue: "🔵 Equipo Azul",
+    team_green: "🟢 Equipo Verde",
+    assign_teams: "Formar equipos",
+    vote_phase_title: "Voto — Categoría personalizada",
+    vote_validate: "Válido ✓",
+    vote_reject: "Inválido ✗",
+    vote_waiting: "Esperando votos…",
+    vote_result_ok: "✅ Validada (mayoría)",
+    vote_result_tie: "⚖️ Empate — 1 pt",
+    vote_result_no: "❌ Rechazada",
+    vote_submit: "Confirmar mis votos",
+    vote_info: "Vota para validar las respuestas de las categorías creadas por el anfitrión",
     unlock_pro: "Desbloquear PRO",
     en_ligne: "En línea",
     vs_bots: "vs Bots",
@@ -1183,6 +1225,16 @@ function normalizeWord(w) {
     .normalize("NFD").replace(/[\u0300-\u036f]/g, "") // accents
     .replace(/[-''\u2019\s]+/g, " ")                  // tirets/apostrophes → espace
     .trim();
+}
+
+// Collapse consecutive duplicate letters: "balle" -> "bale", "football" -> "fotbal"
+function collapseDoubles(s) {
+  return s.replace(/(.)+/g, "$1");
+}
+
+// Remove spaces for compound word matching: "jean pierre" -> "jeanpierre"
+function normalizeCompact(s) {
+  return normalizeWord(s).replace(/ /g, "");
 }
 
 // ─── DICTIONNAIRE DE MOTS VALIDES (enrichi) ────────────────────────
@@ -1897,28 +1949,32 @@ function getSets(lang) {
 
 const VALID_WORDS_EN = {
   prenom:{
-    A:["aaron","abby","abel","abigail","adam","adele","adrian","adriana","aiden","alan","alex","alexa","alexander","alexia","alice","alicia","alison","allison","amber","amelia","amy","andrew","andy","angela","anna","anne","anthony","ashley","austin"],
-    B:["barbara","benjamin","bethany","bianca","bobby","brandon","brian","brittany","brooke","bryan","brianna"],
-    C:["caleb","cameron","chloe","christian","christopher","claire","cole","connie","cora","crystal","cynthia"],
-    D:["dakota","daniel","danielle","david","dawn","deborah","diana","dominic","donna","dylan"],
-    E:["eleanor","elizabeth","ella","emily","emma","eric","ethan","evan","evelyn"],
-    F:["faith","fiona","frank","freddie"],
-    G:["gabriel","george","georgia","grace","grant","gregory"],
-    H:["hailey","hannah","henry","holly","hunter"],
-    I:["ian","isabella","ivy"],
-    J:["jack","jackson","jacob","jake","james","jane","jason","jennifer","jessica","john","jonathan","jordan","joseph","julia","justin"],
-    K:["karen","kate","katherine","kaylee","kelly","kevin","kimberly","kylie"],
-    L:["laura","lauren","leah","liam","lily","lisa","logan","lucy","luke"],
-    M:["madeleine","madison","margaret","mark","mary","matthew","michael","michelle","mike","molly","morgan"],
-    N:["natalie","nathan","nicholas","nicole","noah","nora"],
-    O:["olivia","owen"],
-    P:["pamela","patrick","paul","peter","phillip"],
-    R:["rachel","rebecca","richard","robert","ryan"],
-    S:["samantha","sarah","scott","sean","sierra","sophia","stephanie","steven","susan"],
-    T:["taylor","thomas","timothy","tiffany","tyler"],
-    V:["vanessa","victor","victoria","violet"],
-    W:["william","wyatt"],
-    Z:["zachary","zoe"]
+    A:["aaron","abby","abel","abigail","adam","adele","adrian","adriana","aiden","alan","alex","alexa","alexander","alexia","alice","alicia","alison","allison","amber","amelia","amy","andrew","andy","angela","anna","anne","anthony","ashley","austin","abigail","aiden","alicia","alyssa","amber","amelia","amy","april","aria","ariana","ariel","audrey","autumn","avery"],
+    B:["barbara","benjamin","bethany","bianca","bobby","brandon","brian","brittany","brooke","bryan","brianna","beatrice","bella","blake","bobby","bonnie","brady","brantley","brayden","brenda","brett","bridget","britney","brock","brodie","brooklyn"],
+    C:["caleb","cameron","chloe","christian","christopher","claire","cole","connie","cora","crystal","cynthia","callie","camille","caroline","carter","cassandra","cassidy","chad","charlie","chase","chelsea","chester","cody","colby","colin","colleen","conner","cooper","courtney"],
+    D:["dakota","daniel","danielle","david","dawn","deborah","diana","dominic","donna","dylan","daisy","dallas","dalton","damian","damon","danika","daphne","darcy","darlene","darren","dawson","deanna","delaney","demi","denise","destiny","devlin","devin","dixie","dominique","donovan","dorian","dorothy","douglas","drew"],
+    E:["eleanor","elizabeth","ella","emily","emma","eric","ethan","evan","evelyn","edgar","edith","elena","eli","elias","elijah","elise","eliza","ellie","elsie","emerson","emery","emilia","emilio","emmy","erica","erin","esther","eugenia"],
+    F:["faith","fiona","frank","freddie","farrah","felix","finley","finn","flora","florence","floyd","frances","francesca","fredrick","freya"],
+    G:["gabriel","george","georgia","grace","grant","gregory","gabrielle","gavin","gemma","gianna","gideon","gillian","gina","giovanna","giselle","glen","gloria","gordon","graham","grayson","guinevere","gunnar","gustavo","gwen"],
+    H:["hailey","hannah","henry","holly","hunter","hadley","harley","harmony","harriet","hazel","heather","heidi","helen","hilary","holden","hope","houston","hudson","hugo","humphrey"],
+    I:["ian","isabella","ivy","ignacio","iliana","imogen","india","ingrid","iris","irving","isabel","isadora","isaiah"],
+    J:["jack","jackson","jacob","jake","james","jane","jason","jennifer","jessica","john","jonathan","jordan","joseph","julia","justin","jacinta","jasmine","jayden","jean","jenna","jerome","joel","johanna","jonah","jose","josie","joyce","julian","juliet","june"],
+    K:["karen","kate","katherine","kaylee","kelly","kevin","kimberly","kylie","kai","kaley","kara","karla","katelyn","katrina","kayla","keira","keisha","kelsey","kendall","kendra","kenley","kennedy","kieran","kim","king"],
+    L:["laura","lauren","leah","liam","lily","lisa","logan","lucy","luke","laila","lance","lane","latoya","leandra","leon","leticia","lewis","lia","lila","lincoln","lindsey","linnea","liza","lola","lora","lorena","lori","lorraine","lou","louisa","luc","lucia","lydia","lyric"],
+    M:["madeleine","madison","margaret","mark","mary","matthew","michael","michelle","mike","molly","morgan","mabel","macy","mae","malachi","malcolm","malia","marcella","marco","marcos","marilyn","mario","marlene","marquise","mason","matilda","max","maxwell","maya","megan","melanie","melissa","mia","miles","miranda","miriam","mitchell","monica"],
+    N:["natalie","nathan","nicholas","nicole","noah","nora","nancy","naomi","nathalie","neil","nelson","nerissa","nina","noelle","nolan"],
+    O:["olivia","owen","ocean","octavia","odessa","olive","omar","orion","oscar","oswald"],
+    P:["pamela","patrick","paul","peter","phillip","paige","paloma","parker","paula","penny","peyton","phoebe","pierce","pippa","porter","pressley","presley","priya"],
+    Q:["quinn","quentin","queen"],
+    R:["rachel","rebecca","richard","robert","ryan","rafferty","raina","ramona","rand","raven","ray","raymond","reagan","reed","reese","reid","remi","rhett","rhiannon","riley","rita","robyn","roman","rosa","roxanne","ruby","ruth"],
+    S:["samantha","sarah","scott","sean","sierra","sophia","stephanie","steven","susan","sabrina","sage","saige","sandy","sara","savannah","scarlett","selena","selina","serenity","seth","sienna","simon","skai","skylar","sloane","stella","summer","sydney"],
+    T:["taylor","thomas","timothy","tiffany","tyler","talia","tamara","tara","tatum","tess","theo","tia","tobias","toby","tonya","travis","trevor","trey","trinity","tristan","troy"],
+    U:["ulysses","ursula","uma","unity"],
+    V:["vanessa","victor","victoria","violet","valentina","valeria","valerie","venice","venus","veronica","vince","virginia","vivian","vladislav"],
+    W:["william","wyatt","wade","wanda","warren","waverly","wendy","wes","weston","whitney","will","willow","winston","wren"],
+    X:["xavier","xena","xiomara"],
+    Y:["yara","yasmine","yolanda","yosef"],
+    Z:["zachary","zoe","zayne","zelda","zion","zoe"]
   },
   pays:{
 
@@ -1953,7 +2009,25 @@ const VALID_WORDS_EN = {
     E:["edinburgh","eindhoven"],
     F:["florence","frankfurt","freetown","fukuoka","fez"],
     G:["geneva","glasgow","guangzhou","guadalajara","gothenburg","guayaquil"],
-    H:["hamburg","hanoi","harare","havana","helsinki","hong kong","houston","hyderabad","haifa"]
+    H:["hamburg","hanoi","harare","havana","helsinki","hong kong","houston","hyderabad","haifa"],
+    I:["istanbul","islamabad"],
+    J:["jakarta","jerusalem","johannesburg","jeddah"],
+    K:["kabul","kampala","karachi","kathmandu","khartoum","kigali","kingston","kinshasa","kuala lumpur","kiev"],
+    L:["lagos","lima","lisbon","london","los angeles","la paz","lahore","libreville","lome","luanda","lusaka","luxemburg"],
+    M:["madrid","manila","marseille","medellin","milan","minsk","mogadishu","monrovia","montevideo","montreal","moscow","mumbai","munich"],
+    N:["nairobi","nassau","niamey","new york","new delhi","nouakchott","naples"],
+    O:["oslo","ottawa","osaka","ouagadougou"],
+    P:["paris","phnom penh","prague","pretoria","panama city","palermo","porto"],
+    Q:["quito","quezon city"],
+    R:["rabat","reykjavik","riga","riyadh","rio de janeiro","rome","rotterdam","rangoon"],
+    S:["santiago","sao paulo","sarajevo","seattle","seoul","shanghai","singapore","sofia","stockholm","sydney","salt lake city","san francisco","santo domingo"],
+    T:["taipei","tashkent","tbilisi","tegucigalpa","tehran","tokyo","toronto","tripoli","tunis","tallinn"],
+    U:["ulaanbaatar","utrecht"],
+    V:["vancouver","vienna","vilnius","vladivostok","valencia"],
+    W:["warsaw","washington","windhoek","wellington","wuhan"],
+    X:["xian","xiamen"],
+    Y:["yangon","yaounde","yerevan","yokohama"],
+    Z:["zurich","zagreb","zanzibar"]
   },
   animal:{
 
@@ -2069,7 +2143,8 @@ const VALID_WORDS_EN = {
     K:["karate","kayaking","kendo","kickboxing","kitesurfing"],
     L:["lacrosse","luge"],
     M:["marathon","mixed martial arts","motocross","mountain biking","muay thai"],
-    N:["nordic skiing"],
+    N:["nordic skiing","netball"],
+    O:["orienteering","open water swimming"],
     P:["paddle","paintball","parachuting","parkour","pole vault","polo"],
     R:["rafting","rallying","roller derby","rowing","rugby","running"],
     S:["sailing","skateboarding","skiing","skydiving","snowboarding","soccer","softball","squash","surfing","swimming"],
@@ -2491,7 +2566,7 @@ const VALID_WORDS_EN = {
     W:["wifi","web","website"],},
   danse:{
 
-    A:["adagio","arabesque"],
+    A:["adagio","arabesque","afrobeat"],
     B:["ballet","ballroom","bolero","breakdance"],
     C:["cha cha","charleston","contemporary","capoeira","cabaret"],
     D:["disco"],
@@ -2577,27 +2652,32 @@ const VALID_WORDS_EN = {
 
 const VALID_WORDS_ES = {
   prenom:{
-    A:["aaron","abigail","abraham","adela","adriana","agustin","alba","alberto","alejandro","alex","alfredo","alicia","alonso","alvaro","amalia","amelia","ana","andres","angela","antonio","arturo"],
-    B:["barbara","beatriz","benjamin","blanca","borja"],
-    C:["camila","carlos","carmen","catalina","cesar","clara","claudia","concha","cristina","cristobal"],
-    D:["daniel","david","diana","diego","dolores"],
-    E:["elena","elisa","emilio","enrique","ernesto","estefania","esteban","eva"],
-    F:["fatima","felipe","fernanda","fernando","francisca","francisco"],
-    G:["gabriel","gonzalo","guadalupe","guillermo"],
-    H:["hector","hernan","hugo"],
-    I:["ignacio","ines","irene","isabel","ivan"],
-    J:["javier","jesus","joaquin","jorge","jose","josefina","juan","julia","julian"],
-    K:["karen","kevin"],
-    L:["laura","leandro","leticia","lorena","lucia","luis","luisa"],
-    M:["manuel","maria","mario","marta","mateo","miguel","miriam","monica"],
-    N:["natalia","nicolas","noelia","nora"],
-    O:["oscar","omar"],
-    P:["pablo","paloma","patricia","pedro","pilar"],
-    R:["rafael","ramona","raul","rebeca","ricardo","roberto","rodrigo","rosa","ruben"],
-    S:["samuel","sandra","santiago","sara","sebastian","silvia","sofia"],
-    T:["teresa","tomas"],
-    V:["valentina","valeria","victor","virginia"],
-    Z:["zoila","zoe"]
+    A:["aaron","abigail","abraham","adela","adriana","agustin","alba","alberto","alejandro","alex","alfredo","alicia","alonso","alvaro","amalia","amelia","ana","andres","angela","antonio","arturo","adriana","agata","agustin","aide","aileen","ainara","ainhoa","alan","alana","aldana","aldrich","alejandra"],
+    B:["barbara","beatriz","benjamin","blanca","borja","belen","bernardo","bianca","brandon","brigitte","braulio","bruno","briana"],
+    C:["camila","carlos","carmen","catalina","cesar","clara","claudia","concha","cristina","cristobal","camilo","carolina","cecilia","celia","christian","cloe","constanza","cynthia"],
+    D:["daniel","david","diana","diego","dolores","dario","deborah","delia","denise","desmond","dominic","donaldo"],
+    E:["elena","elisa","emilio","enrique","ernesto","estefania","esteban","eva","edgardo","edmundo","eduardo","efrain","efren","elba","elias","elida","emma","esther","ezequiel"],
+    F:["fatima","felipe","fernanda","fernando","francisca","francisco","fabian","fausto","fidel","florencia","florentino","florinda"],
+    G:["gabriel","gonzalo","guadalupe","guillermo","gerardo","gloria","graciela","gustavo"],
+    H:["hector","hernan","hugo","harley","helga","helena","hilario","horacio","hortensia"],
+    I:["ignacio","ines","irene","isabel","ivan","ilda","iliana","imogen","iris","isadora","isidro"],
+    J:["javier","jesus","joaquin","jorge","jose","josefina","juan","julia","julian","jacinta","jasmine","jean","jenna","jerome","johanna","jonah","jovanna"],
+    K:["karen","kevin","karla","katya","kira"],
+    L:["laura","leandro","leticia","lorena","lucia","luis","luisa","lara","leila","leon","leonarda","liliana","lorenza"],
+    M:["manuel","maria","mario","marta","mateo","miguel","miriam","monica","marcela","marcos","margarita","mariana","marisela","marlene","matias","maximo","mercedes"],
+    N:["natalia","nicolas","noelia","nora","narciso","nayeli","nestor","noe","noemi","norma"],
+    O:["oscar","omar","octavio","olga","olivia","oralia","orlando","osvaldo"],
+    P:["pablo","paloma","patricia","pedro","pilar","paola","pascual","paulina","paulo","piedad"],
+    Q:["queenie","quintero","quique","quirino"],
+    R:["rafael","ramona","raul","rebeca","ricardo","roberto","rodrigo","rosa","ruben","ramiro","renata","reynaldo","rocio","rodrigo","rolando","roque","rosario"],
+    S:["samuel","sandra","santiago","sara","sebastian","silvia","sofia","salome","sergio","silvio","soledad","sonia","susana"],
+    T:["teresa","tomas","tamara","tatiana","teodoro","thiago","trinidad"],
+    U:["ubaldo","ulises","ulrika","uriel","ursula"],
+    V:["valentina","valeria","victor","virginia","vanessa","veronica","victoria","viviana"],
+    W:["wilfredo","willian","wioleta"],
+    X:["xochitl","ximena","xavier"],
+    Y:["yasmin","yolanda","yosef","yvette"],
+    Z:["zoila","zoe","zaira","zenia"]
   },
   pays:{
 
@@ -2621,6 +2701,8 @@ const VALID_WORDS_ES = {
     T:["tailandia","taiwan","tanzania","timor oriental","togo","tonga","trinidad","tunez","turkmenistan","turquia"],
     U:["ucrania","uganda","uruguay","uzbekistan"],
     V:["vanuatu","venezuela","vietnam"],
+    W:["wallis"],
+    Y:["yemen"],
     Z:["zambia","zimbabue"]
   },
   ville:{
@@ -2665,14 +2747,46 @@ const VALID_WORDS_ES = {
     K:["koala","koi"],
     L:["lagartija","leon","leopardo","liebre","lince","lobo","loro","lubina"],
     M:["mariposa","medusa","mono","morsa","mosquito","murcielago"],
-    N:["narval"],
-    O:["orca","ornitorrinco","oso","oveja"],
+    N:["narval","nutria","nandú"],
+    O:["orca","ornitorrinco","oso","oveja","ocelote"],
+    Q:["quetzal"],
+    U:["urogallo"],
+    W:["wambat"],
+    X:["xenops"],
+    Y:["yacare","yak"],
     P:["panda","pantera","pato","pavo real","perro","pez","pinguino","piraña","pulpo","puma","pez espada","paloma"],
     R:["rana","raton","reno","rinoceronte","rata"],
     S:["salmon","sapo","sardina","serpiente","tarantula","tiburon","tigre"],
     T:["tigre","tortuga","tucan"],
     V:["vaca","vibora","venado"],
     Z:["zorro","zopilote"]
+  },
+  metier:{
+    A:["abogado","actor","administrador","agronomo","analista","animador","arquitecto","artista","astronauta","auditor","autor"],
+    B:["biólogo","bolero","bombero","botanico","buzo"],
+    C:["carpintero","carnicero","chef","cientĩfico","cirujano","cocinero","compositor","contador","consultor","costurero","curador"],
+    D:["danzante","decorador","dentista","detective","director","disenador","doctor"],
+    E:["economista","editor","educador","electricista","enfermero","escritor","escultor","explorador"],
+    F:["farmaceutico","florista","fotografo","funcionario"],
+    G:["geologo","gerente","guarda","guia"],
+    H:["historiador","hortelano","hotelero"],
+    I:["ilustrador","informatico","inspector","ingeniero","investigador"],
+    J:["jardinero","jefe","joaillero","juez","jurista"],
+    K:["kinesiologo"],
+    L:["licenciado","lingüista","logista"],
+    M:["maestro","matematico","mecanico","medico","meteorologo","militar","musico"],
+    N:["navegante","neurologo","notario","nutricionista"],
+    O:["oculista","optico","osteópata"],
+    P:["panadero","pediatra","periodista","piloto","pintor","plomero","poeta","policia","profesor","psicologo"],
+    Q:["quimico","quesero"],
+    R:["radiologe","reporter","restaurador"],
+    S:["sastre","secretario","sociologo","soldado","sommelier","veterinario"],
+    T:["taxista","tecnico","terapeuta","torero","traductor"],
+    U:["urbanista"],
+    V:["vendedor","veterinario","violinista"],
+    W:["webmaster"],
+    X:["xenobiologo"],
+    Z:["zoólogo"]
   },
   fruit:{
 
@@ -2691,7 +2805,15 @@ const VALID_WORDS_ES = {
     N:["naranja","nectarina"],
     P:["papa","papaya","pepino","pera","pimiento","piña","platano","puerro"],
     R:["rabano","remolacha","romero"],
-    S:["sandia","tomate"],
+    K:["kumquat","kiwi"],
+    N:["naranja","nectarina","nopal"],
+    O:["oliva","oregano"],
+    S:["sandia","soja","tomate"],
+    T:["tomate","toronja","trufa"],
+    U:["uva","uva pasa"],
+    V:["vainilla","verdolaga"],
+    W:["wasabi"],
+    Z:["zapote","zanahoria","zucchini"],
     T:["tomate","tomillo","trufa"],
     V:["vanilla","vainilla","verdura","vid"],
     Z:["zanahoria","zapote"]
@@ -3081,6 +3203,31 @@ const VALID_SETS    = buildSets(VALID_WORDS);
 const VALID_SETS_EN = buildSets(VALID_WORDS_EN);
 const VALID_SETS_ES = buildSets(VALID_WORDS_ES);
 
+// Fuzzy sets: compact (no spaces) + collapsed (doubles removed) — for tolerant matching
+function buildFuzzySets(wordDict) {
+  const sets = {};
+  Object.entries(wordDict).forEach(([cat, byLetter]) => {
+    sets[cat] = {};
+    Object.entries(byLetter).forEach(([letter, words]) => {
+      const normalized = words.map(w => normalizeWord(w));
+      sets[cat][letter] = {
+        compact: new Set(normalized.map(w => w.replace(/ /g, ""))),
+        collapsed: new Set(normalized.map(w => collapseDoubles(w.replace(/ /g, "")))),
+      };
+    });
+  });
+  return sets;
+}
+const FUZZY_SETS    = buildFuzzySets(VALID_WORDS);
+const FUZZY_SETS_EN = buildFuzzySets(VALID_WORDS_EN);
+const FUZZY_SETS_ES = buildFuzzySets(VALID_WORDS_ES);
+
+function getFuzzySets(lang) {
+  if (lang === "en") return FUZZY_SETS_EN;
+  if (lang === "es") return FUZZY_SETS_ES;
+  return FUZZY_SETS;
+}
+
 // Returns true if the answer is valid for the category + letter
 // Tolérant aux accents, tirets et apostrophes — mot complet requis (pas de correspondance partielle)
 // ─── VALIDATION INTELLIGENTE ────────────────────────────────────
@@ -3111,6 +3258,20 @@ function looksLikeRealName(norm) {
 // Catégories semi-ouvertes (validation phonétique en plus du dico)
 const OPEN_CATS = new Set(["prenom","nom","espace","oceane","medievale","danse","architecture","sport_star","personnage"]);
 
+// Returns true if the answer passes via collapsed-doubles only (not exact/compact)
+function isApproxAnswer(answer, categoryId, letter, lang) {
+  if (!answer?.trim() || !categoryId || !letter) return false;
+  const norm = normalizeWord(answer);
+  const nc = norm.replace(/ /g, "");
+  const sets = getSets(lang);
+  const set = sets[categoryId]?.[letter.toUpperCase()];
+  if (!set) return false;
+  if (set.has(norm)) return false; // exact match — not approximate
+  const fset = getFuzzySets(lang)[categoryId]?.[letter.toUpperCase()];
+  if (fset?.compact.has(nc)) return false; // compact match — not approximate
+  return !!(fset?.collapsed.has(collapseDoubles(nc)));
+}
+
 function isValidAnswer(answer, categoryId, letter, lang) {
   if (!answer?.trim()) return false;
   const norm = normalizeWord(answer);
@@ -3123,52 +3284,68 @@ function isValidAnswer(answer, categoryId, letter, lang) {
   // Récupère UNIQUEMENT le dictionnaire de la langue active — pas de fallback cross-lang
   const sets = getSets(lang);
   const set = sets[categoryId]?.[letter.toUpperCase()];
+  const fset = getFuzzySets(lang)[categoryId]?.[letter.toUpperCase()];
+  const nc = norm.replace(/ /g, ""); // version compacte (sans espaces)
+  const ncc = collapseDoubles(nc);   // version compacte + doublons écrasés
 
   // Catégories ouvertes : dico + validation phonétique
   if (OPEN_CATS.has(categoryId)) {
-    if (set?.has(norm)) return true;
+    if (set?.has(norm) || fset?.compact.has(nc) || fset?.collapsed.has(ncc)) return true;
+    // Prénom : très souple — 3 lettres min., pas de chiffres ni caract. spéciaux,
+    // pas plus de 4 consonnes consécutives. Tout prénom phonétiquement possible est accepté.
+    if (categoryId === "prenom") {
+      if (norm.length < 3 || norm.length > 30) return false;
+      if (/[0-9@#$%^&*()+=\[\]{}|<>]/.test(norm)) return false;
+      if (/[^aeiouy]{5,}/.test(norm)) return false; // max 4 consonnes de suite
+      return true;
+    }
     return looksLikeRealName(norm);
   }
 
   // Toutes les autres catégories : STRICT — uniquement le dico de la langue active
-  // Si le dico est vide pour cette lettre, on accepte (catégorie non couverte)
-  if (!set || set.size === 0) return false; // ← STRICT: refuser si pas dans le dico
-  return set.has(norm);
+  if (!set || set.size === 0) return false;
+  // 1. Correspondance exacte
+  if (set.has(norm)) return true;
+  // 2. Mots composés sans tiret/espace : "jeanpierre" == "jean pierre"
+  if (fset?.compact.has(nc)) return true;
+  // 3. Double lettre simplifiée : "bale" accepté pour "balle" (donne 1pt)
+  if (fset?.collapsed.has(ncc)) return true;
+  return false;
 }
 
 const AI_ANSWERS = {
-  prenom:{A:["ava","ada","aro","aso"],B:["bo","bob","bela","bart"],C:["cho","carl","caia","cara"],D:["dex","dez","dana","dara"],E:["eva","eli","emma","evan"],F:["fay","fex","fez","fadi"],G:["gad","gal","gel","guy"],H:["hugo","hana","hali","heba"],I:["in","ida","ino","ira"],J:["jim","joe","jean","jade"],K:["kim","kai","keo","karl"],L:["lea","leo","lou","lee"],M:["mia","mac","mao","marc"],N:["noa","noe","noe","nel"],O:[],P:["pam","pax","paz","pia"],R:["ray","rex","rio","rob"],S:["sky","sami","sara","sade"],T:["tim","tom","tea","tem"],V:["vera","vaia","vace","vada"]},
-  nom:{A:["ali","adam","adams","adler"],B:["baron","barry","bailly","bardin"],C:["carr","camus","caron","carter"],D:["dahan","danet","duval","daniel"],E:["elie","eloy","elbaz","elias"],F:["fabre","faure","ferri","ferro"],G:["gehin","girod","garcia","girard"],H:["hamid","hardy","harel","haddad"],I:["icard","imbert","ibrahim"],J:["jean","jerome","jaccard","jacquet"],K:["kahn","koné","kante","keita"],L:["lamy","leon","lafon","laval"],M:["marty","meyer","morin","macias"],N:["noel","naimi","neveu","nadeau"],O:[],P:["paul","paoli","paris","payet"],R:["rene","roux","ramos","raoul"],S:["salle","simon","soler","salles"],T:["tabet","testa","toure","tardif"],V:["vidal","vigne","vinot","vallet"]},
-  pays:{A:["aceh","angola","arabie","açores"],B:["benin","bresil","belize","bhutan"],C:["cuba","cook","chine","congo"],D:["danemark","djibouti","dominique"],E:["egypte","espagne","estonie","emirats"],F:["fidji","france","finlande"],G:["guam","grece","ghana","gabon"],H:["haiti","hongrie","honduras","hollande"],I:["inde","iran","irak","italie"],J:["japon","jordanie","jamaique"],K:["kenya","koweit","kosovo","kiribati"],L:["laos","liban","libye","liberia"],M:["mali","maroc","malte","malawi"],N:["niue","niger","nepal","nauru"],O:[],P:["perou","panama","palaos","pologne"],R:["russie","rwanda","roumanie","republique tcheque"],S:["suede","syrie","samoa","suisse"],T:["togo","tchad","tonga","timor"],V:["vietnam","vanuatu","venezuela"]},
-  ville:{A:["apt","aden","agra","albi"],B:["bali","brno","baku","bonn"],C:["caen","cebu","cali","cairo"],D:["dax","doha","dubai","dakar"],E:["evry","erbil","essen","enugu"],F:["fez","flers","frejus","fresno"],G:["gap","goma","gaya","gijon"],H:["hem","hanoi","haifa","hefei"],I:["ife","ipoh","iasi","imus"],J:["jos","jinan","jinja","jambi"],K:["kiev","kobe","kano","king"],L:["lima","lyon","lome","lodz"],M:["male","metz","meru","miri"],N:["nice","nimes","niort","nancy"],O:["oslo","oran","omsk","orsay"],P:["pau","pune","paris","porto"],R:["rome","riad","riga","rabat"],S:["sete","sens","sfax","suva"],T:["thes","tokyo","tunis","tours"],V:["vigo","vichy","varna","vienne"]},
+  prenom:{A:["alice","ambre","axel","adele","antoine","alexandre","amelie","anais"],B:["baptiste","bastien","brigitte","beatrice","benjamin"],C:["camille","clement","charlotte","charlotte","caroline","cedric"],D:["david","diane","dylan","delphine","damien"],E:["emma","emile","elisa","elodie","ethan","elena"],F:["felix","florian","fanny","flavie","frederic"],G:["gabriel","gaelle","gregoire","guilhem","gaetan"],H:["hugo","helene","henri","hubert","hadrien"],I:["ines","iris","ivan","ibrahima","ilona"],J:["julien","justine","jean","julie","jade"],K:["kilian","karine","kevin","kim","kelly"],L:["lucas","lucie","lea","louise","lola"],M:["marie","maxime","mathieu","margot","manon"],N:["noa","noe","noel","noemie","nicolas","nathan"],O:["oscar","olivier","odile","ophelie","olympe"],P:["pierre","pauline","philippe","paul","patricia"],Q:["quintino"],R:["romain","raphael","rachel","remi","renaud"],S:["sophie","simon","sarah","samuel","sebastien"],T:["thomas","theo","tina","thibault","tanguy"],U:["ugo","ulrik"],V:["victor","valerie","vincent","violette"],W:["william","wendy"],X:["xavier"],Y:["yasmine","yoann"],Z:["zoe","zadig"]},
+  nom:{A:["ali","adam","adams","adler","aumont","antoine","amar","albert"],B:["baron","barry","bailly","bardin","bernard","bourgeois","blanc","brunet"],C:["carr","camus","caron","carter","christoph","chauvin","clement","collin"],D:["dahan","danet","duval","daniel","dupont","durand","dubois","dufour"],E:["elie","eloy","elbaz","elias","etienne","evrard"],F:["fabre","faure","ferri","ferro","fontaine","francois","fleury"],G:["gehin","girod","garcia","girard","gilles","guerin","guibert"],H:["hamid","hardy","harel","haddad","hubert","henry","herve"],I:["icard","imbert","ibrahim"],J:["jean","jerome","jaccard","jacquet","joubert","julien"],K:["kahn","kante","keita","klein"],L:["lamy","leon","lafon","laval","lucas","leroy","lefebvre"],M:["marty","meyer","morin","macias","martin","michel","moreau"],N:["noel","naimi","neveu","nadeau","nicolas","nadia"],O:["oudin","ory","oliveira","ochoa"],P:["paul","paoli","paris","payet","petit","perrier","picard"],Q:["quentin"],R:["rene","roux","ramos","raoul","renard","rolland","roger"],S:["salle","simon","soler","salles","schmitt","simon","simon"],T:["tabet","testa","toure","tardif","thomas","touret"],V:["vidal","vigne","vinot","vallet","vincent","vallee"]},
+  pays:{A:["aceh","angola","arabie","açores","afghanistan","albanie","algerie","andorre","armenie","azerbaidjan","australie","autriche"],B:["benin","bresil","belize","bhutan","bahrein","bangladesh","bolivie","bosnie","botswana","bulgarie","burkina faso","burundi","bahamas","barbade"],C:["cuba","cook","chine","congo","cambodge","cameroun","canada","cap vert","centrafrique","tchad","chili","colombie","comores","cote divoire","croatie","chypre"],D:["danemark","djibouti","dominique","dominicaine"],E:["egypte","espagne","estonie","emirats","equateur","erythree","ethiopie","el salvador"],F:["fidji","france","finlande","formose"],G:["guam","grece","ghana","gabon","gambie","georgie","grenade","guatemala","guinee","guyane"],H:["haiti","hongrie","honduras","hollande"],I:["inde","iran","irak","italie","indonesie","irlande","islande","israel"],J:["japon","jordanie","jamaique"],K:["kenya","koweit","kosovo","kiribati","kazakhstan","kirghizistan"],L:["laos","liban","libye","liberia","lesotho","lettonie","liechtenstein","lituanie","luxembourg"],M:["mali","maroc","malte","malawi","madagascar","malaisie","maldives","mauritanie","maurice","mexique","moldavie","monaco","mongolie","montenegro","mozambique","myanmar"],N:["niue","niger","nepal","nauru","namibie","nicaragua","nigeria","norvege","nouvelle zelande"],O:["oman","ouganda","ouzbekistan"],P:["perou","panama","palaos","pologne","pakistan","palestine","papouasie","paraguay","philippines","portugal"],R:["russie","rwanda","roumanie","republique tcheque"],S:["suede","syrie","samoa","suisse","salvador","senegal","serbie","seychelles","sierra leone","singapour","slovaquie","slovenie","somalie","sri lanka","soudan"],T:["togo","tchad","tonga","timor","taiwan","tanzanie","thaïlande","trinite","tunisie","turquie","turkmenistan"],U:["ukraine","uruguay","ouzbekistan","ouganda"],V:["vietnam","vanuatu","venezuela"],W:["wallis"],Y:["yemen"],Z:["zambie","zimbabwe"]},
+  ville:{A:["apt","aden","agra","albi","amsterdam","athenes","ankara","abidjan","alexandrie","alger","amman","addis abeba","asmara","auckland","abu dhabi"],B:["bali","brno","baku","bonn","barcelone","berlin","bogota","buenos aires","bruxelles","budapest","bagdad","bangkok","beyrouth","bangalore","birmingham","brasilia","bridgetown","bruges"],C:["caen","cebu","cali","cairo","calcutta","caracas","casablanca","chicago","colombo","copenhague","calgary","cannes","canberra","chengdu","chisinau"],D:["dax","doha","dubai","dakar","delhi","dacca","dublin","dallas","dar es salam","djakarta","dortmund","dushanbe","durban"],E:["evry","erbil","essen","enugu","edimbourg","eindhoven"],F:["fez","flers","frejus","fresno","florence","francfort","fukuoka","freetown"],G:["gap","goma","gaya","gijon","geneve","glasgow","guangzhou","guadalajara","gothenburg"],H:["hem","hanoi","haifa","hefei","hambourg","harare","helsinki","hong kong","houston","hyderabad"],I:["ife","ipoh","iasi","imus","istanbul","islamabad"],J:["jos","jinan","jinja","jambi","jakarta","jerusalem","johannesburg"],K:["kiev","kobe","kano","kinshasa","kaboul","kampala","karachi","katmandou","khartoum","kigali","kingston","kuala lumpur"],L:["lima","lyon","lome","lodz","lagos","lisbonne","los angeles","la paz","lahore","libreville","luanda","lusaka"],M:["male","metz","meru","miri","madrid","manille","marseille","medellin","milan","moscou","mumbai","munich","montreal","mogadiscio","monrovia","montevideo"],N:["nice","nimes","niort","nancy","nairobi","nassau","niamey","nueva york","nouakchott"],O:["oslo","oran","omsk","orsay","osaka","ottawa","ouagadougou"],P:["pau","pune","paris","porto","pekin","phnom penh","prague","pretoria","panama","palerme"],Q:["quito","quezon"],R:["rome","riad","riga","rabat","reykjavik","rio de janeiro","rotterdam","rangoun"],S:["sete","sens","sfax","suva","santiago","sao paulo","sarajevo","seoul","shanghai","singapour","sofia","stockholm","sydney","salt lake city"],T:["thes","tokyo","tunis","tours","taipei","tbilisi","tegucigalpa","teheran","tripoli","toronto"],U:["ulaanbaatar","utrecht"],V:["vigo","vichy","varna","vienne","varsovie","vancouver","vladivostok"],W:["washington","winnipeg","wuhan","wellington"],X:["xian","xiamen"],Y:["yangon","yaounde","yerevan","yokohama"],Z:["zurich","zagreb"]},
   animal:{A:["ane","ara","aigle","amibe"],B:["boa","bouc","bison","biche"],C:["coq","chat","cerf","chien"],D:["daim","dodo","dama","dard"],E:["elk","emeu","elan","esox"],F:["faon","flet","furet","felin"],G:["gnou","geai","guib","gecko"],H:["hase","hyla","hibou","hyene"],I:["ibis","isard","iguane","impala"],J:["jaguar","jerboa","jaguarundi"],K:["kob","kiwi","koala","kodiak"],L:["lion","loup","lynx","loir"],M:["maki","mole","morse","mante"],N:["nase","nyala","narval","nandou"],O:["ours","orque","okapi","ocelot"],P:["pic","pie","paon","plie"],R:["rat","raie","renne","renard"],S:["singe","seche","serin","saumon"],T:["taon","thon","tigre","tatou"],V:["vache","vison","varan","vipere"]},
-  fruit:{A:["ail","acai","ache","akee"],B:["baie","bluet","boldo","banane"],C:["chou","coing","carob","cumin"],D:["datte","durian","daikon","damson"],E:["endive","epinard","edamame","epazote"],F:["feve","figue","fruit","fraise"],G:["goji","gombo","gesse","gland"],H:["hysope","haricot","houblon","hibiscus"],I:["igname","icaque","ipomee"],J:["jujube","jasmin","jackfruit"],K:["kiwi","kale","kafir","kumquat"],L:["lupin","lichi","lotus","litchi"],M:["mure","mais","melon","mache"],N:["nefle","navet","noisette","nectarine"],O:[],P:["peche","poire","prune","pomme"],R:["rose","radis","raisin","ronces"],S:["soja","sauge","sureau","sapote"],T:["thym","taro","tomate","truffe"],V:["vigne","vanille","valerian","violette"]},
-  metier:{A:["agent","avocat","acteur","auteur"],B:["barman","berger","boucher","banquier"],C:["clerc","clown","coach","cirier"],D:["dj","doreur","driver","danseur"],E:["espion","employe","editeur","ecrivain"],F:["facteur","fermier","faiseur","farrier"],G:["garde","guide","garcon","gobeur"],H:["huissier","hotelier","historien","humaniste"],I:["infirmier","ingenieur","intendant","imprimeur"],J:["juge","juriste","jaugeur","jongleur"],K:["kiosquier","kinesitherapeute"],L:["laveur","luthier","legiste","lisseur"],M:["macon","maire","marin","mineur"],N:["notaire","negociant","navigateur","neurologue"],O:["orfevre","opticien","osteopathe","oto rhino laryngologiste"],P:["pilote","potier","pompier","pecheur"],R:["routier","rondier","reporter","redacteur"],S:["serveur","soudeur","sportif","steward"],T:["torero","tourneur","tailleur","taxateur"],V:["vendeur","verrier","veilleur","vigneron"]},
+  fruit:{A:["ail","acai","ache","akee","abricot","amande","airelle","ananas","aneth","artichaut","asperge","avocat","anis"],B:["baie","bluet","boldo","banane","betterave","brocoli","bleuet","brugnon","basilic"],C:["chou","coing","carob","cumin","cerise","citron","coco","courge","concombre","canneberge","cassis","carotte","cannelle","ciboulette"],D:["datte","durian","daikon","damson","dill","douce"],E:["endive","epinard","edamame","epazote","estragon","eglantier"],F:["feve","figue","fruit","fraise","framboise","fenouil","fenugrec"],G:["goji","gombo","gesse","gland","groseille","grenade","gingembre","groseille rouge","guava"],H:["hysope","haricot","houblon","hibiscus","huile dolive"],I:["igname","icaque","ipomee"],J:["jujube","jasmin","jackfruit","jalapeno","julienne"],K:["kiwi","kale","kafir","kumquat","kaki"],L:["lupin","lichi","lotus","litchi","lime","lupin","lentille"],M:["mure","mais","melon","mache","mangue","mirabelle","myrtille","mandarine","menthe","morelle"],N:["nefle","navet","noisette","nectarine","noix","nori"],O:["orange","olive","oseille","origan","okra","oignon"],P:["peche","poire","prune","pomme","papaye","poivron","pamplemousse","patate","persil","physalis","pistache"],R:["rose","radis","raisin","ronces","rhubarbe","romarin","roquette"],S:["soja","sauge","sureau","sapote","sorbet","sureau","spinard"],T:["thym","taro","tomate","truffe","thé vert"],V:["vigne","vanille","valerian","violette","vesce"]},
+  metier:{A:["agent","avocat","acteur","auteur","architecte","agronome","ambulancier","analyste","animateur","anthropologue","archaeologue","archiviste","astronaute","astronome"],B:["barman","berger","boucher","banquier","boulanger","biologiste","biochimiste","brodeur","briquetier"],C:["clerc","clown","coach","cirier","charpentier","chimiste","chirurgien","comptable","conseiller","cuisinier","courtier","cordonnier","cartographe"],D:["dj","doreur","driver","danseur","decorateur","dentiste","designer","detective","developpeur","directeur","diplomate","dieteticien"],E:["espion","employe","editeur","ecrivain","electricien","eleveur","ergonome","expert","ethnologue"],F:["facteur","fermier","faiseur","farrier","fleuriste","forgeron","fonctionnaire","formateur","fiscaliste"],G:["garde","guide","garcon","gobeur","geologue","geographe","graphiste","gestionnaire"],H:["huissier","hotelier","historien","humaniste","horloger","hydraulicien"],I:["infirmier","ingenieur","intendant","imprimeur","illustrateur","informaticien","inspecteur","installateur","instituteur"],J:["juge","juriste","jaugeur","jongleur","jardinier","joaillier","journaliste"],K:["kiosquier","kinesitherapeute"],L:["laveur","luthier","legiste","lisseur","libraire","linguiste","logisticien"],M:["macon","maire","marin","mineur","menuisier","medecin","meteorologue","militaire","musicien","maroquinier"],N:["notaire","negociant","navigateur","neurologue","nutritionniste"],O:["orfevre","opticien","osteopathe","oceanographe","orientaliste"],P:["pilote","potier","pompier","pecheur","peintre","pharmacien","photographe","physicien","plombier","professeur","psychiatre","psychologue","patissier","podologue"],Q:["qualitologue"],R:["routier","rondier","reporter","redacteur","radiologue","restaurateur","receptionniste"],S:["serveur","soudeur","sportif","steward","sculpteur","sociologue","sommelier","styliste","sage femme"],T:["torero","tourneur","tailleur","taxateur","technicien","therapeute","traducteur","trameur"],U:["urbaniste","urgentiste"],V:["vendeur","verrier","veilleur","vigneron","veterinaire","videographe"],W:["webmaster","webdesigner"],X:["xenobiologiste"],Y:["yogamaster"],Z:["zoologue","zoologiste"]},
   celebrite:{A:["adele","ahanu","aragon","achille"],B:["brel","briand","balzac","beyonce"],C:["camus","cesar","cesaire","colette"],D:["dali","drake","dante","dalida"],E:["eminem","erasme","euclide","einstein"],F:["freud","flaubert","frida kahlo","frank sinatra"],G:["gauss","gorki","gandhi","goethe"],H:["hugo","homer","horace","hannibal"],I:["ibsen","ice cube","idris elba","ibn battuta"],J:["jay z","jean zay","joao miro","james dean"],K:["kant","kafka","kepler","karl marx"],L:["lorca","lao tseu","lady gaga","lamartine"],M:["marx","messi","manet","mozart"],N:["neruda","newton","napoleon","nijinski"],O:["obama","omar sharif","orson welles"],P:["poe","prince","pascal","platon"],R:["rumi","rodin","racine","reagan"],S:["sade","sartre","stomae","shakira"],T:["tupac","tzara","tyson","tesla"],V:["verne","vinci","virgile","vivaldi"]},
-  sport:{A:["aviron","aikido","aerobic","agility"],B:["bmx","boxe","billard","bowling"],C:["canoe","corso","cricket","croquet"],D:["dart","discus","diving","decathlon"],E:["escrime","escalade","exercise","endurance"],F:["fitboxe","fitness","freeski","football"],G:["golf","goalball","gymnastique"],H:["hockey","hurling","hornuss","handball"],I:["judo","indoor","jogging","javelot"],J:["judo","jetski","jogging","javelin"],K:["kendo","kayak","karate","kitesurf"],L:["luge","lutte","lancer","lacrosse"],M:["mma","moto","mushing","marathon"],N:["nordic","natation","nage synchronisee"],O:[],P:["polo","padel","paddle","pelote"],R:["raid","ring","rugby","rodeo"],S:["ski","surf","sumo","squash"],T:["tir","trial","tennis","triathlon"],V:["vtt","velo","voile","voltige"]},
+  sport:{A:["aviron","aikido","aerobic","agility","athletisme","alpinisme","aquagym","auto moto"],B:["bmx","boxe","billard","bowling","badminton","baseball","basketball","biathlon","bodyboard","bodybuilding","breakdance"],C:["canoe","corso","cricket","croquet","cyclisme","cheerleading","curling","crossfit","capoeira"],D:["dart","discus","diving","decathlon","danse sportive","deltaplane"],E:["escrime","escalade","exercise","endurance","equitation","enduro"],F:["fitboxe","fitness","freeski","football","flechettes","frisbee","funambulisme"],G:["golf","goalball","gymnastique","glissade","grimpette"],H:["hockey","hurling","hornuss","handball","halterophilie","hippisme"],I:["indoor","judo","jogging","javelot"],J:["judo","jetski","jogging","javelin","jiu jitsu","jumping"],K:["kendo","kayak","karate","kitesurf","kickboxing","korfball"],L:["luge","lutte","lancer","lacrosse","longboard","laser"],M:["mma","moto","mushing","marathon","muay thai","motocross","mountainbike"],N:["natation","nage synchronisee","nordic ski","nage libre"],O:["open water","orienteering"],P:["polo","padel","paddle","pelote","parachutisme","parkour","patinage","pentathlon","pêche"],Q:["quad"],R:["raid","ring","rugby","rodeo","rafting","rallye","roller","rowing"],S:["ski","surf","sumo","squash","skateboard","snowboard","squash","savate"],T:["tir","trial","tennis","triathlon","tir a larc","tae kwondo","trampolino"],U:["ultimate frisbee"],V:["vtt","velo","voile","voltige","volleyball","varappe"],W:["wakeboard","water polo"],X:["xcountry"],Y:["yoga"],Z:["zumba"]},
   objet:{A:["abri","ancre","alene","album"],B:["bol","bac","bloc","balai"],C:["cle","canif","cible","chaise"],D:["drap","dame","dard","dais"],E:["epee","etau","etui","ecran"],F:["fil","frigo","flute","fusil"],G:["gant","grue","gaffe","gaine"],H:["haie","houe","hamac","hache"],I:["icone","imprimante","impermeable"],J:["jatte","jauge","jeton","jersey"],K:["kayak"],L:["lit","lien","lampe","livre"],M:["main","micro","moule","masse"],N:["nœud","nappe","noeud","nasse"],O:["outil","oreillers","objet de collection"],P:["pieu","plume","porte","pince"],R:["roue","regle","radio","rivet"],S:["sac","soc","seau","sofa"],T:["tube","table","tapis","tasse"],V:["vase","verre","vitre","volet"]},
-  film:{A:["alien","amour","avatar","amelie"],B:["bambi","blade","batman","brazil"],C:["coco","cleo","coda","crash"],D:["dune","drive","daddy","django"],E:["et","enigma","elysium","enfants du paradis"],F:["fargo","flash","fantomas","face off"],G:["ghost","grease","gravity","gattaca"],H:["her","heat","hugo","highlander"],I:["inception","interstellar","intouchables"],J:["jaws","joker","jarmusch","jungle book"],K:["kids","kong","kundun","kill bill"],L:["lion","la haine","lamerica","lady bird"],M:["mulan","matrix","mad max","memento"],N:["nope","noir","notebook","nomadland"],O:[],P:["pan","piano","psycho","parasite"],R:["ran","roma","rocky","requiem"],S:["shrek","speed","seven","shining"],T:["tenet","titanic","taxi driver","the godfather"],V:["vertigo","valerian","v pour vendetta"]},
+  film:{A:["alien","amour","avatar","amelie","apocalypse now","arrival","a beautiful mind"],B:["bambi","blade","batman","brazil","boyhood","braveheart","black swan"],C:["coco","cleo","coda","crash","casablanca","citizen kane","clockwork orange"],D:["dune","drive","daddy","django","dark knight","dead poets society"],E:["et","enigma","elysium","enfants du paradis"],F:["fargo","flash","fantomas","face off","fight club","finding nemo"],G:["ghost","grease","gravity","gattaca","godfather","gladiator"],H:["her","heat","hugo","highlander","harry potter"],I:["inception","interstellar","intouchables"],J:["jaws","joker","jarmusch","jungle book","jurassic park"],K:["kids","kong","kundun","kill bill"],L:["lion","la haine","lamerica","lady bird","lord of the rings","la la land"],M:["mulan","matrix","mad max","memento","moonlight","moulin rouge"],N:["nope","noir","notebook","nomadland"],O:["oldboy","odyssee"],P:["pan","piano","psycho","parasite","pulp fiction"],R:["ran","roma","rocky","requiem","rear window","rain man"],S:["shrek","speed","seven","shining","schindler","scarface","star wars"],T:["tenet","titanic","taxi driver","the godfather","terminator"],V:["vertigo","valerian","v pour vendetta"]},
   marque:{A:["ag","amc","audi","acne"],B:["bmw","bic","bbc","bose"],C:["canon","chanel","celine","cessna"],D:["dhl","dior","dacia","darty"],E:["ebay","epson","esprit","etnies"],F:["ford","fila","fiat","fendi"],G:["gap","gucci","google","goyard"],H:["hp","h m","head","honda"],I:["ikea","intel","imperial","in n out"],J:["joop","james","jaguar","jordan"],K:["kia","keen","kenzo","kappa"],L:["lg","lego","lacor","levis"],M:["moet","muji","mango","marni"],N:["nba","nfl","nike","nars"],O:["omega","oysho","ouibus","off white"],P:["puma","peck","polo","prada"],R:["roca","rolex","reiss","ricoh"],S:["sony","seiko","stella","stussy"],T:["tesla","total","toyota","twitter"],V:["vans","versace","viceroy","vuitton"]},
-  anatomie:{A:["anus","aine","aorte","atlas"],B:["bras","bulbe","biceps","bassin"],C:["cil","col","cou","cote"],D:["dos","dents","derme","deltoid"],E:["epine","epaule","estomac","epiderme"],F:["foie","femur","front","flanc"],G:["genou","gorge","glande","glotte"],H:["hanche","humerus","hippocampe"],I:["iris","index","ischio","intestin"],J:["joue","jambe","jugulaire"],K:["kyste","keratine"],L:["lobe","levre","langue","ligament"],M:["muscle","moelle","mitral","mollet"],N:["nez","nerf","nuque","nasal"],O:[],P:["peau","pied","pouce","paume"],R:["rein","radius","rectum","rotule"],S:["sang","sinus","sacrum","salive"],T:["tibia","tarse","tempe","tendon"],V:["veine","valve","vagin","vertebre"]},
-  musique:{A:["air","bach","abba","akon"],B:["brel","blur","bach","booba"],C:["chopin","camille","cardi b","coldplay"],D:["drake","dalida","dj snake","daft punk"],E:["eminem","ed sheeran","edith piaf","elton john"],F:["fugees","frank ocean","foo fighters","florent pagny"],G:["gorillaz","green day","gainsbourg","guns n roses"],H:["hamza","hendrix","hans zimmer","harry styles"],I:["inxs","indochine","iron maiden","imagine dragons"],J:["jay z","jamiroquai","julien dore","james brown"],K:["keane","khalid","koffee","kid cudi"],L:["lorde","lizzo","logic","lords"],M:["maes","moby","muse","mozart"],N:["nas","ninho","nekfeu","nirvana"],O:[],P:["piaf","prince","pharrell","pearl jam"],R:["rone","rihanna","r kelly","raphael"],S:["sting","skepta","summer","shakira"],T:["toto","the cure","the doors","the weeknd"],V:["vald","vianney","vivaldi","vampire weekend"]},
-  cuisine:{A:["ail","aloo","adobo","acras"],B:["boeuf","blini","burek","bisque"],C:["crepe","curry","chili","confit"],D:["daube","dashi","dolma","dinde"],E:["etuvee","epinard","escalope","empanada"],F:["farce","frito","fondue","fajita"],G:["gyoza","gyros","glace","gratin"],H:["hummus","hotpot","harira","harissa"],I:["idli","injera","iskender","involtini"],J:["jerk","jiaozi","julienne","jambalaya"],K:["kefta","kebbeh","kimchi","kibbeh"],L:["laksa","lardo","lapin","leche"],M:["mole","miso","makis","migas"],N:["naan","nems","nougat","nachos"],O:[],P:["pho","pate","pizza","poele"],R:["roti","ramen","rosbif","risotto"],S:["sushi","soupe","steak","sauce"],T:["taco","tofu","tarte","tapas"],V:["veau","vatapa","veloute","volaille"]},
-  vehicule:{A:["atv","audi","avion","aviso"],B:["bus","bac","bmw","bob"],C:["cab","car","char","canoe"],D:["drone","dumper","drakkar","dragster"],E:["engin","escalator","excavateur","embarcation"],F:["fiat","ford","fusee","frigat"],G:["grue","galere","grader","go kart"],H:["hot rod","hydrofoil","hydravion","hovercraft"],I:["isetta"],J:["jet","jeep","jonque","jet ski"],K:["kayak","karting"],L:["luge","landau","lancia","libelle"],M:["moto","metro","mazda","moped"],N:["nef","navire","navette"],O:[],P:["pelle","patrol","peugeot","planeur"],R:["rame","radeau","renault","remorque"],S:["suv","skate","segway","suzuki"],T:["tank","taxi","tram","train"],V:["van","velo","vespa","viking"]},
-  capital:{A:["apia","alger","amman","accra"],B:["berne","bagdad","berlin","bamako"],C:["cairo","colombo","conakry","caracas"],D:["doha","dili","dacca","dakar"],E:["erevan","edinburgh"],F:["funafuti","freetown"],G:["gaborone","georgetown","guatemala city"],H:["harare","havane","honiara","helsinki"],I:["islamabad"],J:["jeddah","jakarta","jerusalem","jamestown"],K:["kiev","kaboul","kigali","kampala"],L:["lima","lome","luanda","lusaka"],M:["male","minsk","madrid","moscou"],N:["nassau","niamey","nairobi","nicosia"],O:[],P:["paris","prague","panama","palikir"],R:["riad","rome","riga","rabat"],S:["suva","seoul","sofia","skopje"],T:["tokyo","tunis","tirana","teheran"],V:["vaduz","vienne","vilnius","valleta"]},
-  monument:{A:["agra","alta","agora","arche"],B:["big ben","beffroi","basilique","borobudur"],C:["chora","cluny","cheops","crypte"],D:["delphi","dolmen","dome du rocher","dome des rochers"],E:["ephese","escorial","tour eiffel","easter island"],F:["forum romain","fortification","forbidden city","fontaine de trevi"],G:["gaudi","grotte","glacier","golden gate"],H:["himeji","hadrien","hradcany","hollywood"],I:["invalides"],J:["jardin","jerash","jungfrau"],K:["kaaba","karnak","kremlin","kilimanjaro"],L:["luxor","louvre","leptis magna","leaning tower"],M:["moai","minar","minaret","mosquee"],N:["nazca","niagara","notre dame"],O:[],P:["petra","pompei","pagode","pergame"],R:["rialto","rempart","red fort","reichstag"],S:["sphinx","sistine","sigiriya","serengeti"],T:["tour","torii","temple","tianmen"],V:["vatican","versailles","victoria falls"]},
-  langue:{A:["akan","arabe","azeri","aymara"],B:["birman","basque","breton","buryat"],C:["corse","coreen","croate","chinois"],D:["dari","danois","dzongkha"],E:["ewe","espagnol","estonien","esperanto"],F:["farsi","frison","finnois","fidjien"],G:["grec","gallois","guarani","georgien"],H:["hindi","hebrew","hébreu","haoussa"],I:["igbo","italien","islandais","indonesien"],J:["japonais","javanais"],K:["khmer","kongo","kurde","kazakh"],L:["latin","letton","luganda","lituanien"],M:["malais","mongol","maltais","marathi"],N:["nepalais","norvegien"],O:[],P:["persan","pashto","punjabi","polonais"],R:["russe","roumain"],S:["serbe","somali","sindhi","suedois"],T:["turc","thai","tatar","tamoul"],V:["valencien","vietnamien"]},
-  instrument:{A:["alto","arpa","appeau","alphorn"],B:["banjo","basse","bongo","bugle"],C:["cor","cajon","caixa","clave"],D:["daf","dre","dhol","danse"],E:["epinette","euphonium"],F:["fife","flute","fifre","flageolet"],G:["gong","gaita","geige","guitare"],H:["harpe","helicon","hautbois","harmonica"],I:["imbila"],J:["jouhikko","jews harp"],K:["koto","kora","kazoo","kecak"],L:["lur","lir","luth","lyre"],M:["mbira","maracas","melodeon","melodica"],N:["nay","ngoni","nyckelharpa"],O:[],P:["pipa","piano","piccolo","psalterion"],R:["rebab","rebec","rubab","recorder"],S:["saxo","sitar","sarod","sanza"],T:["tar","tuba","tabla","tiple"],V:["viol","viole","viola","veena"]},
-  vetement:{A:["aube","abaya","afgha","amice"],B:["body","burqa","beret","boxer"],C:["cape","ciré","cire","caban"],D:["dastar","dos nu","dashiki","doudoune"],E:["echarpe","espadrille","epaulieres","epaulettes"],F:["frac","fanon","foulard"],G:["gilet","gants","guetres"],H:["haïk","haik","haori","habit"],I:["impermeable"],J:["jean","jupe","jogging","jambières"],K:["kilt","kimono","kaftan","kameez"],L:["lin","legging","lingerie","leg warmers"],M:["manteau","maillot","mitaines","mariniere"],N:["niqab"],O:[],P:["pull","polo","parka","pareo"],R:["robe","raincoat","redingote","robe de chambre"],S:["slip","sari","sweat","short"],T:["toge","toga","trench","turban"],V:["vest","veste","voile","veston"]},
+  anatomie:{A:["anus","aine","aorte","atlas","abdomen","artere","articulation","auriculaire"],B:["bras","bulbe","biceps","bassin","bouche","bronche"],C:["cil","col","cou","cote","cerveau","colonne","cornee","cranie"],D:["dos","dents","derme","deltoid","diaphragme","duodenum"],E:["epine","epaule","estomac","epiderme","oreille","coude"],F:["foie","femur","front","flanc","fibula"],G:["genou","gorge","glande","glotte","gencive"],H:["hanche","humerus","hippocampe"],I:["iris","index","ischio","intestin"],J:["joue","jambe","jugulaire"],K:["kyste","keratine"],L:["lobe","levre","langue","ligament","larynx","lombes"],M:["muscle","moelle","mitral","mollet","membrane","menisque"],N:["nez","nerf","nuque","nasal","nombril"],O:["oreille","ovaire","omoplat","organe"],P:["peau","pied","pouce","paume","pancreas","patella","pelvis"],Q:["quadriceps"],R:["rein","radius","rectum","rotule","retine"],S:["sang","sinus","sacrum","salive","sternum"],T:["tibia","tarse","tempe","tendon","thorax"],U:["ulna","uterus"],V:["veine","valve","vagin","vertebre"]},
+  musique:{A:["abba","adele","akon","amy winehouse","arctic monkeys","asap rocky"],B:["brel","blur","bach","booba","beatles","beyonce","bob marley","bruce springsteen"],C:["chopin","camille","cardi b","coldplay","chris brown"],D:["drake","dalida","dj snake","daft punk","david bowie","dire straits"],E:["eminem","ed sheeran","edith piaf","elton john","ella fitzgerald"],F:["fugees","frank ocean","foo fighters","florent pagny","fleetwood mac"],G:["gorillaz","green day","gainsbourg","guns n roses","george michael"],H:["hamza","hendrix","hans zimmer","harry styles"],I:["inxs","indochine","iron maiden","imagine dragons"],J:["jay z","jamiroquai","julien dore","james brown","johnny cash","john legend"],K:["keane","khalid","koffee","kid cudi","kanye west"],L:["lorde","lizzo","logic","lords","lady gaga","lauryn hill","led zeppelin"],M:["maes","moby","muse","mozart","madonna","maroon 5","miles davis","mac miller"],N:["nas","ninho","nekfeu","nirvana","notorious big"],O:["oasis"],P:["piaf","prince","pharrell","pearl jam","post malone","pink floyd"],R:["rone","rihanna","r kelly","raphael","radiohead","rage against the machine"],S:["sting","skepta","summer","shakira","snoop dogg","sam smith","sex pistols"],T:["toto","the cure","the doors","the weeknd","talking heads","taylor swift"],U:["u2"],V:["vald","vianney","vivaldi","vampire weekend"],W:["weeknd"]},
+  cuisine:{A:["ail","aloo","adobo","acras","aligot","artichaut","assiette"],B:["boeuf","blini","burek","bisque","baguette","boeuf bourguignon","baklava"],C:["crepe","curry","chili","confit","cassoulet","coquilles saint jacques","carpaccio"],D:["daube","dashi","dolma","dinde","dorade"],E:["etuvee","epinard","escalope","empanada"],F:["farce","frito","fondue","fajita","foie gras","felafel"],G:["gyoza","gyros","glace","gratin","gaspacho"],H:["hummus","hotpot","harira","harissa","hamburger"],I:["idli","injera","iskender","involtini"],J:["jerk","jiaozi","julienne","jambalaya"],K:["kefta","kebbeh","kimchi","kibbeh","kebab"],L:["laksa","lardo","lapin","leche","lasagne","lentille"],M:["mole","miso","makis","migas","moussaka","mousse"],N:["naan","nems","nougat","nachos"],O:["osso buco","omelette"],P:["pho","pate","pizza","poele","paella","pois chiches","polenta"],Q:["quiche"],R:["roti","ramen","rosbif","risotto","ratatouille"],S:["sushi","soupe","steak","sauce","saumon","salade"],T:["taco","tofu","tarte","tapas","tiramisu"],U:["udon"],V:["veau","vatapa","veloute","volaille"],W:["waffle","wok"],Y:["yaourt"],Z:["zaatar"]},
+  vehicule:{A:["atv","audi","avion","aviso","ambulance","autobus","autocar"],B:["bus","bac","bmw","bob","bateau","bulldozer","bicyclette"],C:["cab","car","char","canoe","camion","cable car","catamaran"],D:["drone","dumper","drakkar","dragster","dirigeable"],E:["engin","escalator","excavateur","embarcation"],F:["fiat","ford","fusee","frigat","ferry"],G:["grue","galere","grader","go kart","gondole"],H:["hot rod","hydrofoil","hydravion","hovercraft","helicoptere"],I:["isetta"],J:["jet","jeep","jonque","jet ski"],K:["kayak","karting"],L:["luge","landau","lancia","libelle","limousine","locomotive"],M:["moto","metro","mazda","moped","minibus"],N:["nef","navire","navette"],O:["ocean liner"],P:["pelle","patrol","peugeot","planeur","parachute"],Q:["quad"],R:["rame","radeau","renault","remorque","rocket","raft"],S:["suv","skate","segway","suzuki","scooter","sous marin","speedboat"],T:["tank","taxi","tram","train","tracteur"],U:["uber"],V:["van","velo","vespa","viking"],W:["watercraft"],Z:["zeppelin"]},
+  capital:{A:["apia","alger","amman","accra","abou dabi","abuja","addis abeba","andorre la vielle","ankara","antananarivo","ashgabat","assouan","astana","asmara","athens"],B:["berne","bagdad","berlin","bamako","banjul","bangui","belmopan","belgrade","beyrouth","bishkek","bissau","bogota","brasilia","bratislava","brazzaville","bridgetown","bruxelles","bujumbura","budapest"],C:["cairo","colombo","conakry","caracas","canberra","castries","chisinau","copenhague"],D:["doha","dili","dacca","dakar","dhaka","djibouti","dodoma","douglas"],E:["erevan","edinburgh"],F:["funafuti","freetown"],G:["gaborone","georgetown","guatemala city"],H:["harare","havane","honiara","helsinki"],I:["islamabad"],J:["jeddah","jakarta","jerusalem","jamestown"],K:["kiev","kaboul","kigali","kampala","katmandou","khartoum","kingston","kinshasa","kuala lumpur"],L:["lima","lome","luanda","lusaka","la paz","libreville","lilongwe","lisbonne","londres","la valette"],M:["male","minsk","madrid","moscou","managua","manille","maputo","maseru","mbabane","mogadiscio","monrovia","montevideo","moroni","muscat"],N:["nassau","niamey","nairobi","nicosia","ndjamena","naypyidaw","nukualofa","nueva delhi"],O:["oslo","ottawa"],P:["paris","prague","panama","palikir","phnom penh","port au prince","port moresby","porto novo","pretoria"],Q:["quito"],R:["riad","rome","riga","rabat","reykjavik"],S:["suva","seoul","sofia","skopje","san jose","santiago","santo domingo","sao tome","sarajevo","singapour","stockholm","sucre"],T:["tokyo","tunis","tirana","teheran","taipei","tachkent","tbilissi","tegucigalpa","thimphu","tripoli","tallinn"],U:["ulu","ulaanbaatar"],V:["vaduz","vienne","vilnius","valleta"],W:["varsovie","washington","windhoek"],Y:["yaounde","yangon"],Z:["zagreb","zamboanga"]},
+  monument:{A:["agra","alta","agora","arche","alhambra","angkor","arc de triomphe"],B:["big ben","beffroi","basilique","borobudur","buckingham"],C:["chora","cluny","cheops","crypte","colisee","christ the redeemer"],D:["delphi","dolmen","dome du rocher","dome des rochers"],E:["ephese","escorial","tour eiffel","easter island"],F:["forum romain","fortification","forbidden city","fontaine de trevi"],G:["gaudi","grotte","glacier","golden gate","grande pyramide","grande muraille"],H:["himeji","hadrien","hradcany","hollywood","hagia sophia"],I:["invalides"],J:["jardin","jerash","jungfrau"],K:["kaaba","karnak","kremlin","kilimanjaro"],L:["luxor","louvre","leptis magna","leaning tower"],M:["moai","minar","minaret","mosquee","machu picchu","mont saint michel"],N:["nazca","niagara","notre dame"],O:["olympe"],P:["petra","pompei","pagode","pergame","parthenon","pyramides"],Q:["qoqand"],R:["rialto","rempart","red fort","reichstag"],S:["sphinx","sistine","sigiriya","serengeti","stonehenge","sagrada familia","statue de la liberte"],T:["tour","torii","temple","tianmen","taj mahal"],V:["vatican","versailles","victoria falls"]},
+  langue:{A:["akan","arabe","azeri","aymara","afrikaans","albanais","amharique","armenien"],B:["birman","basque","breton","buryat","bengali","bosnien","bulgare","bielorusse"],C:["corse","coreen","croate","chinois","catalan","cantonnais"],D:["dari","danois","dzongkha","dialecte"],E:["ewe","espagnol","estonien","esperanto","anglais"],F:["farsi","frison","finnois","fidjien","flamand","francais"],G:["grec","gallois","guarani","georgien","gujarati","gaelique"],H:["hindi","hebrew","hebreu","haoussa","hongrois"],I:["igbo","italien","islandais","indonesien"],J:["japonais","javanais"],K:["khmer","kongo","kurde","kazakh","kinyarwanda","kirghiz"],L:["latin","letton","luganda","lituanien","laotien"],M:["malais","mongol","maltais","marathi","macedonien","mandarin"],N:["nepalais","norvegien"],O:["ourdou","occitan"],P:["persan","pashto","punjabi","polonais","portugais"],Q:["quechua"],R:["russe","roumain"],S:["serbe","somali","sindhi","suedois","swahili","slovaque","slovene"],T:["turc","thai","tatar","tamoul","tibetain","telougou"],U:["ukrainien","ouzbek"],V:["valencien","vietnamien"],W:["wolof","welsh"],X:["xhosa"],Y:["yoruba"],Z:["zoulou"]},
+  instrument:{A:["alto","arpa","appeau","alphorn","accordeon"],B:["banjo","basse","bongo","bugle","basson","berimbau","bouzouki"],C:["cor","cajon","caixa","clave","clarinette","clavecin","cello"],D:["daf","dre","dhol","didgeridoo","djembe","dulcimer"],E:["epinette","euphonium"],F:["fife","flute","fifre","flageolet","fiddle"],G:["gong","gaita","geige","guitare","gamelan","glockenspiel"],H:["harpe","helicon","hautbois","harmonica","harmoniume","harpe","harpsichord"],I:["imbila"],J:["jouhikko","jews harp"],K:["koto","kora","kazoo","kecak","kalimba"],L:["lur","lir","luth","lyre"],M:["mbira","maracas","melodeon","melodica","mandoline","marimba"],N:["nay","ngoni","nyckelharpa"],O:["orgue","oboe"],P:["pipa","piano","piccolo","psalterion","pan flute"],Q:["quena"],R:["rebab","rebec","rubab","recorder"],S:["saxo","sitar","sarod","sanza","synthé","steel drum"],T:["tar","tuba","tabla","tiple","trompette","trombone","triangle","tambour"],U:["ukulele"],V:["viol","viole","viola","veena","violon","vibraphone"],X:["xylophone"],Z:["zither"]},
+  vetement:{A:["aube","abaya","afgha","amice"],B:["body","burqa","beret","boxer"],C:["cape","ciré","cire","caban"],D:["dastar","dos nu","dashiki","doudoune"],E:["echarpe","espadrille","epaulieres","epaulettes"],F:["frac","fanon","foulard"],G:["gilet","gants","guetres"],H:["haïk","haik","haori","habit"],I:["impermeable"],J:["jean","jupe","jogging","jambières"],K:["kilt","kimono","kaftan","kameez"],L:["lin","legging","lingerie","leg warmers"],M:["manteau","maillot","mitaines","mariniere"],N:["niqab"],O:["overall","overcoat"],P:["pull","polo","parka","pareo"],R:["robe","raincoat","redingote","robe de chambre"],S:["slip","sari","sweat","short"],T:["toge","toga","trench","turban"],V:["vest","veste","voile","veston"]},
   emotion:{A:["aise","amour","ardeur","audace"],B:["bonte","beaute","bluffe","bonheur"],C:["calme","colere","cafard","charme"],D:["desir","deuil","dedain","degoût"],E:["epic","ennui","envie","effroi"],F:["fierte","fureur","frayeur","fierete"],G:["gene","gêne","genie","gaite"],H:["honte","haine","hargne","horreur"],I:["ivresse","inertie","intensite","inquietude"],J:["joie","jubile","jalousie","jouissance"],K:["kinesthesie"],L:["larmes","liberte","loyaute","legerete"],M:["mepris","misere","malaise","modestie"],N:["nostalgie","nervosité","nonchalance"],O:["orgueil","outrage","obstination"],P:["peur","paix","pitie","peine"],R:["rage","regret","rancune","renonce"],S:["stupeur","solitude","saintete","serenite"],T:["terreur","trouble","torpeur","timidite"],V:["vanite","vertige","vigueur","vexation"]},
   mythologie:{A:["ares","ajax","aedes","amour"],B:["borée","boree","bacchus","briares"],C:["circe","cerere","cronos","cronus"],D:["dieu","diana","dieux","diane"],E:["echo","eros","erebe","europe"],F:["faune","fates","furies"],G:["gaia","graces","gorgone","gorgones"],H:["hera","hades","hydre","hygie"],I:["iris","icare","ithaque"],J:["juno","jason","janus","jupiter"],K:["kronos"],L:["lethe","laocoon","licorne","lachesis"],M:["mars","midas","medee","muses"],N:["nike","neptune","nymphes","narcisse"],O:["orphee","olympe","oracle","odyssee"],P:["paris","persee","pegase","pluton"],R:["rhea","romulus","rhadamanthe"],S:["styx","sphinx","saturne","sisyphe"],T:["titans","thesee","themis","triton"],V:["venus","vulcain"]},
 
   espace:{A:["amas","astre","astres","aurora"],B:["binaire","big bang","boucle cosmique"],C:["comete","cosmos","crater","cosmologie"],D:["deriv","deimos","debris","eclipse"],E:["etoile","eclipse","equinoxe","expansion"],F:["fusee","fission","force gravitationnelle"],G:["galaxie","gravite","gravitation","geante rouge"],H:["horizon des evenements"],I:["iss","impact meteoritique"],J:["jupiter"],K:["kepler"],L:["lune","laser","lumiere","luminosite"],M:["mars","meteore","milky way","magnitude"],N:["nasa","neutron","nebuleuse","naine brune"],O:["orbite","onde gravitationnelle"],P:["pluton","pulsar","planete","perigee"],R:["rover","rotation","radiation"],S:["sonde","soleil","saturne","supernova"],T:["transit","telescope","trou noir"],V:["venus","voie lactee"]},
   oceane:{A:["algue","atoll","ambre","anemone"],B:["baleine","benitier","bernacle","baudroie"],C:["crabe","carpe","coral","corail"],D:["delta","dugong","dauphin","delphinapterus"],E:["espadon","epaulard","etoile de mer","ecosysteme marin"],F:["flet","fanon","faque","fletan"],G:["gobie","grand requin","grotte sous-marine","grotte sous marine"],H:["homard","hareng","huitre","hippocampe"],I:["ile","ichtyologie","iguane marin"],J:["jellyfish"],K:["krill","kayak marin"],L:["lamproie","lamantin","langouste","lion de mer"],M:["morse","meduse","murene","marsouin"],N:["narval","nautile","naufrage"],O:["orque","octopus"],P:["phoque","pieuvre","pingouin","plancton"],R:["raie","recif","requin","rascasse"],S:["sole","saumon","seiche","sardine"],T:["thon","turbot","tortue marine"],V:["vive","variete marine"]},
-  medievale:{A:["autel","armure","abbaye","annales"],B:["buste","barde","blason","beffroi"],C:["clerc","chateau","croisade","couvents"],D:["drac","duel","dame","dont"],E:["ecu","epee","ecuyer","ecurie"],F:["fort","fief","faucon","fleche"],G:["glaive","gardes","guildes","gargouille"],H:["herse","heraut","haubert","hommage"],I:["impot"],J:["joute","jeanne d arc"],K:["keep"],L:["luth","lance","lutrin","laique"],M:["motte","moine","merlin","manoir"],N:["nef","noble"],O:[],P:["page","prieure","palefroi","parchemin"],R:["roi","rempart","relique","roi arthur"],S:["serf","siege","scribe","serment"],T:["tour","trone","tribut","templier"],V:["vassal","vitrail","vicomte"]},
+  medievale:{A:["autel","armure","abbaye","annales"],B:["buste","barde","blason","beffroi"],C:["clerc","chateau","croisade","couvents"],D:["drac","duel","dame","dont"],E:["ecu","epee","ecuyer","ecurie"],F:["fort","fief","faucon","fleche"],G:["glaive","gardes","guildes","gargouille"],H:["herse","heraut","haubert","hommage"],I:["impot"],J:["joute","jeanne d arc"],K:["keep"],L:["luth","lance","lutrin","laique"],M:["motte","moine","merlin","manoir"],N:["nef","noble"],O:["oriflamme","ordre"],P:["page","prieure","palefroi","parchemin"],R:["roi","rempart","relique","roi arthur"],S:["serf","siege","scribe","serment"],T:["tour","trone","tribut","templier"],V:["vassal","vitrail","vicomte"]},
   technologie:{A:["api","ascii","arduino","antivirus"],B:["bug","binaire","bluetooth","blockchain"],C:["cpu","code","cloud","crypto"],D:["data","drone","debug","donnees"],E:["email","ethernet","encryption","electronique"],F:["firewall","framework","fibre optique"],G:["gps","gpu","github","graphique"],H:["hack","html","http","hardware"],I:["internet","interface","inteligence artificielle","intelligence artificielle"],J:["java","javascript"],K:["kotlin","kernel","kubernetes"],L:["linux","langage","logiciel"],M:["mongodb","memoire","megadonnees","microprocesseur"],N:["nuage","network","numerique","navigation"],O:["ordinateur","open source"],P:["pixel","python","protocole","processeur"],R:["ram","reseaux","reactjs","robotique"],S:["sql","serveur","systeme","streaming"],T:["terminal","transistor","traitement","technologie"],V:["virus","virtualisation","virtual reality"]},
   danse:{A:["adagio","allegro","afrobeat","arabesque"],B:["barre","ballet","bolero","battement"],C:["cha cha","cabaret","cossack","country"],D:["disco","danzon","danse moderne","danse classique"],E:["entrechat","expression corporelle"],F:["funk","foxtrot","flamenco","fandango"],G:["gigue","glissade"],H:["hula","hora","hip hop"],I:["improvisation"],J:["jazz","jive","jazzjive"],K:["kathak","kuduro","kizomba"],L:["lambada","locking","lindy hop","leg warmers"],M:["mazurka","merengue","moonwalk","mouvements"],N:["neofolk","neosoul","ndombolo"],O:["oriental"],P:["polka","pointe","popping","pirouette"],R:["rock","rumba","reggaeton"],S:["step","salsa","samba","swing"],T:["tango","twist","tutting","tap dance"],V:["valse","vogue","voguing"]},
   architecture:{A:["agora","arche","arcade","abside"],B:["beton","balcon","bunker","beffroi"],C:["cour","cloitre","coupole","creneau"],D:["dome","decor","donjon","dallage"],E:["eglise","escalier","entablement"],F:["frise","facade","fenetre","fronton"],G:["gothique","gargouille","gratte ciel"],H:["hall","hotel","hospice"],I:["igloo","immeuble"],J:["jambage"],K:["kiosque"],L:["loggia","louvre","linteau"],M:["meneau","minaret","mansarde","modillon"],N:["nef","narthex"],O:["ogive","obélisque"],P:["pilier","porche","podium","palais"],R:["rosace","rotonde","rempart","romanesque"],S:["stupa","salle","sanctuaire","soubassement"],T:["tour","tympan","temple","tribune"],V:["vault","voute","vestibule"]},
-  sport_star:{A:["ali","ashe","agassi","anelka"],B:["bolt","bird","best","biles"],C:["curry","carlos","cantona","clemson"],D:["durant","drogba","djokovic","deschamps"],E:["eto o","eusebio"],F:["figo","federer"],G:["grace","gasquet","griezmann","guardiola"],H:["hamm","henry","hatton","hamilton"],I:["ibrahimovic"],J:["james","jordan","jorginho","james lebron"],K:["kobe","kante","kylian"],L:["lin","lewis","lebron","lewandowski"],M:["messi","maldini","maradona","mourinho"],N:["nadal","neymar"],O:[],P:["pele","pogba","platini"],R:["rafael","robben","ronaldo","robinson"],S:["salah","serena","sneijder","schumacher"],T:["tyson","totti"],V:["villa","vieira","van basten"]},
-  personnage:{A:["alice","ariel","anakin","aragorn"],B:["bond","belle","bambi","batman"],C:["conan","cendrillon","captain jack","capitaine haddock"],D:["dory","dumbledore","darth vader","don quichotte"],E:["elsa","ethan hunt","emma bovary"],F:["frodo","frollo","forrest"],G:["groot","gollum","gaston","gandalf"],H:["hulk","hamlet","hermione","harry potter"],I:["ironman"],J:["joker","james bond","jean valjean"],K:["katniss","king kong"],L:["leia","luke","lolita","lecter"],M:["moana","merlin","matrice","magneto"],N:["neo","nemo"],O:[],P:["padme","potter","pinocchio"],R:["rocky","romeo","rapunzel"],S:["scar","simba","sherlock","scarlett"],T:["thor","thanos","terminator"],V:["vaiana","voldemort"]},
+  sport_star:{A:["ali","ashe","agassi","anelka"],B:["bolt","bird","best","biles"],C:["curry","carlos","cantona","clemson"],D:["durant","drogba","djokovic","deschamps"],E:["eto o","eusebio"],F:["figo","federer"],G:["grace","gasquet","griezmann","guardiola"],H:["hamm","henry","hatton","hamilton"],I:["ibrahimovic"],J:["james","jordan","jorginho","james lebron"],K:["kobe","kante","kylian"],L:["lin","lewis","lebron","lewandowski"],M:["messi","maldini","maradona","mourinho"],N:["nadal","neymar"],O:["owen","okoye"],P:["pele","pogba","platini"],R:["rafael","robben","ronaldo","robinson"],S:["salah","serena","sneijder","schumacher"],T:["tyson","totti"],V:["villa","vieira","van basten"]},
+  personnage:{A:["alice","ariel","anakin","aragorn"],B:["bond","belle","bambi","batman"],C:["conan","cendrillon","captain jack","capitaine haddock"],D:["dory","dumbledore","darth vader","don quichotte"],E:["elsa","ethan hunt","emma bovary"],F:["frodo","frollo","forrest"],G:["groot","gollum","gaston","gandalf"],H:["hulk","hamlet","hermione","harry potter"],I:["ironman"],J:["joker","james bond","jean valjean"],K:["katniss","king kong"],L:["leia","luke","lolita","lecter"],M:["moana","merlin","matrice","magneto"],N:["neo","nemo"],O:["obelix","obiwan"],P:["padme","potter","pinocchio"],R:["rocky","romeo","rapunzel"],S:["scar","simba","sherlock","scarlett"],T:["thor","thanos","terminator"],V:["vaiana","voldemort"]},
 };
 
 const DAILY_CAT_WORDS = {};
@@ -3207,11 +3384,14 @@ function scoreAnswerTournoi(answer, allAnswers, categoryId, letter, lang, timeBo
 
 function scoreAnswer(answer, allAnswers, categoryId, letter, lang) {
   if (!answer?.trim()) return 0;
-  // Validate word belongs to category
-  if (categoryId && letter && !isValidAnswer(answer, categoryId, letter, lang)) return -1; // invalid
+  if (categoryId && letter && !isValidAnswer(answer, categoryId, letter, lang)) return -1;
+  // Correspondance approximative (double lettre simplifiée) → plafonné à 1pt
+  if (categoryId && letter && isApproxAnswer(answer, categoryId, letter, lang)) return 1;
   const norm = normalizeWord(answer);
-  const filled = allAnswers.map(a => a?.trim() ? normalizeWord(a) : "").filter(Boolean);
-  const count = filled.filter(a => a === norm).length;
+  const nc = norm.replace(/ /g, "");
+  // Comparer en forme compacte pour éviter "jean pierre" != "jeanpierre"
+  const filled = allAnswers.map(a => a?.trim() ? normalizeWord(a).replace(/ /g, "") : "").filter(Boolean);
+  const count = filled.filter(a => a === nc).length;
   return count === 1 ? 2 : count >= 2 ? 1 : 0;
 }
 function genCode() {
@@ -4592,26 +4772,43 @@ export default function App() {
       { id: "bot1", name: BOT_NAMES[1], isBot: true, answers: {}, done: false },
     ];
 
-    // Équipes 2v2: 3 joueurs par équipe
-    const teams = is2v2 ? {
-      team0: [humanId, "bot0", "bot1"],
-      team1: ["bot2", "bot3", "bot4"],
-    } : null;
+    // Équipes 2v2: formées aléatoirement au début de partie
+    let teams = null;
+    if (is2v2) {
+      const allIds = [...players.map(p => p.id)];
+      // Mélange Fisher-Yates
+      for (let i = allIds.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [allIds[i], allIds[j]] = [allIds[j], allIds[i]];
+      }
+      const half = Math.ceil(allIds.length / 2);
+      teams = { team0: allIds.slice(0, half), team1: allIds.slice(half) };
+    }
 
+
+    // Mort Subite: tirer les catégories actives de ce 1er round
+    const mortCatCount = isMort && cfg.mortCatCount ? cfg.mortCatCount : null;
+    function pickMortCats(pool, n) {
+      const shuffled = [...pool].sort(() => Math.random() - 0.5);
+      return shuffled.slice(0, Math.min(n, shuffled.length));
+    }
+    const activeCategories = mortCatCount ? pickMortCats(activeCats, mortCatCount) : activeCats;
 
     setGameState({
       mode: cfg.mode || "solo",
       difficulty: cfg.difficulty,
       totalTime: DIFFICULTY[cfg.difficulty].time,
       timeLeft: DIFFICULTY[cfg.difficulty].time,
-      categories: activeCats,
+      categories: activeCats,         // pool complet
+      activeCategories,               // catégories jouées ce round
+      mortCatCount,                   // nb cats/manche pour mort subite
       players,
       totalRounds: cfg.totalRounds,
       currentRound: 1,
       spinnerIndex: 0,
       rounds: [],
       letter: null,
-      answers: Object.fromEntries(activeCats.map(c => [c.id, ""])),
+      answers: Object.fromEntries(activeCategories.map(c => [c.id, ""])),
       phase: "roulette",
       cumulativeScores: Object.fromEntries(players.map(p => [p.id, 0])),
       myId: humanId,
@@ -5350,6 +5547,27 @@ function OnlineScreen({
     if (!room) return;
     const playerIds = Object.keys(room.players || {});
     const spinnerOrder = [...playerIds].sort(() => Math.random() - 0.5);
+
+    // Équipes 2v2: si l'hôte a fait des assignations manuelles, les utiliser
+    // Sinon mélanger aléatoirement
+    let teams2v2 = null;
+    if (gameMode === "2v2") {
+      if (customTeams && Object.keys(customTeams).length > 0) {
+        // Convertir les assignments en groupes d'équipes
+        const tg = { team0: [], team1: [], team2: [] };
+        Object.entries(customTeams).forEach(([key, pid]) => {
+          const t = key.split("_")[0];
+          if (tg[t]) tg[t].push(pid);
+        });
+        // Ne garder que les équipes non-vides
+        teams2v2 = Object.fromEntries(Object.entries(tg).filter(([, v]) => v.length > 0));
+      } else {
+        const shuffled = [...playerIds].sort(() => Math.random() - 0.5);
+        const half = Math.ceil(shuffled.length / 2);
+        teams2v2 = { team0: shuffled.slice(0, half), team1: shuffled.slice(half) };
+      }
+    }
+
     // phase: "roulette" → déclenche la roulette de lettre
     await FB.updateRoom(roomCode, {
       status: "playing",
@@ -5359,6 +5577,7 @@ function OnlineScreen({
       currentRound: 1,
       letter: null,
       startedAt: Date.now(),
+      ...(teams2v2 ? { teams: teams2v2 } : {}),
     });
   }
 
@@ -5501,7 +5720,8 @@ function OnlineScreen({
             <span>{t("players_count")} ({players.length}/6)</span>
             {!isHost && <span className="pulse txm">{t("waiting_host")}</span>}
           </div>
-          {players.map(p => (
+          {/* Liste joueurs — mode standard ou haut du 2v2 */}
+          {gameMode !== "2v2" && players.map(p => (
             <div key={p.uid} className="pi">
               <div className={`pav ${p.uid === myUid || p.uid === uid ? "pav-human" : "pav-guest"}`}>{(p.name || "?")[0]}</div>
               <div><div className="pn">{p.name}{p.uid === myUid || p.uid === uid ? " " + t("its_you_paren","(toi)") : ""}</div><div className="ps">📍 {p.country}</div></div>
@@ -5510,6 +5730,76 @@ function OnlineScreen({
               {!p.isHost && !p.ready && <span className="wbadge pulse">…</span>}
             </div>
           ))}
+
+          {/* ── Éditeur d'équipes 2v2 (hôte seulement) ── */}
+          {gameMode === "2v2" && (() => {
+            const TEAM_DEFS = [
+              { key: "team0", label: t("team_red","🔴 Équipe Rouge"), color: "#ef4444" },
+              { key: "team1", label: t("team_blue","🔵 Équipe Bleu"),  color: "#3b82f6" },
+              { key: "team2", label: t("team_green","🟢 Équipe Verte"), color: "#22c55e" },
+            ];
+            // Assignment: playerId → teamKey
+            const assigned = customTeams || {};
+            const unassigned = players.filter(p => !Object.values(assigned).includes(p.uid));
+            function assignPlayer(uid, teamKey) {
+              // retirer d'une autre équipe si besoin
+              const next = {};
+              Object.entries(assigned).forEach(([tid, pid]) => { if (pid !== uid) next[tid+"_"+pid] = pid; });
+              setCustomTeams(prev => {
+                const n = {...(prev||{})};
+                // Remove uid from all team slots
+                Object.keys(n).forEach(k => { if (n[k] === uid) delete n[k]; });
+                // Add to new slot
+                n[teamKey + "_" + uid] = uid;
+                return n;
+              });
+            }
+            const teamGroups = {};
+            TEAM_DEFS.forEach(td => {
+              teamGroups[td.key] = players.filter(p => {
+                return Object.entries(assigned).some(([k, v]) => k.startsWith(td.key) && v === p.uid);
+              });
+            });
+            const allAssigned = players.every(p => Object.values(assigned).includes(p.uid));
+            return (
+              <div>
+                <div style={{ fontSize: 11, color: "var(--txm)", marginBottom: 8 }}>
+                  {isHost ? t("assign_teams","Placez chaque joueur dans une équipe") : t("waiting_host","En attente de l'hôte…")}
+                </div>
+                {TEAM_DEFS.map(td => (
+                  <div key={td.key} style={{ marginBottom: 8 }}>
+                    <div style={{ fontSize: 12, fontWeight: 700, color: td.color, marginBottom: 4 }}>{td.label}</div>
+                    <div style={{ minHeight: 36, background: td.color + "15", borderRadius: 8, border: `1px dashed ${td.color}40`, padding: "4px 8px", display:"flex", flexWrap:"wrap", gap:4 }}>
+                      {teamGroups[td.key].map(p => (
+                        <span key={p.uid} style={{ fontSize: 12, padding: "2px 8px", background: td.color + "30", borderRadius: 12, color: td.color }}>
+                          {p.name}
+                          {isHost && <button onClick={() => assignPlayer(p.uid, "none")} style={{ marginLeft:4, background:"none", border:"none", cursor:"pointer", color:td.color }}>✕</button>}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+                {unassigned.length > 0 && (
+                  <div style={{ marginTop: 8 }}>
+                    <div style={{ fontSize: 11, color: "var(--txm)", marginBottom: 4 }}>Joueurs non assignés :</div>
+                    {unassigned.map(p => (
+                      <div key={p.uid} className="pi" style={{ alignItems:"center" }}>
+                        <div className={`pav ${p.uid === myUid ? "pav-human" : "pav-guest"}`}>{(p.name||"?")[0]}</div>
+                        <div style={{ flex:1 }}><div className="pn">{p.name}</div></div>
+                        {isHost && TEAM_DEFS.map(td => (
+                          <button key={td.key} onClick={() => assignPlayer(p.uid, td.key)}
+                            style={{ marginLeft:4, padding:"2px 8px", fontSize:11, background: td.color+"20", border:`1px solid ${td.color}60`, borderRadius:10, cursor:"pointer", color:td.color }}>
+                            {td.label.split(" ")[1]}
+                          </button>
+                        ))}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            );
+          })()}
+
           {isHost && (
             <button className="btn bp mt10" style={{ marginTop: 10 }} onClick={startGame} disabled={players.length < 2}>
               {players.length < 2 ? t("waiting_players_short","En attente…") : `🚀 ${t("launch_btn","Lancer")} (${players.length})`}
@@ -5532,6 +5822,8 @@ function SetupScreen({
   const [cword, setCword] = useState("");
   const [customCats, setCustomCats] = useState(settings.customCategories || []);
   const [rounds, setRounds] = useState(settings.totalRounds || 5);
+  // Mort Subite: nombre de catégories jouées par manche (3 ou 5)
+  const [mortCatCount, setMortCatCount] = useState(settings.mortCatCount || 3);
   const canPro = tier === TIER.PRO || tier === TIER.VIP;
   const canVip = tier === TIER.VIP;
   const roundsOpts = ROUNDS_OPTIONS[tier] || [5];
@@ -5548,7 +5840,7 @@ function SetupScreen({
   }
   function go() {
     if (!cats.length) return;
-    const cfg = { mode, playerName: name, difficulty: diff, totalRounds: rounds, categories: cats, customCategories: customCats };
+    const cfg = { mode, playerName: name, difficulty: diff, totalRounds: rounds, categories: cats, customCategories: customCats, mortCatCount };
     setSettings(s => ({ ...s, ...cfg }));
     onStart(cfg);
   }
@@ -5580,12 +5872,27 @@ function SetupScreen({
             </button>
           ))}</div>
         </div>
-        <div className="card">
-          <div className="ctitle">{t("rounds_label")}</div>
-          <div className="rounds-grid">{roundsOpts.map(r => (
-            <button key={r} className={`rb ${rounds === r ? "sel" : ""}`} onClick={() => setRounds(r)}>{r}</button>
-          ))}</div>
-        </div>
+        {mode !== "mort" && (
+          <div className="card">
+            <div className="ctitle">{t("rounds_label")}</div>
+            <div className="rounds-grid">{roundsOpts.map(r => (
+              <button key={r} className={`rb ${rounds === r ? "sel" : ""}`} onClick={() => setRounds(r)}>{r}</button>
+            ))}</div>
+          </div>
+        )}
+        {mode === "mort" && (
+          <div className="card">
+            <div className="ctitle">{t("cats_per_round","Catégories par manche")}</div>
+            <p style={{ fontSize: 11, color: "var(--txm)", marginBottom: 8 }}>
+              💀 {t("mort_desc2","Une erreur = éliminé. Le dernier en vie gagne !")}
+            </p>
+            <div className="rounds-grid">{[3, 5].map(n => (
+              <button key={n} className={`rb ${mortCatCount === n ? "sel" : ""}`} onClick={() => setMortCatCount(n)}>
+                {n} {t("cats_per_round","cats")}
+              </button>
+            ))}</div>
+          </div>
+        )}
         <div className="card">
           <div className="ctitle">{t("choose_categories")} ({cats.length})</div>
           <div className="cg">{[...ALL_BASE, ...customCats].map(cat => {
@@ -5678,6 +5985,8 @@ function GameScreen({
   const doneRef = useRef(false);
   const inputRefs = useRef({});
   const { letter, categories, difficulty, players, phase, currentRound, totalRounds, spinnerIndex, myId } = gameState;
+  // En mort subite, on joue uniquement les catégories actives du round courant
+  const activeCategories = gameState.activeCategories || categories;
   const dc = DIFFICULTY[difficulty];
 
 
@@ -5722,7 +6031,7 @@ function GameScreen({
     players.filter(p => p.isBot).forEach((bot, bi) => {
       setTimeout(() => {
         if (doneRef.current) return;
-        const a = {}; categories.forEach(cat => { a[cat.id] = getAiAnswer(cat.id, letter, gameState?.lang || lang); });
+        const a = {}; activeCategories.forEach(cat => { a[cat.id] = getAiAnswer(cat.id, letter, gameState?.lang || lang); });
         setGameState(g => ({ ...g, players: g.players.map(p => p.id === bot.id ? { ...p, answers: a, done: true } : p) }));
       }, dc.aiDelay + bi * 700 + Math.random() * 900);
     });
@@ -5746,7 +6055,7 @@ function GameScreen({
     Haptics.heavy();
     const finalPlayers = gameState.players.map(p => {
       if (!p.isBot) return p;
-      const a = {}; categories.forEach(cat => { a[cat.id] = p.answers?.[cat.id] || getAiAnswer(cat.id, gameState.letter, gameState?.lang || lang); });
+      const a = {}; activeCategories.forEach(cat => { a[cat.id] = p.answers?.[cat.id] || getAiAnswer(cat.id, gameState.letter, gameState?.lang || lang); });
       return { ...p, answers: a, done: true };
     });
     computeRoundScores({ ...gameState, players: finalPlayers });
@@ -5758,7 +6067,10 @@ function GameScreen({
     const roundAnswers = {};
     const roundValidity = {};
 
-    gs.categories.forEach(cat => {
+    // En mort subite, utiliser les catégories actives du round
+    const catsToScore = gs.activeCategories || gs.categories;
+
+    catsToScore.forEach(cat => {
       // BUG 4 FIX: each player's answer comes from p.answers for bots and online players,
       // and from gs.answers only for the local human player
       const myId = gs.myId;
@@ -5781,22 +6093,18 @@ function GameScreen({
     });
 
     // ── Mode Mort Subite ─────────────────────────────────────
-    // Joueurs qui ont 0 point ET au moins une réponse invalide → éliminés
+    // UNE seule erreur (réponse invalide OU vide) = éliminé immédiatement
     let eliminatedIds = [];
     if (gs.mode === "mort") {
+      const activeCatsForRound = gs.activeCategories || gs.categories;
       gs.players.forEach(p => {
         if (p.eliminated) return; // déjà éliminé
-        const hasInvalid = gs.categories.some(cat => {
+        const hasError = activeCatsForRound.some(cat => {
           const v = roundValidity[cat.id]?.[p.id];
-          return v === -1; // réponse invalide
-        });
-        const hasEmpty = gs.categories.every(cat => {
           const ans = roundAnswers[cat.id]?.[p.id] || "";
-          return !ans.trim();
+          return !ans.trim() || v === -1; // vide OU invalide
         });
-        if (hasInvalid || hasEmpty) {
-          eliminatedIds.push(p.id);
-        }
+        if (hasError) eliminatedIds.push(p.id);
       });
     }
 
@@ -5826,8 +6134,10 @@ function GameScreen({
       ? gs.players.filter(p => !p.eliminated && !eliminatedIds.includes(p.id))
       : gs.players;
 
-    const isLast = gs.currentRound >= gs.totalRounds
-      || (gs.mode === "mort" && activePlayers.length <= 1);
+    // Mort Subite: on continue jusqu'au dernier survivant (ignore totalRounds)
+    const isLast = gs.mode === "mort"
+      ? activePlayers.length <= 1
+      : gs.currentRound >= gs.totalRounds;
 
     const updatedPlayers = gs.players.map(p => ({
       ...p,
@@ -5841,7 +6151,12 @@ function GameScreen({
       validity: roundValidity,
       eliminated: eliminatedIds,
       teamScores,
+      activeCategories: gs.activeCategories || gs.categories,
     };
+
+    // Vérifier si une phase de vote VIP est nécessaire (catégories custom)
+    const customCatsInRound = (gs.activeCategories || gs.categories).filter(c => c.custom);
+    const needsVote = customCatsInRound.length > 0;
 
     const newGs = {
       ...gs,
@@ -5849,16 +6164,17 @@ function GameScreen({
       rounds: [...gs.rounds, roundData],
       cumulativeScores: newCumulative,
       currentRoundData: roundData,
-      phase: isLast ? "final_results" : "round_results",
+      phase: needsVote ? "vote_phase" : (isLast ? "final_results" : "round_results"),
       teamScores: teamScores || gs.teamScores,
+      _pendingIsLast: isLast,
     };
     setGameState(newGs);
-    if (isLast) setTimeout(() => onEndGame(newGs), 0);
+    if (!needsVote && isLast) setTimeout(() => onEndGame(newGs), 0);
   }
 
   function upd(id, v) { setGameState(g => ({ ...g, answers: { ...g.answers, [id]: v } })); }
-  function liveTotal() { return categories.reduce((s, cat) => s + (gameState.answers[cat.id]?.trim() ? 2 : 0), 0); }
-  const allFilled = categories.every(cat => gameState.answers[cat.id]?.trim().length > 0);
+  function liveTotal() { return activeCategories.reduce((s, cat) => s + (gameState.answers[cat.id]?.trim() ? 2 : 0), 0); }
+  const allFilled = activeCategories.every(cat => gameState.answers[cat.id]?.trim().length > 0);
 
   if (phase === "roulette") {
     return (
@@ -5884,19 +6200,42 @@ function GameScreen({
     );
   }
 
+  if (phase === "vote_phase") {
+    return (
+      <VotePhase
+        gameState={gameState}
+        onVoteDone={updatedGs => {
+          setGameState(updatedGs);
+          if (updatedGs._pendingIsLast) setTimeout(() => onEndGame(updatedGs), 0);
+        }}
+        lang={lang}
+      />
+    );
+  }
+
   if (phase === "round_results") {
     return (
     <RoundResultsOverlay gameState={gameState} onNext={() => {
-      setGameState(g => ({
-        ...g,
-        currentRound: g.currentRound + 1,
-        spinnerIndex: (g.spinnerIndex + 1) % g.players.length,
-        letter: null,
-        answers: Object.fromEntries(g.categories.map(c => [c.id, ""])),
-        players: g.players.map(p => ({ ...p, answers: {}, done: false })),
-        phase: "roulette",
-        timeLeft: g.totalTime,
-      }));
+      setGameState(g => {
+        // Mort Subite: tirer de nouvelles catégories pour ce round
+        let nextActiveCats = g.activeCategories || g.categories;
+        if (g.mode === "mort" && g.mortCatCount) {
+          const pool = g.categories;
+          const shuffled = [...pool].sort(() => Math.random() - 0.5);
+          nextActiveCats = shuffled.slice(0, Math.min(g.mortCatCount, shuffled.length));
+        }
+        return {
+          ...g,
+          currentRound: g.currentRound + 1,
+          spinnerIndex: (g.spinnerIndex + 1) % g.players.filter(p => !p.eliminated).length,
+          letter: null,
+          activeCategories: nextActiveCats,
+          answers: Object.fromEntries(nextActiveCats.map(c => [c.id, ""])),
+          players: g.players.map(p => ({ ...p, answers: {}, done: false })),
+          phase: "roulette",
+          timeLeft: g.totalTime,
+        };
+      });
     }} lang={lang} />
   );
   }
@@ -5925,14 +6264,14 @@ function GameScreen({
       <div className="catlist">
 
         {/* ── Current round inputs EN HAUT ── */}
-        {categories.map((cat, i) => {
+        {activeCategories.map((cat, i) => {
           const val = gameState.answers[cat.id] || "";
           const filled = val.trim().length > 0;
           return (
             <div key={cat.id} className={`catrow ${filled ? "active" : ""}`}
               onClick={() => inputRefs.current[cat.id]?.focus()}>
               <span className="cat-emoji">{cat.emoji}</span>
-              <span className="cat-label">{getCatLabel(cat.id, lang || "fr")}</span>
+              <span className="cat-label">{getCatLabel(cat.id, lang || "fr")}{cat.custom ? " ✏️" : ""}</span>
               <input
                 ref={el => inputRefs.current[cat.id] = el}
                 className="cat-input"
@@ -5942,7 +6281,7 @@ function GameScreen({
                 autoComplete="off" autoCorrect="off" autoCapitalize="characters" spellCheck="false"
                 onKeyDown={e => {
                   if (e.key === "Enter") {
-                    const nx = categories[i + 1];
+                    const nx = activeCategories[i + 1];
                     if (nx) inputRefs.current[nx.id]?.focus();
                     else inputRefs.current[cat.id]?.blur();
                   }
@@ -5955,7 +6294,8 @@ function GameScreen({
 
         {/* ── Past rounds EN BAS (lecture seule) ── */}
         {gameState.rounds.map((rd, ri) => {
-          const roundTotal = categories.reduce((s, cat) => {
+          const rdCats = rd.activeCategories || categories;
+          const roundTotal = rdCats.reduce((s, cat) => {
             const v = rd.validity?.[cat.id]?.[myId2] ?? 0;
             return s + (v > 0 ? v : 0);
           }, 0);
@@ -5966,7 +6306,7 @@ function GameScreen({
                 <div className="round-sep-line" />
                 <span className="round-total-chip">{roundTotal}{t("pts","pts")}</span>
               </div>
-              {categories.map(cat => {
+              {rdCats.map(cat => {
                 const ans = rd.answers?.[cat.id]?.[myId2] || "";
                 const v = rd.validity?.[cat.id]?.[myId2] ?? 0;
                 const vc = !ans ? "v0" : v === -1 ? "vm" : v === 2 ? "v2" : v === 1 ? "v1" : "v0";
@@ -6000,13 +6340,193 @@ function GameScreen({
   );
 }
 
+// ─── VOTE PHASE (catégories custom VIP) ──────────────────────────
+// Quand une ou plusieurs catégories custom sont jouées, les joueurs votent
+// simultanément pour valider les réponses des autres.
+// Règles :
+//   • Majorité pour = réponse validée (points normaux)
+//   • Égalité = 1 pt seulement
+//   • Majorité contre = 0 pt
+// L'auteur de la réponse NE vote PAS sur sa propre réponse.
+function VotePhase({ gameState, onVoteDone, lang }) {
+  const t = useT(lang || "fr");
+  const { players, currentRoundData, myId } = gameState;
+  const customCats = (gameState.activeCategories || gameState.categories).filter(c => c.custom);
+
+  // votes[catId][targetPlayerId] = "yes" | "no"  (votes du joueur local)
+  const [votes, setVotes] = useState({});
+  const [submitted, setSubmitted] = useState(false);
+
+  // Init bot votes (aléatoires — 70% oui, 30% non)
+  useEffect(() => {
+    const botVotes = {};
+    players.filter(p => p.isBot).forEach(bot => {
+      customCats.forEach(cat => {
+        players.filter(p => p.id !== bot.id).forEach(target => {
+          const key = `${bot.id}:${cat.id}:${target.id}`;
+          botVotes[key] = Math.random() > 0.3 ? "yes" : "no";
+        });
+      });
+    });
+    setVotes(prev => ({ ...prev, ...botVotes }));
+  }, []);
+
+  function castVote(catId, targetId, v) {
+    setVotes(prev => ({ ...prev, [`${myId}:${catId}:${targetId}`]: v }));
+  }
+
+  // Vérifier si le joueur humain a voté sur toutes les réponses des autres
+  const pendingHumanVotes = customCats.flatMap(cat =>
+    players.filter(p => p.id !== myId).filter(p => !votes[`${myId}:${cat.id}:${p.id}`])
+  );
+  const canSubmit = pendingHumanVotes.length === 0;
+
+  function applyVotesAndFinish() {
+    setSubmitted(true);
+    // Recalculer les scores pour les catégories custom
+    const updatedCumulative = { ...gameState.cumulativeScores };
+    const updatedRoundData = { ...currentRoundData };
+
+    customCats.forEach(cat => {
+      players.forEach(target => {
+        const ans = currentRoundData.answers?.[cat.id]?.[target.id] || "";
+        if (!ans.trim()) return; // réponse vide — pas de vote
+        // Compter les votes de tous les joueurs SAUF l'auteur
+        const voters = players.filter(p => p.id !== target.id);
+        const yesVotes = voters.filter(v => {
+          const key = `${v.id}:${cat.id}:${target.id}`;
+          return votes[key] === "yes";
+        }).length;
+        const noVotes = voters.length - yesVotes;
+        let catPts;
+        if (yesVotes > noVotes) {
+          // Majorité pour → points normaux (déjà calculés, on les garde)
+          catPts = currentRoundData.validity?.[cat.id]?.[target.id] ?? 0;
+          catPts = catPts > 0 ? catPts : 0;
+        } else if (yesVotes === noVotes) {
+          catPts = 1; // Égalité → 1 pt
+        } else {
+          catPts = 0; // Majorité contre → 0 pt
+        }
+        // Remplacer le score existant pour cette cat par le résultat du vote
+        const oldPts = currentRoundData.validity?.[cat.id]?.[target.id] ?? 0;
+        const diff = catPts - (oldPts > 0 ? oldPts : 0);
+        updatedCumulative[target.id] = (updatedCumulative[target.id] || 0) + diff;
+        // Stocker le résultat du vote pour l'affichage
+        if (!updatedRoundData.voteResults) updatedRoundData.voteResults = {};
+        if (!updatedRoundData.voteResults[cat.id]) updatedRoundData.voteResults[cat.id] = {};
+        updatedRoundData.voteResults[cat.id][target.id] = { yesVotes, noVotes, catPts };
+      });
+    });
+
+    const nextPhase = gameState._pendingIsLast ? "final_results" : "round_results";
+    const updatedGs = {
+      ...gameState,
+      cumulativeScores: updatedCumulative,
+      currentRoundData: updatedRoundData,
+      phase: nextPhase,
+    };
+    onVoteDone(updatedGs);
+  }
+
+  return (
+    <div className="rov">
+      <div className="rpanel">
+        <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 4 }}>
+          🗳️ {t("vote_phase_title","Vote — Catégorie perso")}
+        </div>
+        <div style={{ fontSize: 11, color: "var(--txm)", marginBottom: 14 }}>
+          {t("vote_info","Votez pour valider les réponses des catégories créées par l'hôte")}
+        </div>
+
+        {customCats.map(cat => (
+          <div key={cat.id} style={{ marginBottom: 16 }}>
+            <div style={{ fontWeight: 700, fontSize: 13, marginBottom: 6 }}>
+              {cat.emoji} {cat.label}
+            </div>
+            {players.map(target => {
+              const ans = currentRoundData.answers?.[cat.id]?.[target.id] || "";
+              if (!ans.trim()) return null;
+              const isMe = target.id === myId;
+              const myVote = votes[`${myId}:${cat.id}:${target.id}`];
+              // Compter les votes déjà enregistrés (bots)
+              const voters = players.filter(p => p.id !== target.id);
+              const yesCount = voters.filter(v => votes[`${v.id}:${cat.id}:${target.id}`] === "yes").length;
+              const noCount = voters.filter(v => votes[`${v.id}:${cat.id}:${target.id}`] === "no").length;
+              return (
+                <div key={target.id} style={{
+                  display: "flex", alignItems: "center", gap: 8,
+                  padding: "8px 10px", marginBottom: 6,
+                  background: "var(--card2,rgba(255,255,255,0.05))",
+                  borderRadius: 10, border: "1px solid var(--bdr,rgba(255,255,255,0.08))"
+                }}>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontSize: 12, color: "var(--txm)" }}>
+                      {target.isBot ? "🤖" : "👤"} {target.name}
+                    </div>
+                    <div style={{ fontSize: 15, fontWeight: 600 }}>{ans}</div>
+                  </div>
+                  {isMe ? (
+                    <span style={{ fontSize: 11, color: "var(--txm)", fontStyle: "italic" }}>
+                      (ta réponse)
+                    </span>
+                  ) : submitted ? (
+                    <span style={{ fontSize: 11, color: "var(--txm)" }}>
+                      {yesCount > noCount ? t("vote_result_ok","✅") : yesCount === noCount ? t("vote_result_tie","⚖️ 1pt") : t("vote_result_no","❌")}
+                    </span>
+                  ) : (
+                    <div style={{ display: "flex", gap: 6 }}>
+                      <button
+                        onClick={() => castVote(cat.id, target.id, "yes")}
+                        style={{
+                          padding: "4px 12px", borderRadius: 8, fontSize: 12, cursor: "pointer",
+                          background: myVote === "yes" ? "rgba(74,222,128,0.25)" : "var(--card2,rgba(255,255,255,0.06))",
+                          border: myVote === "yes" ? "1px solid #4ade80" : "1px solid var(--bdr,rgba(255,255,255,0.1))",
+                          color: myVote === "yes" ? "#4ade80" : "inherit",
+                        }}>
+                        {t("vote_validate","✓")}
+                      </button>
+                      <button
+                        onClick={() => castVote(cat.id, target.id, "no")}
+                        style={{
+                          padding: "4px 12px", borderRadius: 8, fontSize: 12, cursor: "pointer",
+                          background: myVote === "no" ? "rgba(248,113,113,0.25)" : "var(--card2,rgba(255,255,255,0.06))",
+                          border: myVote === "no" ? "1px solid #f87171" : "1px solid var(--bdr,rgba(255,255,255,0.1))",
+                          color: myVote === "no" ? "#f87171" : "inherit",
+                        }}>
+                        {t("vote_reject","✗")}
+                      </button>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        ))}
+
+        {!submitted && (
+          <button
+            className="btn bp"
+            onClick={applyVotesAndFinish}
+            disabled={!canSubmit}
+            style={{ marginTop: 8 }}>
+            {canSubmit ? t("vote_submit","Confirmer mes votes") : `${pendingHumanVotes.length} vote(s) restant(s)`}
+          </button>
+        )}
+      </div>
+    </div>
+  );
+}
+
 // ─── ROUND RESULTS ────────────────────────────────────────────────
 function RoundResultsOverlay({
   gameState, onNext, lang
 }) {
   const t = useT(lang || "fr");
-  const { categories, players, currentRoundData, cumulativeScores, currentRound, totalRounds } = gameState;
+  const { players, currentRoundData, cumulativeScores, currentRound, totalRounds } = gameState;
   if (!currentRoundData) return null;
+  // Utiliser les catégories du round (peut être un sous-ensemble en mort subite)
+  const roundCats = currentRoundData.activeCategories || gameState.activeCategories || gameState.categories;
   const { letter, answers: rAns, scores: rScores } = currentRoundData;
   const sorted = [...players].sort((a, b) => (cumulativeScores[b.id] || 0) - (cumulativeScores[a.id] || 0));
   const max = cumulativeScores[sorted[0]?.id] || 0;
@@ -6028,22 +6548,38 @@ function RoundResultsOverlay({
               {players.map(p => <th key={p.id}>{p.isBot ? "🤖" : "👤"} {p.name.split(" ")[0]}</th>)}
             </tr></thead>
             <tbody>
-              {categories.map(cat => {
+              {roundCats.map(cat => {
                 const allAns = players.map(p => rAns[cat.id]?.[p.id] || "");
+                const voteResult = currentRoundData.voteResults?.[cat.id];
                 return (
                   <tr key={cat.id}>
-                    <td className="td-player">{cat.emoji} {getCatLabel(cat.id, lang || "fr")}</td>
+                    <td className="td-player">
+                      {cat.emoji} {getCatLabel(cat.id, lang || "fr")}
+                      {cat.custom && <span style={{ fontSize: 9, opacity: .7 }}> 🗳️</span>}
+                    </td>
                     {players.map(p => {
                       const ans = rAns[cat.id]?.[p.id] || "";
-                      const pts = currentRoundData.validity?.[cat.id]?.[p.id] ?? scoreAnswer(ans, allAns, cat.id, letter, gameState?.lang);
-                      const invalid = pts === -1;
+                      let pts = currentRoundData.validity?.[cat.id]?.[p.id] ?? scoreAnswer(ans, allAns, cat.id, letter, gameState?.lang);
+                      // Pour les cats custom: afficher le résultat du vote
+                      if (cat.custom && voteResult?.[p.id] !== undefined) {
+                        pts = voteResult[p.id].catPts;
+                      }
+                      const invalid = pts === -1 || (cat.custom && voteResult?.[p.id]?.catPts === 0 && ans.trim());
                       const cc = pts === 2 ? "pts-2" : pts === 1 ? "pts-1" : "pts-0";
+                      const voteInfo = cat.custom && voteResult?.[p.id];
                       return (
                         <td key={p.id}>
                           <div style={{ fontSize: 11, textDecoration: invalid ? "line-through" : "none", color: invalid ? "var(--rd)" : "inherit" }}>
                             {ans || <em style={{ color: "var(--txm)" }}>—</em>}
                           </div>
-                          <div className={`td-pts ${cc}`}>{invalid ? "❌" : `+${Math.max(0,pts)}pt`}</div>
+                          <div className={`td-pts ${cc}`}>
+                            {invalid ? "❌" : `+${Math.max(0,pts)}pt`}
+                          </div>
+                          {voteInfo && (
+                            <div style={{ fontSize: 9, color: "var(--txm)" }}>
+                              {voteInfo.yesVotes}✓ {voteInfo.noVotes}✗
+                            </div>
+                          )}
                         </td>
                       );
                     })}
