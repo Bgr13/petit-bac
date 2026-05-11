@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 // BUG 1 FIX: Import Firebase npm modular API
 import { initializeApp, getApps } from "firebase/app";
-import { getDatabase, ref as dbRef, set as dbSet, get as dbGet, update as dbUpdate, onValue as dbOnValue, query as dbQuery, orderByChild, equalTo } from "firebase/database";
+import { getDatabase, ref as dbRef, set as dbSet, get as dbGet, update as dbUpdate, onValue as dbOnValue, off as dbOff, query as dbQuery, orderByChild, equalTo, limitToLast } from "firebase/database";
 import { getAuth, signInAnonymously } from "firebase/auth";
 
 // ═══════════════════════════════════════════════════════════════════
@@ -3433,18 +3433,23 @@ const THEME_VARS = {
     "--yw":"#fdcb6e","--yws":"rgba(253,203,110,0.15)","--ywd":"#e0a800",
     "--rd":"#d63031","--rds":"rgba(214,48,49,0.08)","--or":"#e17055",
     "--r":"20px","--rs":"12px","--rm":"16px","--tr":"0.18s cubic-bezier(0.4,0,0.2,1)",
-    "--s1":"0 2px 12px rgba(108,92,231,0.06)","--s2":"0 4px 20px rgba(108,92,231,0.1)","--s3":"0 12px 40px rgba(108,92,231,0.15)",
-    "--scard":"0 2px 20px rgba(108,92,231,0.08)","--spk":"0 8px 25px rgba(255,107,138,0.35)","--sac":"0 8px 25px rgba(108,92,231,0.35)"
+    "--s1":"0 2px 12px rgba(108,92,231,0.06),0 1px 3px rgba(0,0,0,0.04)","--s2":"0 4px 20px rgba(108,92,231,0.1),0 2px 6px rgba(0,0,0,0.06)","--s3":"0 12px 40px rgba(108,92,231,0.15),0 4px 12px rgba(0,0,0,0.08)",
+    "--scard":"0 2px 20px rgba(108,92,231,0.08)","--spk":"0 8px 25px rgba(255,107,138,0.35)","--sac":"0 8px 25px rgba(108,92,231,0.35)",
+    "--hdr-bg":"rgba(255,255,255,0.88)","--overlay-bg":"rgba(248,250,255,0.94)","--pk":"#FF6B8A","--pks":"rgba(255,107,138,0.1)","--gnb":"#00CEC9"
   },
   dark:{
     "--bg":"#0c0c10","--sf":"#16161d","--sf2":"#1e1e28","--sf3":"#26263a","--br":"#2e2e42","--brh":"#484870",
     "--tx":"#e2e8f0","--txm":"#94a3b8","--txd":"#64748b","--ac":"#818cf8","--acl":"#a5b4fc",
     "--acg":"rgba(129,140,248,0.18)","--acs":"rgba(129,140,248,0.1)","--ac-border":"rgba(129,140,248,0.3)",
+    "--pk":"#f472b6","--pks":"rgba(244,114,182,0.12)",
     "--pro":"#38bdf8","--prog":"rgba(56,189,248,0.12)","--vip":"#fbbf24","--vipg":"rgba(251,191,36,0.12)",
-    "--gn":"#4ade80","--gns":"rgba(74,222,128,0.12)","--yw":"#fbbf24","--yws":"rgba(251,191,36,0.12)",
+    "--gn":"#4ade80","--gns":"rgba(74,222,128,0.12)","--gnb":"#34d399",
+    "--yw":"#fbbf24","--yws":"rgba(251,191,36,0.12)","--ywd":"#fbbf24",
     "--rd":"#f87171","--rds":"rgba(248,113,113,0.12)","--or":"#fb923c",
-    "--r":"14px","--rs":"9px","--rm":"11px","--tr":"0.14s cubic-bezier(0.4,0,0.2,1)",
-    "--s1":"0 1px 4px rgba(0,0,0,0.3)","--s2":"0 3px 10px rgba(0,0,0,0.4)","--s3":"0 10px 28px rgba(0,0,0,0.5)"
+    "--r":"20px","--rs":"12px","--rm":"16px","--tr":"0.15s cubic-bezier(0.4,0,0.2,1)",
+    "--s1":"0 1px 6px rgba(0,0,0,0.35)","--s2":"0 3px 14px rgba(0,0,0,0.45)","--s3":"0 10px 32px rgba(0,0,0,0.55)",
+    "--scard":"0 2px 12px rgba(0,0,0,0.35)","--spk":"0 8px 25px rgba(244,114,182,0.3)","--sac":"0 8px 25px rgba(129,140,248,0.3)",
+    "--hdr-bg":"rgba(22,22,29,0.92)","--overlay-bg":"rgba(12,12,16,0.95)"
   },
   sakura:{
     "--bg":"#fff0f6","--sf":"#fff5f9","--sf2":"#ffe0ed","--sf3":"#ffc2d9","--br":"#ffadd2","--brh":"#f472b6",
@@ -3550,7 +3555,24 @@ const THEME_VARS = {
 
 // Apply theme CSS variables dynamically
 function applyTheme(themeId) {
-  const vars = THEME_VARS[themeId] || THEME_VARS.light;
+  const base = THEME_VARS[themeId] || THEME_VARS.light;
+  const vars = { ...base };
+  // Calcul automatique des overlays de verre si non définis
+  if (!vars["--hdr-bg"] || !vars["--overlay-bg"]) {
+    const bg = vars["--bg"] || "#F8FAFF";
+    const r = parseInt(bg.slice(1,3)||"F8", 16);
+    const isDark = r < 60;
+    if (!vars["--hdr-bg"]) {
+      vars["--hdr-bg"] = isDark
+        ? `rgba(${r},${parseInt(bg.slice(3,5)||"F8",16)},${parseInt(bg.slice(5,7)||"FF",16)},0.92)`
+        : "rgba(255,255,255,0.88)";
+    }
+    if (!vars["--overlay-bg"]) {
+      vars["--overlay-bg"] = isDark
+        ? `rgba(${r},${parseInt(bg.slice(3,5)||"F8",16)},${parseInt(bg.slice(5,7)||"FF",16)},0.96)`
+        : "rgba(248,250,255,0.94)";
+    }
+  }
   if (typeof document !== "undefined") {
     Object.entries(vars).forEach(([k, v]) => document.documentElement.style.setProperty(k, v));
   }
@@ -3628,12 +3650,13 @@ body{font-family:"Nunito",sans-serif;background:var(--bg);color:var(--tx);min-he
 .hdr{
   padding:18px 20px 16px;
   display:flex;align-items:center;justify-content:space-between;
-  background:rgba(255,255,255,0.85);
+  background:var(--hdr-bg, rgba(255,255,255,0.88));
   border-bottom:1px solid var(--br);
   flex-shrink:0;
-  box-shadow:0 2px 16px rgba(108,92,231,0.06);
-  backdrop-filter:blur(20px);
-  -webkit-backdrop-filter:blur(20px);
+  box-shadow:0 2px 20px rgba(0,0,0,0.06);
+  backdrop-filter:blur(24px);
+  -webkit-backdrop-filter:blur(24px);
+  position:sticky;top:0;z-index:10;
 }
 .logo{
   font-size:22px;font-weight:900;letter-spacing:-.5px;color:var(--tx);
@@ -3647,10 +3670,10 @@ body{font-family:"Nunito",sans-serif;background:var(--bg);color:var(--tx);min-he
 .bnav{
   display:flex;gap:2px;padding:10px 8px 12px;
   border-top:1px solid var(--br);
-  background:rgba(255,255,255,0.92);
-  backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
+  background:var(--hdr-bg, rgba(255,255,255,0.92));
+  backdrop-filter:blur(28px);-webkit-backdrop-filter:blur(28px);
   margin-top:auto;flex-shrink:0;
-  box-shadow:0 -4px 24px rgba(108,92,231,0.08);
+  box-shadow:0 -4px 28px rgba(0,0,0,0.08);
 }
 .nb{
   flex:1;padding:8px 4px 6px;border:none;background:transparent;
@@ -3676,10 +3699,10 @@ body{font-family:"Nunito",sans-serif;background:var(--bg);color:var(--tx);min-he
 /* ─── CARDS ─── */
 .card{
   background:var(--sf);border:1px solid var(--br);
-  border-radius:var(--r);padding:18px 20px;margin-bottom:14px;
+  border-radius:var(--r);padding:20px 20px;margin-bottom:14px;
   box-shadow:var(--scard);transition:all var(--tr);
 }
-.ctitle{font-size:11px;font-weight:800;color:var(--txm);text-transform:uppercase;letter-spacing:1.4px;margin-bottom:16px}
+.ctitle{font-size:11px;font-weight:800;color:var(--txm);text-transform:uppercase;letter-spacing:1.6px;margin-bottom:16px}
 
 /* ─── BOUTONS ─── */
 .btn{
@@ -3762,7 +3785,7 @@ body{font-family:"Nunito",sans-serif;background:var(--bg);color:var(--tx);min-he
   color:var(--txm);cursor:pointer;transition:all var(--tr);
   box-shadow:var(--s1);font-weight:600;
 }
-.ct.on{
+.ct.on,.ct.ct-on{
   background:var(--acs);border-color:var(--ac);
   color:var(--ac);font-weight:800;
   box-shadow:0 4px 12px rgba(108,92,231,0.2);
@@ -3835,48 +3858,61 @@ select.inp{appearance:none;cursor:pointer}
 /* ─── ROULETTE ─── */
 .roul{
   position:fixed;inset:0;
-  background:rgba(248,250,255,0.96);
+  background:var(--overlay-bg, rgba(248,250,255,0.96));
   display:flex;flex-direction:column;align-items:center;justify-content:center;
-  z-index:200;backdrop-filter:blur(24px);
+  z-index:200;backdrop-filter:blur(32px);-webkit-backdrop-filter:blur(32px);
+  animation:fadeIn .2s ease;
 }
-.roul-title{font-size:16px;font-weight:800;color:var(--tx);margin-bottom:6px}
-.roul-turn{font-size:13px;color:var(--txm);margin-bottom:32px;text-align:center;padding:0 40px;font-weight:600}
-.roul-drum{position:relative;width:180px;height:180px;display:flex;align-items:center;justify-content:center;margin-bottom:36px}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.roul-title{
+  font-size:13px;font-weight:800;color:var(--txm);
+  letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;
+}
+.roul-turn{
+  font-size:16px;color:var(--tx);margin-bottom:40px;
+  text-align:center;padding:0 40px;font-weight:700;
+}
+.roul-drum{
+  position:relative;width:220px;height:220px;
+  display:flex;align-items:center;justify-content:center;margin-bottom:44px;
+}
 .roul-ring{
   position:absolute;inset:0;border-radius:50%;
-  border:3px solid var(--ac);opacity:.15;
+  border:2px solid var(--ac);opacity:.2;
+  animation:ringPulse 2s ease-in-out infinite;
 }
+@keyframes ringPulse{0%,100%{transform:scale(1);opacity:.2}50%{transform:scale(1.04);opacity:.35}}
 .roul-ring2{
-  position:absolute;inset:16px;border-radius:50%;
-  border:2px solid var(--acl);opacity:.1;
+  position:absolute;inset:20px;border-radius:50%;
+  border:1.5px dashed var(--acl);opacity:.15;
+  animation:ringPulse 2s ease-in-out infinite reverse;
 }
-.roul-bg{
-  position:absolute;inset:10px;border-radius:50%;
-  background:linear-gradient(135deg,rgba(108,92,231,0.08),rgba(168,85,247,0.08));
+.roul-ring3{
+  position:absolute;inset:40px;border-radius:50%;
+  background:var(--acs);border:1px solid var(--ac-border);
 }
 .roul-l{
-  font-family:inherit;font-size:96px;font-weight:900;
-  color:var(--ac);line-height:1;user-select:none;
-  position:relative;z-index:1;
-  background:linear-gradient(135deg,#6C5CE7,#a855f7);
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
-  filter:drop-shadow(0 4px 20px rgba(108,92,231,0.35));
+  font-family:inherit;font-size:110px;font-weight:900;
+  line-height:1;user-select:none;position:relative;z-index:1;
+  color:var(--ac);
+  filter:drop-shadow(0 6px 24px rgba(108,92,231,0.4));
+  text-shadow:none;
 }
-.roul-l.spin{animation:rSpin .06s linear infinite}
-@keyframes rSpin{0%{opacity:.4;transform:scale(.85)}50%{opacity:1;transform:scale(1.12)}100%{opacity:.4;transform:scale(.85)}}
-.roul-l.lock{animation:rLock .5s cubic-bezier(.34,1.56,.64,1) forwards}
-@keyframes rLock{from{transform:scale(.2);opacity:0}to{transform:scale(1);opacity:1}}
+.roul-l.spin{animation:rSpin .07s linear infinite}
+@keyframes rSpin{0%{opacity:.3;transform:scale(.8) rotate(-5deg)}50%{opacity:1;transform:scale(1.15) rotate(5deg)}100%{opacity:.3;transform:scale(.8) rotate(-5deg)}}
+.roul-l.lock{animation:rLock .6s cubic-bezier(.34,1.56,.64,1) forwards}
+@keyframes rLock{from{transform:scale(.1) rotate(-30deg);opacity:0}60%{transform:scale(1.15) rotate(5deg);opacity:1}to{transform:scale(1) rotate(0);opacity:1}}
 .roul-btn{
-  padding:18px 56px;
-  background:linear-gradient(135deg,#6C5CE7,#a855f7);
+  padding:18px 64px;
+  background:linear-gradient(135deg,var(--ac),var(--acl));
   color:#fff;border:none;border-radius:50px;
   font-family:inherit;font-size:17px;font-weight:900;
   cursor:pointer;box-shadow:var(--sac);
   transition:all var(--tr);letter-spacing:.6px;
-  animation:pBtn 1.8s ease-in-out infinite;
+  animation:pBtn 2s ease-in-out infinite;
 }
-@keyframes pBtn{0%,100%{box-shadow:0 6px 20px rgba(108,92,231,0.3)}50%{box-shadow:0 10px 30px rgba(108,92,231,0.5)}}
-.roul-btn:hover{transform:scale(1.04)}
+@keyframes pBtn{0%,100%{transform:scale(1);box-shadow:0 6px 24px rgba(108,92,231,0.35)}50%{transform:scale(1.03);box-shadow:0 10px 36px rgba(108,92,231,0.55)}}
+.roul-btn:active{transform:scale(0.97)!important;animation:none}
 .roul-btn:disabled{opacity:.4;animation:none;cursor:default;transform:none}
 .roul-waiting{
   padding:16px 40px;background:var(--sf);color:var(--txm);
@@ -3889,45 +3925,40 @@ select.inp{appearance:none;cursor:pointer}
 .ghdr{
   padding:14px 18px;border-bottom:1px solid var(--br);
   display:flex;align-items:center;gap:14px;flex-shrink:0;
-  background:rgba(255,255,255,0.9);
-  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
-  box-shadow:0 2px 16px rgba(108,92,231,0.07);
+  background:var(--hdr-bg, rgba(255,255,255,0.9));
+  backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
+  box-shadow:0 2px 20px rgba(0,0,0,0.07);
 }
 .glbadge{
-  font-family:inherit;font-size:28px;font-weight:900;
-  background:linear-gradient(135deg,#6C5CE7,#a855f7);
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
-  background-color:var(--acs);
-  border:2px solid var(--ac-border);border-radius:var(--rm);
-  padding:6px 16px;box-shadow:0 4px 12px rgba(108,92,231,0.2);
-  /* Fallback for browsers that don't support text clip on bordered element */
-  -webkit-text-fill-color:var(--ac);
-  background-clip:unset;background:var(--acs);color:var(--ac);
+  font-size:30px;font-weight:900;
+  background:var(--acs);
+  border:2px solid var(--ac-border);border-radius:14px;
+  padding:6px 16px;box-shadow:0 4px 16px rgba(108,92,231,0.2);
+  color:var(--ac);min-width:56px;text-align:center;
 }
-.tbar-w{flex:1}
-.tbar{height:6px;background:var(--sf3);border-radius:6px;overflow:hidden}
+.tbar-w{flex:1;min-width:0}
+.tbar{height:8px;background:var(--sf3);border-radius:8px;overflow:hidden}
 .tfill{
-  height:100%;border-radius:6px;
-  transition:width 1s linear,background-color .5s;
-  background:linear-gradient(90deg,#6C5CE7,#a855f7);
-  box-shadow:0 0 8px rgba(108,92,231,0.4);
+  height:100%;border-radius:8px;
+  transition:width 1s linear,background-color .4s;
+  box-shadow:0 0 10px currentColor;
 }
-.ttxt{font-family:inherit;font-size:11px;color:var(--txm);margin-top:5px;text-align:right;font-weight:700}
-.round-badge{font-size:11px;color:var(--txm);text-align:right;line-height:1.7;flex-shrink:0;font-weight:700}
+.ttxt{font-size:13px;font-weight:900;color:var(--txm);margin-top:4px;text-align:right;letter-spacing:-.3px}
+.round-badge{font-size:12px;color:var(--txm);text-align:right;line-height:1.6;flex-shrink:0;font-weight:800}
 
 /* ─── CATEGORY LIST ─── */
-.catlist{flex:1;overflow-y:auto;overflow-x:hidden;padding:12px 14px 8px;display:flex;flex-direction:column;gap:8px}
+.catlist{flex:1;overflow-y:auto;overflow-x:hidden;padding:12px 14px 8px;display:flex;flex-direction:column;gap:10px}
 .catrow{
   display:flex;align-items:center;gap:12px;
   background:var(--sf);border:1.5px solid var(--br);
-  border-radius:16px;padding:0 14px 0 12px;
-  min-height:58px;transition:all var(--tr);
+  border-radius:18px;padding:0 14px 0 12px;
+  min-height:62px;transition:all var(--tr);
   box-shadow:var(--s1);
 }
 .catrow.active{
-  border-color:var(--ac);background:#FFFFFF;
-  box-shadow:0 4px 16px rgba(108,92,231,0.15);
-  transform:scale(1.01);
+  border-color:var(--ac);background:var(--sf);
+  box-shadow:0 6px 20px rgba(108,92,231,0.18);
+  transform:scale(1.015);
 }
 .catrow.past-valid{border-color:rgba(0,184,148,0.35);background:rgba(0,184,148,0.04)}
 .catrow.past-shared{border-color:rgba(253,203,110,0.4);background:rgba(253,203,110,0.04)}
@@ -3975,8 +4006,8 @@ select.inp{appearance:none;cursor:pointer}
 /* ─── SUBMIT BAR ─── */
 .sbar{
   padding:12px 16px 20px;border-top:1px solid var(--br);
-  background:rgba(255,255,255,0.95);flex-shrink:0;
-  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  background:var(--hdr-bg, rgba(255,255,255,0.95));flex-shrink:0;
+  backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
 }
 .sbtn{
   width:100%;padding:18px;
@@ -4009,15 +4040,16 @@ select.inp{appearance:none;cursor:pointer}
 /* ─── RESULTS OVERLAY ─── */
 .rov{
   position:fixed;inset:0;
-  background:rgba(248,250,255,0.88);
+  background:var(--overlay-bg, rgba(248,250,255,0.88));
   display:flex;align-items:flex-end;justify-content:center;
-  z-index:150;backdrop-filter:blur(16px);
+  z-index:150;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
 }
 .rpanel{
-  background:var(--sf);border:1.5px solid var(--br);
-  border-radius:28px 28px 0 0;padding:8px 20px 28px;
-  width:100%;max-width:430px;max-height:88vh;overflow-y:auto;
-  animation:mUp .28s cubic-bezier(.34,1.2,.64,1);box-shadow:var(--s3);
+  background:var(--sf);border:1px solid var(--br);
+  border-radius:32px 32px 0 0;padding:8px 20px 32px;
+  width:100%;max-width:430px;max-height:90vh;overflow-y:auto;
+  animation:mUp .3s cubic-bezier(.34,1.2,.64,1);
+  box-shadow:0 -8px 48px rgba(0,0,0,0.12);
 }
 /* Handle bar iOS style */
 .rpanel::before,.modal::before{
@@ -4047,50 +4079,57 @@ select.inp{appearance:none;cursor:pointer}
 
 /* ─── SCORE ROW ─── */
 .srow{
-  display:flex;align-items:center;gap:12px;
-  padding:15px 18px;background:var(--sf);
-  border-radius:16px;border:1.5px solid var(--br);
+  display:flex;align-items:center;gap:14px;
+  padding:16px 18px;background:var(--sf);
+  border-radius:18px;border:1.5px solid var(--br);
   margin-bottom:10px;box-shadow:var(--s1);
   transition:all var(--tr);
 }
 .srow.win{
-  border-color:rgba(108,92,231,0.3);
-  background:linear-gradient(135deg,rgba(108,92,231,0.06),rgba(168,85,247,0.06));
-  box-shadow:0 6px 20px rgba(108,92,231,0.15);
+  border-color:var(--ac-border);
+  background:linear-gradient(135deg,var(--acs),rgba(168,85,247,0.06));
+  box-shadow:var(--s2);
 }
-.srank{font-family:inherit;font-size:18px;font-weight:900;width:30px;color:var(--txm)}
-.sname{flex:1;font-weight:700;font-size:15px}
-.spts{font-family:inherit;font-size:20px;font-weight:900;color:var(--ac)}
+.srank{font-size:20px;font-weight:900;width:32px;color:var(--txm);flex-shrink:0}
+.sname{flex:1;font-weight:700;font-size:15px;color:var(--tx)}
+.spts{font-size:22px;font-weight:900;color:var(--ac)}
 
 /* ─── HERO SECTION ─── */
-.hero{text-align:center;padding:28px 0 20px}
+.hero{text-align:center;padding:24px 0 18px}
 .htitle{
-  font-size:34px;font-weight:900;letter-spacing:-1px;margin-bottom:8px;
-  background:linear-gradient(135deg,#6C5CE7,#FF6B8A);
+  font-size:36px;font-weight:900;letter-spacing:-1.5px;margin-bottom:8px;
+  background:linear-gradient(135deg,var(--ac) 0%,var(--acl) 50%,var(--pk,#FF6B8A) 100%);
   -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  background-size:200% 200%;
+  animation:gradientShift 6s ease infinite;
 }
-.hsub{color:var(--txm);font-size:14px;line-height:1.7;font-weight:600}
+.hsub{
+  color:var(--txm);font-size:13px;line-height:1.7;font-weight:600;
+  max-width:280px;margin:0 auto;
+}
 .sgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
 .scard{
   background:var(--sf);border:1.5px solid var(--br);
-  border-radius:18px;padding:16px;text-align:center;box-shadow:var(--scard);
+  border-radius:20px;padding:18px 12px;text-align:center;
+  box-shadow:var(--scard);transition:all var(--tr);
 }
-.snum{font-size:28px;font-weight:900;color:var(--ac)}
+.scard:hover{transform:translateY(-2px);box-shadow:var(--s2)}
+.snum{font-size:30px;font-weight:900;color:var(--ac);letter-spacing:-.5px}
 .slbl{font-size:10px;color:var(--txm);margin-top:4px;font-weight:800;text-transform:uppercase;letter-spacing:.8px}
 
 /* ─── MODAL ─── */
 .mov{
   position:fixed;inset:0;
-  background:rgba(248,250,255,0.85);
+  background:var(--overlay-bg, rgba(248,250,255,0.85));
   display:flex;align-items:flex-end;justify-content:center;
-  z-index:100;backdrop-filter:blur(14px);
+  z-index:100;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
 }
 .modal{
   background:var(--sf);border:1px solid var(--br);
-  border-radius:28px 28px 0 0;padding:8px 22px 36px;
+  border-radius:32px 32px 0 0;padding:8px 22px 36px;
   width:100%;max-width:430px;
   animation:mUp .3s cubic-bezier(.34,1.15,.64,1);
-  box-shadow:0 -6px 40px rgba(108,92,231,0.12),0 -1px 8px rgba(0,0,0,0.06);
+  box-shadow:0 -8px 48px rgba(0,0,0,0.12);
 }
 @keyframes mUp{from{transform:translateY(100%);opacity:0}to{transform:translateY(0);opacity:1}}
 .mtitle{font-size:20px;font-weight:900;margin-bottom:6px}
@@ -4186,18 +4225,20 @@ select.inp{appearance:none;cursor:pointer}
 /* ─── PROFILE PANEL ─── */
 .profile-ov{
   position:fixed;inset:0;
-  background:rgba(45,52,54,0.6);
-  z-index:200;backdrop-filter:blur(10px);
+  background:rgba(0,0,0,0.55);
+  z-index:200;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
   display:flex;flex-direction:column;justify-content:flex-end;
+  animation:fadeIn .2s ease;
 }
 .profile-panel{
-  background:var(--sf);border-radius:28px 28px 0 0;
-  padding:0 0 36px;max-height:92vh;overflow-y:auto;
+  background:var(--sf);border-radius:32px 32px 0 0;
+  padding:0 0 40px;max-height:93vh;overflow-y:auto;
   animation:mUp .32s cubic-bezier(.34,1.1,.64,1);
+  box-shadow:0 -12px 60px rgba(0,0,0,0.2);
 }
 .profile-hero{
-  background:linear-gradient(150deg,#5a45e0,#6C5CE7,#a855f7);
-  padding:32px 22px 28px;border-radius:28px 28px 0 0;
+  background:linear-gradient(150deg,#4f35d4,#6C5CE7,#a855f7);
+  padding:36px 22px 30px;border-radius:32px 32px 0 0;
   color:#fff;display:flex;align-items:center;gap:18px;
 }
 .profile-avatar-lg{
@@ -4238,45 +4279,51 @@ select.inp{appearance:none;cursor:pointer}
 }
 
 /* ─── GAME MODE CARDS (HOME) ─── */
-.mode-grid{display:flex;flex-direction:column;gap:12px;margin-bottom:16px}
+.mode-grid{display:flex;flex-direction:column;gap:14px;margin-bottom:16px}
 .game-mode-card{
-  border-radius:20px;padding:20px 18px;cursor:pointer;
-  display:flex;align-items:center;gap:16px;
+  border-radius:24px;padding:22px 20px;cursor:pointer;
+  display:flex;align-items:center;gap:18px;
   border:none;width:100%;text-align:left;
-  transition:all var(--tr);position:relative;overflow:hidden;
+  transition:all 0.2s cubic-bezier(0.4,0,0.2,1);
+  position:relative;overflow:hidden;
 }
-.game-mode-card::after{
+.game-mode-card::before{
   content:'';position:absolute;inset:0;
-  background:linear-gradient(135deg,rgba(255,255,255,0.12),rgba(255,255,255,0));
+  background:linear-gradient(160deg,rgba(255,255,255,0.18) 0%,rgba(255,255,255,0) 60%);
   pointer-events:none;
 }
-.game-mode-card:hover{transform:translateY(-4px);filter:brightness(1.07)}
-.game-mode-card:active{transform:translateY(0) scale(0.98)}
+.game-mode-card:active{transform:scale(0.97)!important}
+.game-mode-card:hover{transform:translateY(-3px);filter:brightness(1.08)}
 .gmc-solo{
-  background:linear-gradient(135deg,#5a45e0,#6C5CE7,#8b5cf6);
-  color:#fff;box-shadow:0 10px 32px rgba(108,92,231,0.4);
+  background:linear-gradient(135deg,#4f35d4,#6C5CE7,#8b5cf6);
+  color:#fff;box-shadow:0 12px 36px rgba(108,92,231,0.45);
 }
 .gmc-online{
-  background:linear-gradient(135deg,#00b4d8,#0096c7,#0077b6);
-  color:#fff;box-shadow:0 10px 32px rgba(0,150,199,0.35);
+  background:linear-gradient(135deg,#0284c7,#0ea5e9,#38bdf8);
+  color:#fff;box-shadow:0 12px 36px rgba(14,165,233,0.4);
 }
 .gmc-2v2{
-  background:linear-gradient(135deg,#f97316,#fb923c,#fdba74);
-  color:#fff;box-shadow:0 10px 32px rgba(249,115,22,0.35);
+  background:linear-gradient(135deg,#ea580c,#f97316,#fb923c);
+  color:#fff;box-shadow:0 12px 36px rgba(249,115,22,0.4);
 }
 .gmc-mort{
-  background:linear-gradient(135deg,#e11d48,#f43f5e,#fb7185);
-  color:#fff;box-shadow:0 10px 32px rgba(225,29,72,0.35);
+  background:linear-gradient(135deg,#be123c,#e11d48,#f43f5e);
+  color:#fff;box-shadow:0 12px 36px rgba(225,29,72,0.4);
 }
-.gmc-icon{font-size:38px;flex-shrink:0;filter:drop-shadow(0 4px 8px rgba(0,0,0,0.2))}
-.gmc-title{font-size:17px;font-weight:900;letter-spacing:-.2px;margin-bottom:4px}
-.gmc-desc{font-size:12px;opacity:.85;line-height:1.5;font-weight:600}
+.gmc-icon{
+  font-size:42px;flex-shrink:0;
+  filter:drop-shadow(0 4px 12px rgba(0,0,0,0.25));
+  animation:iconBob 3s ease-in-out infinite;
+}
+@keyframes iconBob{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+.gmc-title{font-size:18px;font-weight:900;letter-spacing:-.3px;margin-bottom:5px;line-height:1.2}
+.gmc-desc{font-size:12px;opacity:.88;line-height:1.5;font-weight:600}
 .gmc-badge{
   position:absolute;top:14px;right:14px;
-  background:rgba(255,255,255,0.22);
-  border:1px solid rgba(255,255,255,0.3);
-  border-radius:20px;padding:4px 10px;
-  font-size:10px;font-weight:800;letter-spacing:.4px;
+  background:rgba(255,255,255,0.2);
+  border:1px solid rgba(255,255,255,0.28);
+  border-radius:20px;padding:5px 11px;
+  font-size:10px;font-weight:800;letter-spacing:.5px;
   backdrop-filter:blur(8px);
 }
 
@@ -4414,6 +4461,8 @@ const FB = (() => {
   const local = { rooms: {}, listeners: {} };
 
   return {
+    db,  // Exposed for direct modular API usage (Leaderboard etc.)
+
     async signIn() {
       if (auth) {
         try {
@@ -4638,7 +4687,7 @@ export default function App() {
   const [showShare, setShowShare] = useState(false);
   const [showProfilePhoto, setShowProfilePhoto] = useState(false);
   const [showLegal, setShowLegal] = useState(null); // "cgu" | "privacy" | null
-  const [profilePhoto, setProfilePhoto] = useState(null); // { type, data/emoji, bg }
+  const [profilePhoto, setProfilePhoto] = useState(() => { try { return JSON.parse(localStorage.getItem("pb_photo")); } catch(e) { return null; } }); // { type, data/emoji, bg }
   const [uid, setUid] = useState(null);
   // Profile data
   const [wordHistory, setWordHistory] = useState(() => {
@@ -4899,7 +4948,7 @@ export default function App() {
         total: (prev.total || 0) + myScore,
         streak: newStreak,
         totalWords: (prev.totalWords || 0) + wordsThisGame,
-        uniqueWords: prev.uniqueWords || 0,
+        uniqueWords: (prev.uniqueWords || 0) + new Set(newWords).size,
       };
       try { localStorage.setItem("pb_stats", JSON.stringify(updated)); } catch(e) {}
       return updated;
@@ -4935,6 +4984,19 @@ export default function App() {
       const entry = { todayKey, score: myScore };
       setDailyPlayed(entry);
       try { localStorage.setItem("pb_daily", JSON.stringify(entry)); } catch(e) {}
+    }
+
+    // Sauvegarder score tournoi dans Firebase
+    if (gs.isTournoi && uid && FB.db) {
+      try {
+        const weekKey = "week_" + gs.weekNum;
+        dbSet(dbRef(FB.db, `tournoi/${weekKey}/${uid}`), {
+          name: settings.playerName || "Joueur",
+          score: myScore,
+          xp: xp || 0,
+          updatedAt: Date.now(),
+        });
+      } catch(e) {}
     }
 
     logEvent("game_end", { uid, mode: gs.mode, score: myScore, won });
@@ -5003,7 +5065,7 @@ export default function App() {
       {showLegal && <LegalModal onClose={() => setShowLegal(null)} lang={lang} type={showLegal} />}
       {showProfilePhoto && <ProfilePhotoModal
         onClose={() => setShowProfilePhoto(false)}
-        onSave={p => setProfilePhoto(p)}
+        onSave={p => { setProfilePhoto(p); try { localStorage.setItem("pb_photo", JSON.stringify(p)); } catch(e) {} }}
         currentPhoto={profilePhoto?.emoji || ""}
         playerName={settings.playerName}
         lang={lang}
@@ -5415,10 +5477,14 @@ function OnlineScreen({
   uid, settings, setSettings, onEnterGame, onBack, tier, lang, gameMode
 }) {
   const t = useT(lang || "fr");
-  const [step, setStep] = useState("choose");   // choose | matchmaking | private_create | private_join | waiting
+  const [step, setStep] = useState("choose");   // choose | configure | matchmaking | private_create | private_join | waiting
   const [playerName, setPlayerName] = useState(settings.playerName);
   const [country, setCountry] = useState(settings.country || "France");
   const [roomCode, setRoomCode] = useState(null);
+  // Config hôte (peut être modifié dans l'étape "configure")
+  const [hostDiff, setHostDiff] = useState(settings.difficulty || "medium");
+  const [hostRounds, setHostRounds] = useState(settings.totalRounds || 5);
+  const [hostCats, setHostCats] = useState(settings.categories || []);
   // Fallback uid si Firebase auth pas encore prête
   // Use useRef so the fallback ID is stable across re-renders
   const myUidRef = useRef(uid || ("local_" + Math.random().toString(36).substring(2, 9)));
@@ -5477,10 +5543,11 @@ function OnlineScreen({
     setLoading(true); setError("");
     try {
       const code = genCode();
+      const finalCats = hostCats.length > 0 ? hostCats : settings.categories;
       const newRoom = {
         code, type: "private", country,
         hostId: myUid, status: "waiting",
-        settings: { difficulty: settings.difficulty, categories: settings.categories, totalRounds: settings.totalRounds, gameMode: gameMode || "solo" },
+        settings: { difficulty: hostDiff, categories: finalCats, totalRounds: hostRounds, gameMode: gameMode || "solo" },
         players: { [myUid]: { uid: myUid, name: playerName, country, isHost: true, ready: true, connected: true } },
         currentRound: 0, spinnerIndex: 0, phase: "waiting",
         cumulativeScores: { [myUid]: 0 },
@@ -5616,7 +5683,7 @@ function OnlineScreen({
             <div className="mode-title">{t("public_game")}</div>
             <div className="mode-desc">{t("matchmaking_country")} {country} {t("matchmaking_random")}</div>
           </div>
-          <div className="mode-card" onClick={() => setStep("private_create")}>
+          <div className="mode-card" onClick={() => setStep("configure")}>
             <div className="mode-icon">🔒</div>
             <div className="mode-title">{t("private_room")}</div>
             <div className="mode-desc">{t("online_subtitle")}</div>
@@ -5665,34 +5732,100 @@ function OnlineScreen({
     </div>
   );
 
+  if (step === "configure") return (
+    <div style={{ display: "flex", flexDirection: "column", height: "100vh" }}>
+      <div className="hdr">
+        <button className="btn bs bsm" onClick={() => setStep("choose")} style={{ width: "auto" }}>{t("ob_back")}</button>
+        <span style={{ fontWeight: 700, fontSize: 14 }}>⚙️ {t("game_settings","Paramètres")}</span>
+        <div style={{ width: 55 }} />
+      </div>
+      <div className="cnt">
+        <div className="card">
+          <div className="ctitle">{t("your_name2","Ton nom")}</div>
+          <input className="inp" value={playerName} onChange={e => setPlayerName(e.target.value)} placeholder={t("your_firstname","Prénom")} />
+        </div>
+
+        <div className="card">
+          <div className="ctitle">{t("difficulty_label","Difficulté")}</div>
+          <div className="dg">
+            {Object.entries(DIFFICULTY).map(([k, d]) => (
+              <button key={k} className={`db ${hostDiff === k ? "sel" : ""}`}
+                style={hostDiff === k ? { background: d.color, borderColor: "transparent" } : {}}
+                onClick={() => setHostDiff(k)}>
+                <div className="dd" style={{ background: d.color }} />
+                {t(k, k)}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="card">
+          <div className="ctitle">{t("rounds_label","Manches")}</div>
+          <div className="rounds-grid">
+            {[3, 5, 10].map(n => (
+              <button key={n} className={`rb ${hostRounds === n ? "sel" : ""}`} onClick={() => setHostRounds(n)}>{n}</button>
+            ))}
+          </div>
+        </div>
+
+        <div className="card">
+          <div className="ctitle">{t("categories_label","Catégories")} ({hostCats.length || ALL_BASE.length})</div>
+          <div className="cg">
+            {ALL_BASE.map(cat => {
+              const sel = hostCats.length === 0 || hostCats.includes(cat.id);
+              return (
+                <button key={cat.id} className={`ct ${sel ? "ct-on" : ""}`}
+                  onClick={() => {
+                    if (hostCats.length === 0) {
+                      // Tout sélectionné → décocher cette catégorie
+                      setHostCats(ALL_BASE.map(c => c.id).filter(id => id !== cat.id));
+                    } else if (sel) {
+                      const next = hostCats.filter(id => id !== cat.id);
+                      setHostCats(next.length === 0 ? ALL_BASE.map(c => c.id) : next);
+                    } else {
+                      setHostCats([...hostCats, cat.id]);
+                    }
+                  }}>
+                  {cat.emoji} {getCatLabel(cat.id, lang || "fr")}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        <button className="btn bp" onClick={() => setStep("private_create")}>
+          {t("continue_btn","Continuer")} →
+        </button>
+      </div>
+    </div>
+  );
+
   if (step === "private_create" || step === "private_join") return (
     <div style={{ display: "flex", flexDirection: "column", height: "100vh" }}>
       <div className="hdr">
-        <button className="btn bs bsm" onClick={() => { cleanup(); setStep("choose"); }} style={{ width: "auto" }}>{t("ob_back")}</button>
+        <button className="btn bs bsm" onClick={() => { cleanup(); setStep(step === "private_create" ? "configure" : "choose"); }} style={{ width: "auto" }}>{t("ob_back")}</button>
         <span style={{ fontWeight: 700, fontSize: 14 }}>{t("private_room")}</span>
         <div style={{ width: 55 }} />
       </div>
       <div className="cnt">
         {error && <div style={{ padding: "10px 14px", background: "rgba(248,113,113,.1)", border: "1px solid rgba(248,113,113,.25)", borderRadius: "var(--rs)", marginBottom: 12, fontSize: 12, color: "var(--rd)" }}>{error}</div>}
-        <div className="card">
-          <div className="ctitle">{t("your_name2")}</div>
-          <input className="inp" value={playerName} onChange={e => setPlayerName(e.target.value)} placeholder={t("your_firstname")} />
-        </div>
         {step === "private_create" ? (
           <div className="card">
-            <div className="ctitle">{t("create_room")}</div>
-            <p className="txm" style={{ marginBottom: 12 }}>{t("code_generated")}</p>
+            <div className="ctitle">{t("create_room","Créer un salon")}</div>
+            <div style={{ fontSize: 12, color: "var(--txm)", marginBottom: 12 }}>
+              <span>⚡ {t(hostDiff, hostDiff)} · 🔄 {hostRounds} {t("rounds_label","manches")} · 🗂 {hostCats.length || ALL_BASE.length} {t("categories_label","catégories")}</span>
+            </div>
             <button className="btn bp" onClick={createPrivate} disabled={loading}>
-              {loading ? <span className="spin">⟳</span> : t("create_room_private")}
+              {loading ? <span className="spin">⟳</span> : t("create_room_private","Créer le salon")}
             </button>
           </div>
         ) : (
           <div className="card">
-            <div className="ctitle">{t("join_with_code")}</div>
+            <div className="ctitle">{t("join_with_code","Rejoindre avec un code")}</div>
             <input className="inp" value={joinCode} onChange={e => setJoinCode(e.target.value.toUpperCase())} placeholder="Ex: AB3C" maxLength={4}
               style={{ fontFamily: "'DM Mono',monospace", fontSize: 24, letterSpacing: 8, textAlign: "center", marginBottom: 12 }} />
             <button className="btn bp" onClick={joinPrivate} disabled={joinCode.length < 4 || loading}>
-              {loading ? <span className="spin">⟳</span> : t("join_btn")}
+              {loading ? <span className="spin">⟳</span> : t("join_btn","Rejoindre")}
             </button>
           </div>
         )}
@@ -5924,13 +6057,16 @@ function SetupScreen({
 
 // ─── ROULETTE ─────────────────────────────────────────────────────
 function LetterRoulette({
-  players, spinnerIndex, spinnerOrder, currentRound, totalRounds, myId, onLetterChosen, lang
+  players, spinnerIndex, spinnerOrder, currentRound, totalRounds, myId, onLetterChosen, lang,
+  forcedLetter, // lettre reçue depuis Firebase pour les non-spinners
+  isOnline,     // true si partie en ligne (attend forcedLetter, pas de stop aléatoire local)
 }) {
   const t = useT(lang || "fr");
   const [cur, setCur] = useState("A");
   const [locked, setLocked] = useState(false);
   const [lockedL, setLockedL] = useState(null);
   const ivRef = useRef(null);
+  const lockedRef = useRef(false);
 
   const spinnerId = spinnerOrder ? spinnerOrder[spinnerIndex % spinnerOrder.length] : players[spinnerIndex % players.length]?.id;
   const spinner = players.find(p => p.id === spinnerId || p.uid === spinnerId) || players[0];
@@ -5941,14 +6077,24 @@ function LetterRoulette({
       setCur(ALPHABET[Math.floor(Math.random() * ALPHABET.length)]);
       SoundFX.play("tick");
     }, 75);
-    if (!isMyTurn) {
-      setTimeout(() => doStop(ALPHABET[Math.floor(Math.random() * ALPHABET.length)]), 1400 + Math.random() * 800);
+    // Non-spinner en solo : stop aléatoire local
+    // En ligne non-spinner : attendre forcedLetter depuis Firebase (ne pas faire de stop aléatoire)
+    if (!isMyTurn && !isOnline) {
+      setTimeout(() => { if (!lockedRef.current) doStop(ALPHABET[Math.floor(Math.random() * ALPHABET.length)]); }, 1400 + Math.random() * 800);
     }
     return () => clearInterval(ivRef.current);
   }, []);
 
+  // Quand Firebase envoie la vraie lettre (mode online non-spinner)
+  useEffect(() => {
+    if (forcedLetter && !isMyTurn && !lockedRef.current) {
+      doStop(forcedLetter);
+    }
+  }, [forcedLetter]);
+
   function doStop(forceLetter) {
-    if (locked) return;
+    if (lockedRef.current) return;
+    lockedRef.current = true;
     clearInterval(ivRef.current);
     const fl = forceLetter || cur;
     setCur(fl); setLocked(true); setLockedL(fl);
@@ -5964,7 +6110,7 @@ function LetterRoulette({
         {isMyTurn ? t("its_your_turn") : `🎲 ${spinner?.name || t("nav_play","Joueur")} ${t("spinner_rolling","{0} tourne…").replace("{0}","")}`}
       </div>
       <div className="roul-drum">
-        <div className="roul-ring" /><div className="roul-ring2" />
+        <div className="roul-ring" /><div className="roul-ring2" /><div className="roul-ring3" />
         <div className={`roul-l ${locked ? "lock" : "spin"}`}>{locked ? lockedL : cur}</div>
       </div>
       {isMyTurn
@@ -5991,34 +6137,43 @@ function GameScreen({
 
 
   // ── Listener Firebase pour sync lettre (mode online) ──────────
+  // Toutes les mises à jour passent par un seul setGameState fonctionnel
+  // pour éviter les stale closures et le reset du timer.
   useEffect(() => {
-    if (!gameState.roomCode) return; // S'active si room Firebase présent
+    if (!gameState.roomCode) return;
     const unsubscribe = FB.listenRoom(gameState.roomCode, (room) => {
       if (!room) return;
-      // Sync phase depuis Firebase (roulette → playing → round_results)
-      if (room.phase && room.phase !== gameState.phase) {
-        if (room.phase === "roulette") {
-          setGameState(g => ({ ...g, phase: "roulette", spinnerOrder: room.spinnerOrder || g.spinnerOrder, spinnerIndex: room.spinnerIndex || 0 }));
+      setGameState(g => {
+        let next = g;
+        // Sync retour à la roulette (nouvelle manche initiée par l'hôte)
+        if (room.phase === "roulette" && g.phase !== "roulette") {
+          next = { ...next, phase: "roulette",
+            spinnerOrder: room.spinnerOrder || g.spinnerOrder,
+            spinnerIndex: room.spinnerIndex != null ? room.spinnerIndex : g.spinnerIndex,
+            pendingLetter: null,
+          };
         }
-        if (room.phase === "playing" && room.letter) {
-          setGameState(g => ({ ...g, phase: "playing", letter: room.letter, timeLeft: g.totalTime }));
+        // Transition roulette → playing : stocker pendingLetter pour LetterRoulette
+        // (LetterRoulette va appeler onLetterChosen qui transition réellement vers playing)
+        // Ne PAS changer phase ici pour ne pas sauter l'animation de la roulette
+        if (room.letter && room.letter !== g.pendingLetter && g.phase === "roulette") {
+          next = { ...next, pendingLetter: room.letter };
         }
-      }
-      // Recevoir la lettre choisie par le host
-      if (room.letter && room.letter !== gameState.letter) {
-        setGameState(g => ({ ...g, letter: room.letter }));
-      }
-      // Recevoir les réponses des autres joueurs
-      if (room.playerAnswers) {
-        setGameState(g => ({
-          ...g,
-          players: g.players.map(p => ({
+        // Sync lettre si déjà en playing (pas de reset timer !)
+        if (g.phase === "playing" && room.letter && room.letter !== g.letter) {
+          next = { ...next, letter: room.letter };
+        }
+        // Réponses des autres joueurs (ne touche pas au timer)
+        if (room.playerAnswers) {
+          const updatedPlayers = g.players.map(p => ({
             ...p,
             answers: room.playerAnswers?.[p.id] || p.answers,
-            done: room.playerDone?.[p.id] || p.done,
-          }))
-        }));
-      }
+            done: room.playerDone?.[p.id] ?? p.done,
+          }));
+          next = { ...next, players: updatedPlayers };
+        }
+        return next;
+      });
     });
     return () => { if (unsubscribe) unsubscribe(); };
   }, [gameState.mode, gameState.roomCode]);
@@ -6058,6 +6213,15 @@ function GameScreen({
       const a = {}; activeCategories.forEach(cat => { a[cat.id] = p.answers?.[cat.id] || getAiAnswer(cat.id, gameState.letter, gameState?.lang || lang); });
       return { ...p, answers: a, done: true };
     });
+    // En mode online: pousser les réponses du joueur local vers Firebase
+    if (gameState.roomCode && gameState.myId) {
+      try {
+        FB.updateRoom(gameState.roomCode, {
+          [`playerAnswers/${gameState.myId}`]: gameState.answers || {},
+          [`playerDone/${gameState.myId}`]: true,
+        });
+      } catch(e) {}
+    }
     computeRoundScores({ ...gameState, players: finalPlayers });
   }
 
@@ -6085,7 +6249,9 @@ function GameScreen({
         const mine = (p.isBot || p.id !== myId)
           ? (p.answers?.[cat.id] || "")
           : (gs.answers?.[cat.id] || "");
-        const pts = scoreAnswer(mine, allAns, cat.id, gs.letter, gs.lang || "fr");
+        const pts = gs.isTournoi
+          ? scoreAnswerTournoi(mine, allAns, cat.id, gs.letter, gs.lang || "fr", 0)
+          : scoreAnswer(mine, allAns, cat.id, gs.letter, gs.lang || "fr");
         roundScores[p.id] += pts > 0 ? pts : 0;
         roundAnswers[cat.id][p.id] = mine;
         roundValidity[cat.id][p.id] = pts;
@@ -6177,16 +6343,23 @@ function GameScreen({
   const allFilled = activeCategories.every(cat => gameState.answers[cat.id]?.trim().length > 0);
 
   if (phase === "roulette") {
+    const spinnerIdForRender = gameState.spinnerOrder
+      ? gameState.spinnerOrder[spinnerIndex % gameState.spinnerOrder.length]
+      : players[spinnerIndex % players.length]?.id;
+    const amSpinner = spinnerIdForRender === (myId || uid) ||
+      players.find(p => p.id === spinnerIdForRender)?.uid === (myId || uid);
     return (
       <LetterRoulette
         players={players} spinnerIndex={spinnerIndex}
         spinnerOrder={gameState.spinnerOrder} currentRound={currentRound} totalRounds={totalRounds}
         myId={myId || uid}
+        forcedLetter={gameState.pendingLetter}
+        isOnline={!!gameState.roomCode}
         onLetterChosen={async l => {
-          // Mettre à jour l'état local
-          setGameState(g => ({ ...g, letter: l, phase: "playing", timeLeft: g.totalTime }));
-          // En mode online: synchroniser la lettre sur Firebase pour tous les joueurs
-          if (gameState.roomCode) { // Mode en ligne détecté via roomCode
+          // Mettre à jour l'état local (transition roulette → playing)
+          setGameState(g => ({ ...g, letter: l, pendingLetter: l, phase: "playing", timeLeft: g.totalTime }));
+          // En mode online: SEUL le spinner publie la lettre sur Firebase
+          if (gameState.roomCode && amSpinner) {
             try {
               await FB.updateRoom(gameState.roomCode, {
                 letter: l,
@@ -7107,69 +7280,61 @@ function LeaderboardScreen({ onClose, xp, playerName, lang, uid, tier }) {
     return () => clearInterval(id);
   }, []);
 
-  // Charger classements Firebase
+  // Charger classements Firebase (modular API)
   useEffect(() => {
-    if (!uid) return;
-    // Sauvegarder le joueur courant
+    if (!uid || !FB.db) return;
+    // Sauvegarder le joueur courant dans le classement global
     try {
-      if (typeof firebase !== "undefined" && firebase.apps?.length > 0) {
-        firebase.database().ref("leaderboard/" + uid).set({
-          name: playerName || "Joueur",
-          xp: xp || 0,
-          badge: levelInfo.badge,
-          country: "🌍",
-          updatedAt: Date.now(),
-        });
-      }
+      dbSet(dbRef(FB.db, "leaderboard/" + uid), {
+        name: playerName || "Joueur",
+        xp: xp || 0,
+        badge: levelInfo.badge,
+        country: "🌍",
+        updatedAt: Date.now(),
+      });
     } catch(e) {}
 
     const loadData = async () => {
       setLoading(true);
       try {
-        if (typeof firebase !== "undefined" && firebase.apps?.length > 0) {
-          const db = firebase.database();
-          // Classement global
-          const snap = await db.ref("leaderboard").orderByChild("xp").limitToLast(50).once("value");
-          const data = snap.val() || {};
-          const list = Object.entries(data)
-            .map(([id, v]) => ({ ...v, id, isMe: id === uid }))
-            .sort((a, b) => b.xp - a.xp);
-          setEntries(list);
-          // Classement tournoi de la semaine
-          const weekKey = "week_" + tournament.weekNum;
-          const tSnap = await db.ref("tournoi/" + weekKey).orderByChild("score").limitToLast(50).once("value");
-          const tData = tSnap.val() || {};
-          const tList = Object.entries(tData)
-            .map(([id, v]) => ({ ...v, id, isMe: id === uid }))
-            .sort((a, b) => b.score - a.score);
-          setTournoiEntries(tList);
-        } else {
-          setEntries(getMockLeaderboard(uid, playerName, xp, levelInfo));
-          setTournoiEntries([]);
-        }
+        // Classement global
+        const snap = await dbGet(dbQuery(dbRef(FB.db, "leaderboard"), orderByChild("xp"), limitToLast(50)));
+        const data = snap.val() || {};
+        const list = Object.entries(data)
+          .map(([id, v]) => ({ ...v, id, isMe: id === uid }))
+          .sort((a, b) => b.xp - a.xp);
+        setEntries(list);
+        // Classement tournoi de la semaine
+        const weekKey = "week_" + tournament.weekNum;
+        const tSnap = await dbGet(dbQuery(dbRef(FB.db, "tournoi/" + weekKey), orderByChild("score"), limitToLast(50)));
+        const tData = tSnap.val() || {};
+        const tList = Object.entries(tData)
+          .map(([id, v]) => ({ ...v, id, isMe: id === uid }))
+          .sort((a, b) => b.score - a.score);
+        setTournoiEntries(tList);
       } catch(e) {
         setEntries(getMockLeaderboard(uid, playerName, xp, levelInfo));
+        setTournoiEntries([]);
       }
       setLoading(false);
     };
     loadData();
-    // Listener temps réel pour le tournoi
-    let unsub = null;
+
+    // Listener temps réel pour le tournoi (modular API)
+    let tournoiRef = null;
+    let tournoiUnsub = null;
     try {
-      if (typeof firebase !== "undefined" && firebase.apps?.length > 0) {
-        const weekKey = "week_" + tournament.weekNum;
-        const ref = firebase.database().ref("tournoi/" + weekKey);
-        ref.on("value", snap => {
-          const data = snap.val() || {};
-          const list = Object.entries(data)
-            .map(([id, v]) => ({ ...v, id, isMe: id === uid }))
-            .sort((a, b) => b.score - a.score);
-          setTournoiEntries(list);
-        });
-        unsub = () => ref.off("value");
-      }
+      const weekKey = "week_" + tournament.weekNum;
+      tournoiRef = dbQuery(dbRef(FB.db, "tournoi/" + weekKey), orderByChild("score"), limitToLast(50));
+      tournoiUnsub = dbOnValue(tournoiRef, snap => {
+        const data = snap.val() || {};
+        const list = Object.entries(data)
+          .map(([id, v]) => ({ ...v, id, isMe: id === uid }))
+          .sort((a, b) => b.score - a.score);
+        setTournoiEntries(list);
+      });
     } catch(e) {}
-    return () => { if (unsub) unsub(); };
+    return () => { if (tournoiUnsub) tournoiUnsub(); };
   }, [uid, xp, tab]);
 
   const myRank = entries.findIndex(e => e.isMe) + 1;
