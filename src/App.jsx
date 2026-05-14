@@ -1,7 +1,7 @@
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef } from "react";
 // BUG 1 FIX: Import Firebase npm modular API
 import { initializeApp, getApps } from "firebase/app";
-import { getDatabase, ref as dbRef, set as dbSet, get as dbGet, update as dbUpdate, onValue as dbOnValue, off as dbOff, query as dbQuery, orderByChild, equalTo, limitToLast } from "firebase/database";
+import { getDatabase, ref as dbRef, set as dbSet, get as dbGet, update as dbUpdate, onValue as dbOnValue, query as dbQuery, orderByChild, equalTo, limitToLast } from "firebase/database";
 import { getAuth, signInAnonymously } from "firebase/auth";
 
 // ═══════════════════════════════════════════════════════════════════
@@ -160,6 +160,7 @@ const TRANSLATIONS = {
     // Misc
     loading: "Chargement...",
     searching: "Recherche d'adversaires...",
+    xp: "XP",
     xp_gained: "XP gagnés",
     level: "Niv.",
     badge_unlocked: "BADGE DÉBLOQUÉ",
@@ -483,6 +484,7 @@ const TRANSLATIONS = {
     ob_placeholder: "Your name or username",
     loading: "Loading...",
     searching: "Finding opponents...",
+    xp: "XP",
     xp_gained: "XP earned",
     level: "Lv.",
     badge_unlocked: "BADGE UNLOCKED",
@@ -806,6 +808,7 @@ const TRANSLATIONS = {
     ob_placeholder: "Tu nombre o apodo",
     loading: "Cargando...",
     searching: "Buscando rivales...",
+    xp: "XP",
     xp_gained: "XP ganados",
     level: "Niv.",
     badge_unlocked: "INSIGNIA DESBLOQUEADA",
@@ -3355,11 +3358,11 @@ function getAiAnswer(id, l, lang) {
   if (dailyPool.length) return dailyPool[Math.floor(Math.random() * dailyPool.length)];
   // Use lang-specific word list if available
   if (lang === "en") {
-    const enPool = Object.values(VALID_WORDS_EN[id]?.[l] || []);
+    const enPool = [...(VALID_WORDS_EN[id]?.[l] || [])];
     if (enPool.length) return enPool[Math.floor(Math.random() * enPool.length)];
   }
   if (lang === "es") {
-    const esPool = Object.values(VALID_WORDS_ES[id]?.[l] || []);
+    const esPool = [...(VALID_WORDS_ES[id]?.[l] || [])];
     if (esPool.length) return esPool[Math.floor(Math.random() * esPool.length)];
   }
   const pool = AI_ANSWERS[id]?.[l] || [];
@@ -4863,6 +4866,7 @@ export default function App() {
       myId: humanId,
       teams: teams,
       lang: lang,
+      usedLetters: [],
     });
     setScreen("game");
     logEvent("game_start", { uid, mode: cfg.mode, difficulty: cfg.difficulty });
@@ -4879,7 +4883,7 @@ export default function App() {
       totalTime: DIFFICULTY[roomData.settings.difficulty || "medium"].time,
       timeLeft: DIFFICULTY[roomData.settings.difficulty || "medium"].time,
       categories: activeCats,
-      players: Object.values(roomData.players || {}),
+      players: Object.values(roomData.players || {}).map(p => ({ ...p, id: p.uid || p.id })),
       totalRounds: roomData.settings.totalRounds || 5,
       currentRound: 1,
       spinnerIndex: roomData.spinnerIndex || 0,
@@ -4897,6 +4901,7 @@ export default function App() {
       })() : null,
       isHost: roomData.hostId === uid,
       lang: lang, // BUG 6 FIX: include lang in online game state
+      usedLetters: [],
     });
     setScreen("game");
   }
@@ -6060,6 +6065,7 @@ function LetterRoulette({
   players, spinnerIndex, spinnerOrder, currentRound, totalRounds, myId, onLetterChosen, lang,
   forcedLetter, // lettre reçue depuis Firebase pour les non-spinners
   isOnline,     // true si partie en ligne (attend forcedLetter, pas de stop aléatoire local)
+  usedLetters,  // lettres déjà utilisées dans cette partie — exclues du tirage
 }) {
   const t = useT(lang || "fr");
   const [cur, setCur] = useState("A");
@@ -6068,19 +6074,23 @@ function LetterRoulette({
   const ivRef = useRef(null);
   const lockedRef = useRef(false);
 
+  // Pool de lettres disponibles (sans les lettres déjà utilisées)
+  const availableAlphabet = ALPHABET.filter(l => !(usedLetters || []).includes(l));
+  const pool = availableAlphabet.length > 0 ? availableAlphabet : ALPHABET;
+
   const spinnerId = spinnerOrder ? spinnerOrder[spinnerIndex % spinnerOrder.length] : players[spinnerIndex % players.length]?.id;
   const spinner = players.find(p => p.id === spinnerId || p.uid === spinnerId) || players[0];
   const isMyTurn = spinner?.id === myId || spinner?.uid === myId;
 
   useEffect(() => {
     ivRef.current = setInterval(() => {
-      setCur(ALPHABET[Math.floor(Math.random() * ALPHABET.length)]);
+      setCur(pool[Math.floor(Math.random() * pool.length)]);
       SoundFX.play("tick");
     }, 75);
     // Non-spinner en solo : stop aléatoire local
     // En ligne non-spinner : attendre forcedLetter depuis Firebase (ne pas faire de stop aléatoire)
     if (!isMyTurn && !isOnline) {
-      setTimeout(() => { if (!lockedRef.current) doStop(ALPHABET[Math.floor(Math.random() * ALPHABET.length)]); }, 1400 + Math.random() * 800);
+      setTimeout(() => { if (!lockedRef.current) doStop(pool[Math.floor(Math.random() * pool.length)]); }, 1400 + Math.random() * 800);
     }
     return () => clearInterval(ivRef.current);
   }, []);
@@ -6167,8 +6177,8 @@ function GameScreen({
         if (room.playerAnswers) {
           const updatedPlayers = g.players.map(p => ({
             ...p,
-            answers: room.playerAnswers?.[p.id] || p.answers,
-            done: room.playerDone?.[p.id] ?? p.done,
+            answers: room.playerAnswers?.[p.id || p.uid] || p.answers,
+            done: room.playerDone?.[p.id || p.uid] ?? p.done,
           }));
           next = { ...next, players: updatedPlayers };
         }
@@ -6249,9 +6259,10 @@ function GameScreen({
         const mine = (p.isBot || p.id !== myId)
           ? (p.answers?.[cat.id] || "")
           : (gs.answers?.[cat.id] || "");
-        const pts = gs.isTournoi
+        const rawPts = gs.isTournoi
           ? scoreAnswerTournoi(mine, allAns, cat.id, gs.letter, gs.lang || "fr", 0)
           : scoreAnswer(mine, allAns, cat.id, gs.letter, gs.lang || "fr");
+        const pts = typeof rawPts === "object" ? (rawPts.pts ?? 0) : rawPts;
         roundScores[p.id] += pts > 0 ? pts : 0;
         roundAnswers[cat.id][p.id] = mine;
         roundValidity[cat.id][p.id] = pts;
@@ -6355,9 +6366,10 @@ function GameScreen({
         myId={myId || uid}
         forcedLetter={gameState.pendingLetter}
         isOnline={!!gameState.roomCode}
+        usedLetters={gameState.usedLetters || []}
         onLetterChosen={async l => {
           // Mettre à jour l'état local (transition roulette → playing)
-          setGameState(g => ({ ...g, letter: l, pendingLetter: l, phase: "playing", timeLeft: g.totalTime }));
+          setGameState(g => ({ ...g, letter: l, pendingLetter: l, phase: "playing", timeLeft: g.totalTime, usedLetters: [...(g.usedLetters || []), l] }));
           // En mode online: SEUL le spinner publie la lettre sur Firebase
           if (gameState.roomCode && amSpinner) {
             try {
@@ -6630,8 +6642,8 @@ function VotePhase({ gameState, onVoteDone, lang }) {
                 <div key={target.id} style={{
                   display: "flex", alignItems: "center", gap: 8,
                   padding: "8px 10px", marginBottom: 6,
-                  background: "var(--card2,rgba(255,255,255,0.05))",
-                  borderRadius: 10, border: "1px solid var(--bdr,rgba(255,255,255,0.08))"
+                  background: "var(--sf2)",
+                  borderRadius: 10, border: "1px solid var(--br)"
                 }}>
                   <div style={{ flex: 1 }}>
                     <div style={{ fontSize: 12, color: "var(--txm)" }}>
@@ -6653,8 +6665,8 @@ function VotePhase({ gameState, onVoteDone, lang }) {
                         onClick={() => castVote(cat.id, target.id, "yes")}
                         style={{
                           padding: "4px 12px", borderRadius: 8, fontSize: 12, cursor: "pointer",
-                          background: myVote === "yes" ? "rgba(74,222,128,0.25)" : "var(--card2,rgba(255,255,255,0.06))",
-                          border: myVote === "yes" ? "1px solid #4ade80" : "1px solid var(--bdr,rgba(255,255,255,0.1))",
+                          background: myVote === "yes" ? "rgba(74,222,128,0.25)" : "var(--sf2)",
+                          border: myVote === "yes" ? "1px solid #4ade80" : "1px solid var(--br)",
                           color: myVote === "yes" ? "#4ade80" : "inherit",
                         }}>
                         {t("vote_validate","✓")}
@@ -6663,8 +6675,8 @@ function VotePhase({ gameState, onVoteDone, lang }) {
                         onClick={() => castVote(cat.id, target.id, "no")}
                         style={{
                           padding: "4px 12px", borderRadius: 8, fontSize: 12, cursor: "pointer",
-                          background: myVote === "no" ? "rgba(248,113,113,0.25)" : "var(--card2,rgba(255,255,255,0.06))",
-                          border: myVote === "no" ? "1px solid #f87171" : "1px solid var(--bdr,rgba(255,255,255,0.1))",
+                          background: myVote === "no" ? "rgba(248,113,113,0.25)" : "var(--sf2)",
+                          border: myVote === "no" ? "1px solid #f87171" : "1px solid var(--br)",
                           color: myVote === "no" ? "#f87171" : "inherit",
                         }}>
                         {t("vote_reject","✗")}
@@ -6776,10 +6788,12 @@ function RoundResultsOverlay({
         ))}
         {/* XP gained this round */}
         {(() => {
-          const roundPts = cumulativeScores[players.find(p=>!p.isBot)?.id||players[0]?.id] || 0;
+          const humanPlayer = players.find(p=>!p.isBot);
+          const humanId = humanPlayer?.id || humanPlayer?.uid || "";
+          const roundPts = cumulativeScores[humanId] || 0;
           return (
             <div style={{ textAlign: "center", padding: "8px 0", fontSize: 13, color: "var(--ac)", fontWeight: 700 }}>
-              +{Math.max(5, (currentRoundData?.scores?.[players.find(p=>!p.isBot)?.id||""] || 0) * 3 + 5)} {t("xp")} ⚡
+              +{Math.max(5, (currentRoundData?.scores?.[humanId] || 0) * 3 + 5)} {t("xp")} ⚡
             </div>
           );
         })()}
@@ -8160,7 +8174,7 @@ function TierModal({
       setLoading(true);
       window.open(tier_item.stripe, "_blank");
       // Simuler l'activation après 2s (mode démo)
-      setTimeout(() => { onSelect(tier_item.id); onClose(); }, 1500);;
+      setTimeout(() => { onSelect(tier_item.id); onClose(); }, 1500);
       setTimeout(() => { setLoading(false); }, 2000);
     } else {
       // Mode démo: activer directement
