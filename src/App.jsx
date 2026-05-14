@@ -282,6 +282,7 @@ const TRANSLATIONS = {
     cancel: "Annuler",
     activate: "Activer",
     stay_free: "Rester gratuit",
+    free_tier_status: "◇ Gratuit — Version de base",
     ob5_placeholder: "Ton prénom ou pseudo",
     tier_free_desc: "◇ 6 catégories · Solo vs IA · Multijoueur",
     tier_pro_desc: "◆ Tout le gratuit + 7 catégories bonus + Défi du jour",
@@ -606,6 +607,7 @@ const TRANSLATIONS = {
     cancel: "Cancel",
     activate: "Activate",
     stay_free: "Stay free",
+    free_tier_status: "◇ Free — Basic version",
     ob5_placeholder: "Your name or username",
     tier_free_desc: "◇ 6 categories · Solo vs AI · Multiplayer",
     tier_pro_desc: "◆ Everything in Free + 7 bonus categories + Daily challenge",
@@ -919,6 +921,7 @@ const TRANSLATIONS = {
     cancel: "Cancelar",
     activate: "Activar",
     stay_free: "Quedarse gratis",
+    free_tier_status: "◇ Gratis — Versión básica",
     ob5_placeholder: "Tu nombre o apodo",
     tier_free_desc: "◇ 6 categorías · Solo vs IA · Multijugador",
     tier_pro_desc: "◆ Todo lo de Gratis + 7 categorías extra + Reto del día",
@@ -5284,8 +5287,8 @@ function HomeScreen({ onSolo, onOnline, on2v2, onMort, onOnline2v2, onOnlineMort
         <div style={{ padding: "12px 14px", background: "var(--sf)", border: "1.5px solid var(--br)", borderRadius: "var(--rm)", marginTop: 4 }}>
           <div style={{ fontSize: 11, fontWeight: 700, color: "var(--txm)", marginBottom: 5, textTransform: "uppercase", letterSpacing: ".5px" }}>{t("points_rule2")}</div>
           <div style={{ fontSize: 12, color: "var(--txm)", lineHeight: 1.7 }}>
-            <span style={{ color: "var(--gn)", fontWeight: 700 }}>{`2 ${t("pts")}`}</span> {t("pts_unique")} ·{" "}
-            <span style={{ color: "var(--yw)", fontWeight: 700 }}>{`1 ${t("pts")}`}</span> {t("pts_shared")} ·{" "}
+            <span style={{ color: "var(--gn)", fontWeight: 700 }}>2 pts</span> {t("pts_unique")} ·{" "}
+            <span style={{ color: "var(--yw)", fontWeight: 700 }}>1 pt</span> {t("pts_shared")} ·{" "}
             <span style={{ color: "var(--rd)", fontWeight: 700 }}>0</span> {t("pts_invalid2")}
           </div>
         </div>
@@ -5842,7 +5845,7 @@ function OnlineScreen({
     <div style={{ display: "flex", flexDirection: "column", height: "100vh" }}>
       <div className="hdr">
         <button className="btn bs bsm" onClick={() => { cleanup(); setStep("choose"); }} style={{ width: "auto" }}>✕</button>
-        <span style={{ fontWeight: 700, fontSize: 14 }}>{t("salon_label")} {roomData?.type === "private" ? t("private_room") : "🌍 Public"} · {gameMode === "2v2" ? "🤝 2v2" : gameMode === "mort" ? "💀 Mort Subite" : "🌍 Multijoueur"}</span>
+        <span style={{ fontWeight: 700, fontSize: 14 }}>{roomData?.type === "private" ? t("private_room") : "🌍 Public"} · {gameMode === "2v2" ? "🤝 2v2" : gameMode === "mort" ? "💀 Mort Subite" : "🌍 Multijoueur"}</span>
         <div style={{ width: 40 }} />
       </div>
       <div className="cnt">
@@ -6414,6 +6417,7 @@ function GameScreen({
           currentRound: g.currentRound + 1,
           spinnerIndex: (g.spinnerIndex + 1) % g.players.filter(p => !p.eliminated).length,
           letter: null,
+          pendingLetter: null, // FIX: reset pour que forcedLetter ne rejoue pas l'ancienne lettre
           activeCategories: nextActiveCats,
           answers: Object.fromEntries(nextActiveCats.map(c => [c.id, ""])),
           players: g.players.map(p => ({ ...p, answers: {}, done: false })),
@@ -6969,7 +6973,7 @@ function FinalResultsScreen({ gameState, onPlayAgain, onHome, uid, lang }) {
             <div style={{ fontSize: 36, marginBottom: 6 }}>💪</div>
             <div style={{ fontSize: 17, fontWeight: 700 }}>{t("good_game")}</div>
             <div style={{ fontSize: 13, color: "var(--txm)", marginTop: 3 }}>
-              +{calcXpGain(myScore, false, totalRounds)} {t("xp")} {t("xp_gained","gagnés")}
+              +{calcXpGain(myScore, false, totalRounds)} {t("xp_gained","XP gagnés")}
             </div>
           </div>
         )}
@@ -7635,7 +7639,7 @@ function SettingsPanel({ settings, setSettings, theme, onThemeChange, lang, setL
           <div style={{ padding: "12px 14px", background: "var(--acs)", borderRadius: "var(--rm)", border: "1.5px solid var(--ac-border,rgba(67,56,202,0.2))", marginBottom: 12 }}>
             <div style={{ fontWeight: 700, fontSize: 13, marginBottom: 2 }}>{t("subscription")}</div>
             <div style={{ fontSize: 12, color: "var(--txm)", marginBottom: 8 }}>
-              {tier === TIER.VIP ? t("vip_all_features") : tier === TIER.PRO ? t("pro_advanced") : "◇ Gratuit — Version de base"}
+              {tier === TIER.VIP ? t("vip_all_features") : tier === TIER.PRO ? t("pro_advanced") : t("free_tier_status","◇ Gratuit — Version de base")}
             </div>
             <button className="btn bp bsm" onClick={onTier} style={{ width: "auto", fontSize: 12 }}>
               {tier === TIER.FREE ? t("upgrade_pro") : t("manage_sub")}
@@ -7786,7 +7790,7 @@ function BugReportModal({
                 className="inp"
                 value={desc}
                 onChange={e => setDesc(e.target.value)}
-                placeholder={t("bug_category")}
+                placeholder={t("bug_desc_placeholder")}
                 style={{ minHeight:120, resize:"none", marginBottom:14, lineHeight:1.5 }}
               />
               <button className="btn bp" onClick={submit} style={{ background:"linear-gradient(135deg,#b91c1c,#dc2626)" }}>
