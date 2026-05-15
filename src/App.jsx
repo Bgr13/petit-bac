@@ -97,7 +97,7 @@ const TRANSLATIONS = {
     profile_title: "Profil",
     stats_games: "Parties",
     stats_wins: "Victoires",
-    stats_winrate: "Win rate",
+    stats_winrate: "% Victoires",
     stats_best: "Meilleur",
     stats_total: "Pts total",
     stats_avg: "Moy/partie",
@@ -264,6 +264,9 @@ const TRANSLATIONS = {
     round_label: "Round",
     launch_btn: "🚀 Lancer",
     rounds_label: "Rounds",
+    game_settings: "Paramètres de jeu",
+    difficulty_label: "Difficulté",
+    categories_label: "Catégories",
     search_ellipsis: "Recherche…",
     public_game: "Partie publique",
     multiplayer: "Multijoueur",
@@ -344,6 +347,8 @@ const TRANSLATIONS = {
     in_game_name: "Ton nom en jeu",
     used_matchmaking: "Utilisé pour le matchmaking",
     bug_category: "Catégorie du bug",
+    bug_cat_other: "❓ Autre",
+    badges_section: "Badges",
     bug_send: "Envoyer le rapport",
     bug_thanks: "Merci pour ton rapport !",
     bug_title: "🐛 Signaler un bug",
@@ -381,6 +386,12 @@ const TRANSLATIONS = {
     score: "Score",
     rounds: "rounds",
     xp: "XP",
+    leaderboard_my_rank: "Ta position : #{rank} • {xp} XP",
+    leaderboard_my_rank_tournoi: "Ta position tournoi : #{rank}",
+    tab_mondial: "🌍 Mondial",
+    tab_tournoi: "🏆 Tournoi",
+    no_tournoi_players: "Sois le premier à jouer ce tournoi !",
+    no_global_players: "Aucun joueur encore",
   },
   en: {
     appName: "Le Petit Bac",
@@ -589,6 +600,9 @@ const TRANSLATIONS = {
     round_label: "Round",
     launch_btn: "🚀 Start",
     rounds_label: "Rounds",
+    game_settings: "Game settings",
+    difficulty_label: "Difficulty",
+    categories_label: "Categories",
     search_ellipsis: "Searching…",
     public_game: "Public game",
     multiplayer: "Multiplayer",
@@ -669,6 +683,8 @@ const TRANSLATIONS = {
     in_game_name: "Your in-game name",
     used_matchmaking: "Used for matchmaking",
     bug_category: "Bug category",
+    bug_cat_other: "❓ Other",
+    badges_section: "Badges",
     bug_send: "Send report",
     bug_thanks: "Thanks for your report!",
     bug_title: "🐛 Report a bug",
@@ -706,6 +722,12 @@ const TRANSLATIONS = {
     score: "Score",
     rounds: "rounds",
     xp: "XP",
+    leaderboard_my_rank: "Your rank: #{rank} • {xp} XP",
+    leaderboard_my_rank_tournoi: "Your tournament rank: #{rank}",
+    tab_mondial: "🌍 Global",
+    tab_tournoi: "🏆 Tournament",
+    no_tournoi_players: "Be the first to play this tournament!",
+    no_global_players: "No players yet",
   },
   es: {
     appName: "El Baccalaureato",
@@ -845,6 +867,17 @@ const TRANSLATIONS = {
     room_not_found: "Sala no encontrada. Verifica el código.",
     firebase_connected: "Firebase conectado — multijugador activo",
     stripe_test_mode: "Modo demo: ¡suscripción activada para la presentación!",
+    tier_vip_f4: "Insignia exclusiva ★",
+    tier_vip_f3: "Torneos VIP",
+    tier_vip_f2: "12 temas exclusivos",
+    tier_vip_f1: "Todo PRO +",
+    tier_pro_f4: "Desafío diario",
+    tier_pro_f3: "Multijugador ilimitado",
+    tier_pro_f2: "10 temas",
+    tier_pro_f1: "30 categorías",
+    tier_free_f3: "Solo vs IA",
+    tier_free_f2: "2 temas",
+    tier_free_f1: "6 categorías",
     stripe_secure: "Pago seguro por Stripe • Cancela cuando quieras",
     per_month: "/mes",
     subscribe_btn: "Suscribirse",
@@ -903,6 +936,9 @@ const TRANSLATIONS = {
     round_label: "Ronda",
     launch_btn: "🚀 Iniciar",
     rounds_label: "Rondas",
+    game_settings: "Configuración de juego",
+    difficulty_label: "Dificultad",
+    categories_label: "Categorías",
     search_ellipsis: "Buscando…",
     public_game: "Partida pública",
     multiplayer: "Multijugador",
@@ -983,6 +1019,8 @@ const TRANSLATIONS = {
     in_game_name: "Tu nombre en el juego",
     used_matchmaking: "Usado para el matchmaking",
     bug_category: "Categoría del error",
+    bug_cat_other: "❓ Otro",
+    badges_section: "Insignias",
     bug_send: "Enviar informe",
     bug_thanks: "¡Gracias por tu informe!",
     bug_title: "🐛 Reportar un error",
@@ -1020,6 +1058,12 @@ const TRANSLATIONS = {
     score: "Puntos",
     rounds: "rondas",
     xp: "XP",
+    leaderboard_my_rank: "Tu posición: #{rank} • {xp} XP",
+    leaderboard_my_rank_tournoi: "Tu posición en torneo: #{rank}",
+    tab_mondial: "🌍 Global",
+    tab_tournoi: "🏆 Torneo",
+    no_tournoi_players: "¡Sé el primero en jugar este torneo!",
+    no_global_players: "Aún no hay jugadores",
   }
 };
 
@@ -1330,7 +1374,7 @@ const VALID_WORDS = {
     O:["orléans","orsay","orleans","osaka","oslo","oakland","oklahoma city","omaha","orlando","oran","ouagadougou","oaxaca","obafemi awolowo","odessa","ogbomosho","omdurman","omsk","orange","olinda","olomouc","oporto","oradea","ostrava","oujda","oviedo"],
     P:["paris","prague","porto","pekin","perth","phnom penh","pretoria","panama","palermo","porto alegre","pune","pau","perigueux","perpignan","poissy","poitiers","pontoise","pantin","pessac","pierrefitte sur seine","pontault combault","puteaux","philadelphia","phoenix","pittsburgh","portland","palembang","pamplona","patna","pekanbaru","pereira","peshawar","podgorica","port elizabeth","port harcourt","port louis","port moresby","port of spain","porto novo","puebla","pusan","pyongyang","pont de claix","paderborn","palma de mallorca","patras","pensacola","peralillo","pernambuco","pingtung","piracicaba","pleven","plovdiv","poznań","pristina"],
     Q:["quimper","quimperlé","quimperle","quezon city","quito","qom","quetta","quezaltenango","qingdao","quebec"],
-    R:["rome","rotterdam","rabat","rio de janeiro","riad","recife","reykjavik","riga","riyadh","rennes","reims","rouen","roubaix","rosny sous bois","rueil malmaison","rodez","romans sur isere","raleigh","richmond","riverside","rochester","sacramento","rangoon","rawalpindi","resistencia","rio branco","rosario","roshd","rostov","routt","rub al khali","rustenburg","rybinsk"],
+    R:["rome","rotterdam","rabat","rio de janeiro","riad","recife","reykjavik","riga","riyadh","rennes","reims","rouen","roubaix","rosny sous bois","rueil malmaison","rodez","romans sur isere","raleigh","richmond","riverside","rochester","rangoon","rawalpindi","resistencia","rio branco","rosario","roshd","rostov","routt","rub al khali","rustenburg","rybinsk"],
     S:["sydney","stockholm","seville","singapour","shanghai","sofia","saint petersbourg","san francisco","santiago","sao paulo","sarajevo","seoul","skopje","salzburg","san diego","san jose","santo domingo","sapporo","saint etienne","saint denis","saint nazaire","saint quentin","strasbourg","sarcelles","sevran","sete","saint brieuc","saint malo","saint maur des fosses","saint ouen","sartrouville","soissons","salon de provence","sucy en brie","sarreguemines","saumur","sens","seattle","sacramento","san antonio","santa ana","santa barbara","savannah","scottsdale","spokane","salt lake city","salta","salvador","san juan","san pablo","san pedro","sanaa","santa cruz","santiago de cuba","santo andre","santos","sao luis","semarang","sendai","sfax","shenzhen","shiraz","sikasso","singapore","sousse","surabaya","surat","suva","setif","shenyang","shijiazhuang","sholapur","sialkot","siliguri","sion","slough","songdo","speyer","springfield","srinagar","stavanger","stoke on trent","stuttgart","suez","sulaymaniyah","sunderland","surakarta"],
     T:["tokyo","tunis","toronto","teheran","taipei","tripoli","tachkent","tbilissi","thessalonique","tallinn","toulouse","toulon","tours","tourcoing","troyes","thionville","thiais","tarbes","thonon les bains","tampa","tempe","toledo","tucson","tulsa","tegucigalpa","tel aviv","thies","thimphu","tianjin","tijuana","tirana","tiruchirappalli","toliara","toluca","tombouctou","torino","tabriz","tahoua","taiyuan","takamatsu","tanga","tangier","tanta","tarawa","tashkent","tbilisi","thais","thes","tuxtla gutierrez","ternopil","tiaret","tiefa","tlemcen","toamasina","tokushima","trelew","trondheim","tuxtla"],
     U:["ulis","utrecht","ulan bator","umea","uagadugu","uberlandia","ulaanbaatar","uluru","umuahia","united arab emirates"],
@@ -1391,7 +1435,7 @@ const VALID_WORDS = {
     C:["chirurgien","comptable","charpentier","cardiologue","ceramiste","chimiste","choregraphe","coiffeur","consultant","cuisinier","caissier","capitaine","carreleur","chauffeur","chercheur","choriste","chroniqueur","cinematographe","clerc","clown","coach","colonel","comedien","commissaire","compositeur","concepteur","concierge","conducteur","conseiller","conservateur","controleur","copiste","correspondant","couturier","couvreur","cabliste","cachetier","cafetier","calligraphe","calorifugeur","cartographe","cartonnage","ceinturier","chapelier","charron","chasseur","chaudronnier","chocolatier","cirier","clinicien","cloisonneur","cordier","cordonnier","couteliere","coupeur","chasseur de tetes","coach sportif","commissaire priseur","cryptographe","curateur"],
     D:["dentiste","designer","diplomate","directeur","documentaliste","dermatologue","danseur","decorateur","detective","developpeur","dieteticien","distributeur","douanier","dj","dramaturge","demolisseur","dessinateur","discographe","disquaire","documentariste","doreur","dresseur","driver","directeur artistique"],
     E:["electricien","enseignant","economiste","ergotherapeute","ecrivain","educateur","endocrinologue","elagueur","emballeur","employe","encadreur","entrepreneur","epidemiologiste","espion","ethologue","ecologiste","editeur","electrotechnicien","emailleur","embaumeur","encarteur","equarrisseur","equiculteur","estheticien","estimateur","etherographe","evaluateur","evangeliste","excavateur","exportateur","ethnologue"],
-    F:["footballeur","fleuriste","facteur","forgeron","formateur","pharmacien","fermier","financier","fiscaliste","fonctionnaire","forensicien","forestier","fabricant","fabuliste","facturiere","faiseur","farrier","faucheur","faussaire","ficeleur","filandier","filetier","fondeur","fournisseur","franchiseur","fripier","fromager","frotteur","fumiste","ferronnier"],
+    F:["footballeur","fleuriste","facteur","forgeron","formateur","fermier","financier","fiscaliste","fonctionnaire","forensicien","forestier","fabricant","fabuliste","facturiere","faiseur","farrier","faucheur","faussaire","ficeleur","filandier","filetier","fondeur","fournisseur","franchiseur","fripier","fromager","frotteur","fumiste","ferronnier"],
     G:["geologue","gynecologue","graphiste","garde","geometre","gardien","gendarme","gestionnaire","gouverneur","guide","guitariste","galeriste","gantier","garagiste","garcon","garde champetre","garnisseur","gazetier","geophysicien","glassier","gobeur","gouvernante","graveur","greffier","grenetier","grimpeur","geomaticien","genealogiste"],
     H:["historien","huissier","hotelier","hydraulicien","herboriste","humanitaire","hematologiste","heraldiste","horticulteur","horticulturiste","hospitalier","humaniste","humoriste","hydrologue"],
     I:["infirmier","ingenieur","inspecteur","illustrateur","immunologue","informaticien","instituteur","intendant","imprimeur","insectologiste","interlocuteur","intermediaire","inventeur","idolographe","iconographe"],
@@ -1404,7 +1448,7 @@ const VALID_WORDS = {
     P:["pharmacien","plombier","patissier","pediatre","photographe","pilote","pompier","professeur","psychiatre","psychologue","paysagiste","pecheur","peintre","plongeur","podologue","politicien","potier","precepteur","president","procureur","producteur","programmeur","promoteur","prospecteur","praticien","preleveur","prestidigitateur"],
     Q:["qualitologue"],
     R:["radiologue","realisateur","restaurateur","rhumatologue","receptionniste","redacteur","reporter","routier","repasseur","rhabilleur","rhapsodiste","robinettier","rondier"],
-    S:["secretaire","sociologue","sapeur pompier","sculpteur","sommelier","styliste","sage femme","sauveteur","serrurier","serveur","soudeur","sportif","statisticien","steward","superviseur","sellier","sigilliste","silviculturiste","sinologue","soigneur","souffleur","sourcier","speleologue","sexologue"],
+    S:["secretaire","sociologue","sapeur pompier","sculpteur","sommelier","styliste","sage femme","sauveteur","serrurier","serveur","soldat","soudeur","sportif","statisticien","steward","superviseur","sellier","sigilliste","silviculturiste","sinologue","soigneur","souffleur","sourcier","speleologue","sexologue"],
     T:["technicien","traducteur","taxidermiste","therapeute","tourneur","tailleur","tapissier","topographe","tuyauteur","tarificateur","taxateur","teinturier","torero","tractoriste","tricoteur"],
     U:["urologue"],
     V:["veterinaire","viticulteur","videoaste","violoniste","vendeur","veilleur","vernisseur","verrier","vigneron"],},
@@ -1419,7 +1463,7 @@ const VALID_WORDS = {
     G:["gandhi","george clooney","gerard depardieu","gainsbourg","galileo","gauguin","gauss","gene kelly","george washington","georges clemenceau","georges pompidou","goethe","gorki","grace kelly","genghis khan","gutenberg"],
     H:["harry styles","halle berry","homer simpson","hemingway","harry potter","hannibal","harold lloyd","hector berlioz","henri matisse","henry ford","hippolyte taine","homer","horace","hugo","harry houdini","heraclite","hippocrate"],
     I:["idris elba","isabelle adjani","ice cube","ibsen","irene joliot curie","ion antonescu","ibn battuta"],
-    J:["johnny depp","jay z","jennifer lopez","michael jackson","jules verne","joan of arc","james dean","jean cocteau","jean gabin","jean jaures","jean racine","jean zay","jimi hendrix","john lennon","jorge amado","jeanne d arc","jules cesar","joao miro"],
+    J:["johnny depp","jay z","jennifer lopez","jules verne","joan of arc","james dean","jean cocteau","jean gabin","jean jaures","jean racine","jean zay","jimi hendrix","john lennon","jorge amado","jeanne d arc","jules cesar","joao miro"],
     K:["kim kardashian","katy perry","kanye west","keanu reeves","kobe bryant","kafka","kant","kepler","karl marx"],
     L:["lady gaga","leonardo dicaprio","lebron james","louis de funes","leonard de vinci","la fontaine","lacordaire","lamartine","lampedusa","lao tseu","lars von trier","lavoisier","le corbusier","leon blum","leonard bernstein","levi strauss","lorca","louis pasteur","leonard euler"],
     M:["madonna","michael jackson","messi","marilyn monroe","mozart","marcus aurelius","machiavel","malraux","mandela","manet","mao zedong","marie curie","marie antoinette","marivaux","marlene dietrich","marlon brando","marx","maupassant","mauriac","michelange","moliere","montaigne","montesquieu","moussorgski","marc aurele","martin luther king"],
@@ -1551,7 +1595,7 @@ const VALID_WORDS = {
     V:["vertebre","veine","valve","ventricule","vagin","vaisseau","vesicule"],},
   musique:{
 
-    A:["ac dc","adele","bach","aya nakamura","abba","alpha blondy","amine","aerosmith","afrojack","air","akon","alice cooper","amadou et mariam","amy winehouse","angele","anitta","arctic monkeys","asaf avidan","asap rocky","audiophile"],
+    A:["ac dc","adele","aya nakamura","abba","alpha blondy","amine","aerosmith","afrojack","air","akon","alice cooper","amadou et mariam","amy winehouse","angele","anitta","arctic monkeys","asaf avidan","asap rocky","audiophile"],
     B:["beatles","brel","beyonce","bob marley","booba","bigflo et oli","bjork","black eyed peas","black sabbath","blur","bon jovi","bruce springsteen","billie eilish","bach"],
     C:["chopin","coldplay","calogero","claude francois","christophe mae","camille","cardi b","childish gambino","chris brown","clean bandit","coltrane","cypress hill"],
     D:["drake","daft punk","dalida","david guetta","dire straits","disclosure","dj khaled","dj snake"],
@@ -1645,7 +1689,7 @@ const VALID_WORDS = {
     B:["big ben","burj khalifa","basilique","belem tower","borobudur","beffroi","basilique saint pierre","berlin wall","blarney castle","blue mosque","buckingham palace","burj al arab"],
     C:["colisee","chapelle sixtine","cheops","cathedral","chichen itza","christ redempteur","citadelle","colonne","cordoue","crypte","carnac","cathédrale","cathedrales","catacombes","chateau de versailles","cheopse","chora","cistercien","cluny","colonne trajane","colosses","chateau versailles","cathedrale"],
     D:["dome du rocher","delphi","dolmen","dome des rochers","dome des invalides"],
-    E:["tour eiffel","empire state building","escorial","ephese","easter island"],
+    E:["empire state building","escorial","ephese","easter island"],
     F:["forum romain","forbidden city","fortification","fontaine de trevi"],
     G:["grande muraille","gaudi","grand canyon","grand palais","glacier","grotte","golden gate","great pyramid"],
     H:["hagia sofia","hanging gardens","hollywood","hradcany","hadrien","himeji","hongkong skyline"],
@@ -1659,7 +1703,7 @@ const VALID_WORDS = {
     P:["parthenon","pyramides de gizeh","palais royal","pantheon","pergame","pompei","pont du gard","pagode","palais du potala","palmyre","persepolis","petra","pyramides"],
     R:["reichstag","rialto","red fort","rempart","rialto bridge","robben island"],
     S:["sphinx","statue de la liberte","stonehenge","saint sophie","sagrada familia","sigiriya","sanctuaire","saint basile","serengeti","sistine"],
-    T:["taj mahal","temple","tour","thermopyles","tianmen","torii"],
+    T:["taj mahal","temple","tour","tour eiffel","thermopyles","tianmen","torii"],
     V:["vatican","versailles","victoria falls"],},
   langue:{
 
@@ -1784,7 +1828,7 @@ const VALID_WORDS = {
     J:["jupiter"],
     K:["kepler"],
     L:["lune","lumiere","laser","luminosite"],
-    M:["mars","meteore","milky way","magnitude","voie lactee","meteorite"],
+    M:["mars","meteore","milky way","magnitude","meteorite"],
     N:["nebuleuse","neutron","nasa","naine blanche","naine brune"],
     O:["orbite","onde gravitationnelle"],
     P:["pluton","planete","pulsar","parallaxe","perigee"],
@@ -1839,7 +1883,7 @@ const VALID_WORDS = {
     V:["vassal","vitrail","vicomte"],},
   technologie:{
 
-    A:["algorithme","api","application","arduino","artificial intelligence","authentification","automatisation","intelligence artificielle","antivirus","ascii","accelerateur"],
+    A:["algorithme","api","application","arduino","artificial intelligence","authentification","automatisation","antivirus","ascii","accelerateur"],
     B:["bluetooth","blockchain","base de donnees","binaire","bug","bande passante","bootloader"],
     C:["cloud","code","cpu","crypto","compilation","cybersecurite","compilateur","capteur","cryptographie"],
     D:["donnees","drone","debug","data","digital","disque dur"],
@@ -2155,8 +2199,8 @@ const VALID_WORDS_EN = {
     B:["badminton","baseball","basketball","beach volleyball","biathlon","billiards","bmx","bobsled","bodybuilding","bowling","boxing","breakdancing"],
     C:["canoeing","cheerleading","cricket","crossfit","curling","cycling"],
     D:["darts","decathlon","discus","diving","dodgeball"],
-    E:["endurance","equestrian","escalade","fencing"],
-    F:["fitness","floorball","football","freestyle skiing","full contact"],
+    E:["endurance","equestrian","escalade"],
+    F:["fencing","fitness","floorball","football","freestyle skiing","full contact"],
     G:["golf","gymnastics"],
     H:["handball","hammer throw","high jump","hockey","horse racing","hurling","hurdles"],
     I:["ice hockey","indoor soccer"],
@@ -2574,8 +2618,8 @@ const VALID_WORDS_EN = {
     I:["internet","interface","ios"],
     J:["java","javascript"],
     K:["kernel","kubernetes"],
-    L:["linux","machine learning"],
-    M:["memory","microchip","monitor","motherboard"],
+    L:["linux"],
+    M:["machine learning","memory","microchip","monitor","motherboard"],
     N:["network","neural network"],
     O:["open source","operating system"],
     P:["pixel","processor","programming","protocol","python"],
@@ -2603,7 +2647,7 @@ const VALID_WORDS_EN = {
     R:["reggaeton","rock","rumba"],
     S:["salsa","samba","shuffle","step","swing"],
     T:["tango","tap dance","twist"],
-    V:["vogue","waltz"],
+    V:["vogue"],
     W:["waacking","waltz"],},
   architecture:{
 
@@ -2732,24 +2776,24 @@ const VALID_WORDS_ES = {
     B:["barcelona","berlin","bogota","buenos aires","bruselas","budapest","bagdad","bangkok","beirut","bilbao"],
     C:["cairo","calcuta","caracas","casablanca","chicago","colombo","copenhague","ciudad de mexico","cape town"],
     D:["dakar","delhi","daca","doha","dubai","dublin","dallas","dar es salam"],
-    E:["edimburgo"],
+    E:["edimburgo","estocolmo"],
     F:["florencia","frankfurt","freetown","fukuoka"],
     G:["ginebra","glasgow","guangzhou","guadalajara"],
-    H:["hamburgo","hanoi","harare","la habana","helsinki","hong kong","houston","hyderabad"],
+    H:["hamburgo","hanoi","harare","helsinki","hong kong","houston","hyderabad"],
     I:["islamabad","estambul"],
     J:["jakarta","jerusalen","johannesburgo","yeda"],
     K:["kabul","kampala","karachi","katmandu","jartum","kigali","kinshasa","kingston","kuala lumpur","kiev"],
-    L:["lagos","lima","lisboa","londre","los angeles","la paz","lahore","libreville","lome","luanda","lusaka"],
+    L:["la habana","lagos","lima","lisboa","londre","los angeles","la paz","lahore","libreville","lome","luanda","lusaka"],
     M:["madrid","manila","marsella","medellin","ciudad de mexico","milan","minsk","mogadiscio","monrovia","montevideo","montreal","moscu","mumbai","munich"],
     N:["nairobi","nassau","niamey","nueva york","nueva delhi","nueva orleans"],
     O:["osaka","oslo","uagadugu"],
     P:["paris","pekin","phnom penh","praga","pretoria","panama","palermo","oporto","perth"],
     Q:["quezon city","quito"],
     R:["rabat","reykjavik","riga","riad","rio de janeiro","roma","rotterdam"],
-    S:["santiago","sao paulo","sarajevo","seattle","seul","shanghai","singapur","sofia","estocolmo","sydney","salt lake city","san antonio","san diego","san francisco","santo domingo"],
+    S:["santiago","sao paulo","sarajevo","seattle","seul","shanghai","singapur","sofia","sydney","salt lake city","san antonio","san diego","san francisco","santo domingo"],
     T:["taipei","tbilisi","tegucigalpa","teheran","tesalonica","tokio","toronto","tripoli","tunez"],
-    V:["vancouver","viena","vilna","vladivostok","valencia"],
-    W:["varsovia","washington","winnipeg","wuhan"],
+    V:["vancouver","varsovia","viena","vilna","vladivostok","valencia"],
+    W:["washington","winnipeg","wuhan"],
     Y:["yangon","yaounde","erevan","yokohama"],
     Z:["zurich","zagreb"]
   },
@@ -2783,31 +2827,31 @@ const VALID_WORDS_ES = {
     Z:["zorro","zopilote"]
   },
   metier:{
-    A:["abogado","actor","administrador","agronomo","analista","animador","arquitecto","artista","astronauta","auditor","autor"],
-    B:["biólogo","bolero","bombero","botanico","buzo"],
-    C:["carpintero","carnicero","chef","cientĩfico","cirujano","cocinero","compositor","contador","consultor","costurero","curador"],
-    D:["danzante","decorador","dentista","detective","director","disenador","doctor"],
+    A:["abogado","actor","acupunturista","administrador","agronomo","albanil","analista","animador","arquitecto","artista","astronauta","astronomo","auditor","autor"],
+    B:["bailarin","bibliotecario","biólogo","biologo","bolero","bombero","boqueron","botanico","buzo"],
+    C:["camarero","carpintero","carnicero","cerrajero","chef","cientĩfico","cientista","cirujano","cocinero","compositor","contador","consultor","costurero","creador","curador"],
+    D:["danzante","decorador","dentista","detective","diplomatico","director","disenador","doctor"],
     E:["economista","editor","educador","electricista","enfermero","escritor","escultor","explorador"],
-    F:["farmaceutico","florista","fotografo","funcionario"],
-    G:["geologo","gerente","guarda","guia"],
-    H:["historiador","hortelano","hotelero"],
+    F:["farmaceutico","filosofo","florista","fontanero","fotografo","fotógrafo","funcionario","futbolista"],
+    G:["geologo","gendarme","gerente","guarda","guia"],
+    H:["herrero","historiador","hortelano","hotelero"],
     I:["ilustrador","informatico","inspector","ingeniero","investigador"],
-    J:["jardinero","jefe","joaillero","juez","jurista"],
+    J:["jardinero","jefe","joaillero","jornalero","joyero","juez","jurista"],
     K:["kinesiologo"],
-    L:["licenciado","lingüista","logista"],
-    M:["maestro","matematico","mecanico","medico","meteorologo","militar","musico"],
-    N:["navegante","neurologo","notario","nutricionista"],
-    O:["oculista","optico","osteópata"],
-    P:["panadero","pediatra","periodista","piloto","pintor","plomero","poeta","policia","profesor","psicologo"],
+    L:["librero","licenciado","lingüista","linguista","logista","logistico"],
+    M:["maestro","marinero","matematico","mecanico","medico","meteorologo","militar","musicista","musico"],
+    N:["navegante","navegador","neurologo","notario","nutricionista"],
+    O:["obrero","oculista","odontologo","optico","osteópata"],
+    P:["panadero","pastelero","pediatra","periodista","piloto","pintor","plomero","poeta","policia","profesor","psicologo"],
     Q:["quimico","quesero"],
-    R:["radiologe","reporter","restaurador"],
-    S:["sastre","secretario","sociologo","soldado","sommelier","veterinario"],
-    T:["taxista","tecnico","terapeuta","torero","traductor"],
+    R:["radiologo","radiologe","realizador","reporter","reportero","restaurador"],
+    S:["sastre","secretario","sociologo","soldado","sommelier","surfista","veterinario"],
+    T:["tatuador","taxista","tecnico","terapeuta","torero","traductor"],
     U:["urbanista"],
-    V:["vendedor","veterinario","violinista"],
+    V:["vendedor","veterinario","vidriero","violinista","viticultor"],
     W:["webmaster"],
     X:["xenobiologo"],
-    Z:["zoólogo"]
+    Z:["zapatero","zoólogo","zoologo"]
   },
   fruit:{
 
@@ -2821,47 +2865,19 @@ const VALID_WORDS_ES = {
     H:["higo","hinojo"],
     I:["ichiban"],
     J:["jengibre","jitomate"],
+    K:["kumquat","kiwi"],
     L:["lechuga","lima","limon","litchi"],
     M:["maiz","mango","manzana","melocoton","melon","mora","morango"],
-    N:["naranja","nectarina"],
-    P:["papa","papaya","pepino","pera","pimiento","piña","platano","puerro"],
-    R:["rabano","remolacha","romero"],
-    K:["kumquat","kiwi"],
     N:["naranja","nectarina","nopal"],
     O:["oliva","oregano"],
+    P:["papa","papaya","pepino","pera","pimiento","piña","platano","puerro"],
+    R:["rabano","remolacha","romero"],
     S:["sandia","soja","tomate"],
-    T:["tomate","toronja","trufa"],
+    T:["tomate","tomillo","toronja","trufa"],
     U:["uva","uva pasa"],
-    V:["vainilla","verdolaga"],
+    V:["vainilla","vanilla","verdolaga","verdura","vid"],
     W:["wasabi"],
-    Z:["zapote","zanahoria","zucchini"],
-    T:["tomate","tomillo","trufa"],
-    V:["vanilla","vainilla","verdura","vid"],
-    Z:["zanahoria","zapote"]
-  },
-  metier:{
-
-    A:["abogado","actor","acupunturista","administrador","agronomo","albanil","arquitecto","artista","astronauta","astronomo"],
-    B:["bailarin","bibliotecario","biologo","bombero","boqueron"],
-    C:["camarero","carpintero","carnicero","cerrajero","chef","cientista","cirujano","cocinero","contador","creador"],
-    D:["dentista","disenador","diplomatico","director","doctor"],
-    E:["economista","electricista","enfermero","escritor","escultor"],
-    F:["farmaceutico","fotógrafo","fontanero","futbolista","filosofo"],
-    G:["geologo","gendarme","guia"],
-    H:["historiador","herrero","hotelero"],
-    I:["informatico","ingeniero","investigador"],
-    J:["jardinero","joyero","juez","jornalero"],
-    K:["kinesiologo"],
-    L:["librero","linguista","logistico"],
-    M:["matematico","mecanico","medico","militar","musicista","marinero"],
-    N:["notario","nutricionista","navegador","neurologo"],
-    O:["obrero","optico","odontologo"],
-    P:["panadero","pediatra","periodista","piloto","policia","profesor","psicologo","plomero","pastelero"],
-    R:["radiologo","realizador","reportero"],
-    S:["sastre","secretario","sociologo","soldado","sommelier","surfista"],
-    T:["tatuador","tecnico","terapeuta","traductor"],
-    V:["veterinario","vidriero","violinista","viticultor","vendedor"],
-    Z:["zapatero","zoologo"]
+    Z:["zanahoria","zapote","zucchini"]
   },
   celebrite:{
 
@@ -3042,7 +3058,7 @@ const VALID_WORDS_ES = {
     B:["baco","belerofonte"],
     C:["calipso","caronte","cerbero","circe","clitemnestra","cronos","ciclope"],
     D:["dedalo","diana","dionisio"],
-    E:["eco","electra","eros","euridice"],
+    E:["eco","electra","esfinge","estigia","eros","euridice"],
     G:["gaia","gorgonas"],
     H:["hades","hefesto","hera","heracles","hercules","hermes","hestia","hidra","hipnos"],
     I:["icaro","iris"],
@@ -3053,7 +3069,7 @@ const VALID_WORDS_ES = {
     O:["odisea","olimpo","oraculo","orfeo"],
     P:["pandora","paris","pegaso","penelope","persefone","perseo","pluton","poseidon","prometeo"],
     R:["romulo"],
-    S:["saturno","sirenas","sifo","esfinge","estigia"],
+    S:["saturno","sirenas","sifo"],
     T:["teseo","temas","titanes","triton","tifon"],
     U:["ulises"],
     V:["venus","vulcano"],
@@ -3061,14 +3077,14 @@ const VALID_WORDS_ES = {
   },
   espace:{
 
-    A:["asteroide","astronauta","astronomia","atmosfera","aurora"],
-    B:["big bang","agujero negro"],
+    A:["agujero negro","asteroide","astronauta","astronomia","atmosfera","aurora"],
+    B:["big bang"],
     C:["cometa","constelacion","cosmos","crater"],
     E:["eclipse","exoplaneta"],
     G:["galaxia","gravedad"],
     J:["jupiter"],
     L:["luna","luz"],
-    M:["marte","meteoro","via lactea"],
+    M:["marte","meteoro"],
     N:["nebulosa","neutron","nasa"],
     O:["orbita"],
     P:["planeta","pluton","pulsar"],
@@ -3076,7 +3092,7 @@ const VALID_WORDS_ES = {
     S:["satelite","saturno","sol","supernova"],
     T:["telescopio"],
     U:["universo","urano"],
-    V:["venus"],},
+    V:["venus","via lactea"],},
   oceane:{
 
     A:["abismo","alga","anchoa","anémona","arrecife"],
@@ -5570,7 +5586,7 @@ function ProfilePanel({ stats, playerName, wordHistory, catHistory, tier, onClos
 
           {/* Badges */}
           <div className="profile-section">
-            <div className="profile-section-title">Badges ({unlockedBadges?.length || 0}/{BADGE_DEFS.length})</div>
+            <div className="profile-section-title">{t("badges_section","Badges")} ({unlockedBadges?.length || 0}/{BADGE_DEFS.length})</div>
             <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
               {BADGE_DEFS.map(b => {
                 const unlocked = unlockedBadges?.includes(b.id);
@@ -7460,7 +7476,12 @@ function LeaderboardScreen({ onClose, xp, playerName, lang, uid, tier }) {
 
   // Charger classements Firebase (modular API)
   useEffect(() => {
-    if (!uid || !FB.db) return;
+    if (!uid || !FB.db) {
+      setEntries(getMockLeaderboard(uid, playerName, xp, levelInfo));
+      setTournoiEntries([]);
+      setLoading(false);
+      return;
+    }
     // Sauvegarder le joueur courant dans le classement global
     try {
       dbSet(dbRef(FB.db, "leaderboard/" + uid), {
@@ -7525,16 +7546,16 @@ function LeaderboardScreen({ onClose, xp, playerName, lang, uid, tier }) {
           <div style={{ fontSize:11, opacity:.7, letterSpacing:1, textTransform:"uppercase", marginBottom:4 }}>🏆 {t("nav_rank")}</div>
           <div style={{ fontSize:20, fontWeight:800 }}>{t("leaderboard_title","Classement")}</div>
           {myRank > 0 && tab === "global" && (
-            <div style={{ fontSize:13, opacity:.85, marginTop:4 }}>Ta position : #{myRank} • {(xp||0).toLocaleString()} XP</div>
+            <div style={{ fontSize:13, opacity:.85, marginTop:4 }}>{t("leaderboard_my_rank","Ta position : #{rank} • {xp} XP").replace("{rank}", myRank).replace("{xp}", (xp||0).toLocaleString())}</div>
           )}
           {myTournoiRank > 0 && tab === "tournoi" && (
-            <div style={{ fontSize:13, opacity:.85, marginTop:4 }}>Ta position tournoi : #{myTournoiRank}</div>
+            <div style={{ fontSize:13, opacity:.85, marginTop:4 }}>{t("leaderboard_my_rank_tournoi","Ta position tournoi : #{rank}").replace("{rank}", myTournoiRank)}</div>
           )}
         </div>
 
         {/* Onglets */}
         <div style={{ display:"flex", borderBottom:"1px solid var(--br)", background:"var(--sf)" }}>
-          {[["global","🌍 Mondial"],["tournoi","🏆 Tournoi"]].map(([id,label]) => (
+          {[["global", t("tab_mondial","🌍 Mondial")],["tournoi", t("tab_tournoi","🏆 Tournoi")]].map(([id,label]) => (
             <button key={id} onClick={() => setTab(id)} style={{
               flex:1, padding:"12px 8px", fontSize:13, fontWeight: tab===id?700:500,
               color: tab===id?"var(--ac)":"var(--txm)",
@@ -7593,7 +7614,7 @@ function LeaderboardScreen({ onClose, xp, playerName, lang, uid, tier }) {
               {(tab === "global" ? entries : tournoiEntries).length === 0 && (
                 <div style={{ textAlign:"center", padding:"30px 0", color:"var(--txm)" }}>
                   <div style={{ fontSize:36, marginBottom:8 }}>🏆</div>
-                  <div>{tab === "tournoi" ? "Sois le premier à jouer ce tournoi !" : "Aucun joueur encore"}</div>
+                  <div>{tab === "tournoi" ? t("no_tournoi_players","Sois le premier à jouer ce tournoi !") : t("no_global_players","Aucun joueur encore")}</div>
                 </div>
               )}
             </div>
@@ -7775,7 +7796,7 @@ function SettingsPanel({ settings, setSettings, theme, onThemeChange, lang, setL
                 value={settings.country || "France"}
                 onChange={e => setSettings(s => ({ ...s, country: e.target.value }))}
               >
-                {["France","Belgique","Suisse","Canada","Maroc","Algeria","Tunisie","Senegal","Côte d'Ivoire","Autre"].map(c => (
+                {["France","Belgique","Suisse","Canada","Maroc","Algérie","Tunisie","Sénégal","Côte d'Ivoire","Autre"].map(c => (
                   <option key={c} value={c}>{c}</option>
                 ))}
               </select>
@@ -7810,7 +7831,7 @@ function SettingsPanel({ settings, setSettings, theme, onThemeChange, lang, setL
           <div className="card" style={{ padding: "8px 14px", marginBottom: 12 }}>
             <div className="settings-row">
               <div>
-                <div className="settings-label">{`🌐 ${t("settings_lang")}`}</div>
+                <div className="settings-label">{t("settings_lang")}</div>
                 <div className="settings-sub">{t("lang_selector_sub")}</div>
               </div>
               <div style={{ display: "flex", gap: 6 }}>
@@ -7934,7 +7955,7 @@ function BugReportModal({
             <div>
               <div className="ctitle" style={{ marginBottom:10 }}>{t("bug_category")}</div>
               <div style={{ display:"flex", gap:8, flexWrap:"wrap", marginBottom:14 }}>
-                {[["gameplay","🎮 Gameplay"],["ui","🖼 Interface"],["scoring","📊 Scores"],["crash","💥 Crash"],["other","❓ Autre"]].map(([id, label]) => (
+                {[["gameplay","🎮 Gameplay"],["ui","🖼 Interface"],["scoring","📊 Scores"],["crash","💥 Crash"],["other", t("bug_cat_other","❓ Autre")]].map(([id, label]) => (
                   <button key={id} onClick={() => setCategory(id)} style={{
                     padding:"7px 12px", borderRadius:20,
                     border: category===id ? "1.5px solid var(--ac)" : "1.5px solid var(--br)",
