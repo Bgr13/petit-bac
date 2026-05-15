@@ -1492,6 +1492,7 @@ const VALID_WORDS = {
     L:["lutte","lancer de javelot","luge","lacrosse","lancer"],
     M:["marathon","motocross","musculation","mma","muay thai","mountainbike","moto","mushing","mountaineering"],
     N:["natation","nage synchronisee","nordic"],
+    O:["octopush","open water","orienteering"],
     P:["polo","patinage","parachutisme","petanque","plongeon","paddle","padel","paintball","parkour","pelote"],
     Q:["quidditch"],
     R:["rugby","rallye","raid","raquette","ring","rodeo","roller","rowing"],
@@ -1586,7 +1587,7 @@ const VALID_WORDS = {
     K:["kyste","keratine"],
     L:["langue","levre","lobe","ligament"],
     M:["molaire","muscle","machoire","membrane","menisque","moelle","maxillaire","metacarpe","metatarse","mitral","mollet","mamelons"],
-    N:["nerf","nez","nuque","narine","nasal","naviculaire"],
+    N:["nerf","nez","nuque","narine","nasal","naviculaire","nombril"],
     O:["os","oreille","omoplate","ovaire","orbite"],
     P:["poumon","pancreas","peau","pied","pouce","poignet","prostate","palais","paume","perinee","phalange","plante","parotide","patella","peronnier","pharynx","plexus","poitrine"],
     R:["rein","radius","rectum","rotule","rachis","retine"],
@@ -1644,7 +1645,7 @@ const VALID_WORDS = {
     C:["camion","canoe","cabrio","caravane","catamaran","char","chariot","cab","cabriolet","canot","carriole","chalutier","chaloupe","charette","citerne","clipper","cockpit","container","corbillard","corvette","coupe","cable car","cadillac","caisson","calèche","camionnette","camping car","canot pneumatique","car","car de police","cargo","cargoboat","carrosse","catapulte"],
     D:["deltaplane","dirigeable","draisienne","dragster","drone","drakkar","dumper"],
     E:["escalator","embarcation","engin","excavateur"],
-    F:["ferrari","fusee","funiculaire","fourgon","fregatte","frigat","formule un","fiat","ford","fourgonnette","funambule"],
+    F:["ferrari","fusee","funiculaire","fourgon","fregatte","frigat","formule un","fiat","ford","fourgonnette"],
     G:["go kart","gyropode","galere","gondole","grader","gyroplane","grue"],
     H:["helicoptere","hovercraft","hoverboard","half track","hot rod","hydrofoil","harley davidson","hydravion"],
     I:["isetta"],
@@ -1670,7 +1671,7 @@ const VALID_WORDS = {
     G:["guatemala city","georgetown","gaborone"],
     H:["helsinki","harare","havane","honiara"],
     I:["islamabad"],
-    J:["jakarta","jerusalem","jamestown","jakartajerusalem","jeddah"],
+    J:["jakarta","jerusalem","jamestown"],
     K:["kiev","kaboul","kampala","khartoum","kigali","kingston","kinshasa","kuala lumpur"],
     L:["lima","lisbonne","lome","libreville","lilongwe","luanda","lusaka","la paz"],
     M:["madrid","moscou","maputo","maseru","mogadiscio","monrovia","male","managua","manila","mbabane","minsk","montevideo","moroni","muscat"],
@@ -1743,6 +1744,7 @@ const VALID_WORDS = {
     L:["luth","lyre","lauto","leier","lirone","lituus","lur","lir"],
     M:["mandoline","maracas","mbira","melodeon","melodica"],
     N:["nyckelharpa","ngoni","nay"],
+    O:["orgue","oud","ocarina"],
     P:["piano","piccolo","percussions","pipa","psalterion"],
     R:["rebab","recorder","rebec","rubab"],
     S:["saxo","sitar","synthetiseur","sarod","sanza","steel drum","santur","sarangi","serpent","shaker","shakuhachi","shenai","shofar","sousaphone","surbahar","svirel"],
@@ -1848,7 +1850,7 @@ const VALID_WORDS = {
     G:["grand requin","gobie","grotte sous-marine","grotte sous marine"],
     H:["homard","hippocampe","hareng","huitre"],
     I:["ichtyologie","ile","iguane marin"],
-    J:["jellyfish"],
+    J:["janthine"],
     K:["krill","kayak marin"],
     L:["langouste","lion de mer","lamproie","lamantin"],
     M:["maquereau","meduse","murene","morse","marsouin"],
@@ -1864,7 +1866,7 @@ const VALID_WORDS = {
     A:["armure","arbalete","abbaye","alchimiste","armoiries","assiegeant","autel","archange","arquebus","annales"],
     B:["banneret","beffroi","bouclier","buste","bastion","barde","beguinage","blason"],
     C:["cathedrale","chevalier","chatelain","cle de voute","chateau","chevauchee","clerc","croisade","couvents"],
-    D:["donjon","drac","druide","duel","dame","dont"],
+    D:["donjon","drac","druide","duel","dame"],
     E:["ecuyer","epee","ecu","etendard","ecurie"],
     F:["feodalite","fort","faucon","feudalisme","fleche","fief"],
     G:["guildes","glaive","gargouille","gardes"],
@@ -1914,7 +1916,7 @@ const VALID_WORDS = {
     G:["glissade","gigue"],
     H:["hip hop","hula","hora"],
     I:["improvisation"],
-    J:["jazz","jive","jazzjive"],
+    J:["jazz","jive"],
     K:["kizomba","kathak","kuduro"],
     L:["lindy hop","lambada","locking","leg warmers"],
     M:["mazurka","merengue","modern jazz","moonwalk","mouvements"],
@@ -2821,8 +2823,8 @@ const VALID_WORDS_ES = {
     Y:["yacare","yak"],
     P:["panda","pantera","pato","pavo real","perro","pez","pinguino","piraña","pulpo","puma","pez espada","paloma"],
     R:["rana","raton","reno","rinoceronte","rata"],
-    S:["salmon","sapo","sardina","serpiente","tarantula","tiburon","tigre"],
-    T:["tigre","tortuga","tucan"],
+    S:["salmon","sapo","sardina","serpiente"],
+    T:["tarantula","tiburon","tigre","tortuga","tucan"],
     V:["vaca","vibora","venado"],
     Z:["zorro","zopilote"]
   },
@@ -3041,7 +3043,7 @@ const VALID_WORDS_ES = {
     G:["gratitud","gozo"],
     H:["horror","humildad"],
     I:["indignacion","inquietud"],
-    J:["jubilo","gozo"],
+    J:["jubilo"],
     M:["melancolia","miedo","misericordia"],
     N:["nostalgia","nerviosismo"],
     O:["odio","orgullo"],
@@ -3054,7 +3056,7 @@ const VALID_WORDS_ES = {
   },
   mythologie:{
 
-    A:["aquiles","apoldo","afrodita","ares","artemisa","atenea","atlas"],
+    A:["aquiles","apolo","afrodita","ares","artemisa","atenea","atlas"],
     B:["baco","belerofonte"],
     C:["calipso","caronte","cerbero","circe","clitemnestra","cronos","ciclope"],
     D:["dedalo","diana","dionisio"],
@@ -3069,8 +3071,8 @@ const VALID_WORDS_ES = {
     O:["odisea","olimpo","oraculo","orfeo"],
     P:["pandora","paris","pegaso","penelope","persefone","perseo","pluton","poseidon","prometeo"],
     R:["romulo"],
-    S:["saturno","sirenas","sifo"],
-    T:["teseo","temas","titanes","triton","tifon"],
+    S:["saturno","sirenas","sisifo"],
+    T:["teseo","temis","titanes","triton","tifon"],
     U:["ulises"],
     V:["venus","vulcano"],
     Z:["zeus"]
@@ -3108,11 +3110,11 @@ const VALID_WORDS_ES = {
     L:["langosta","leon marino","lubina"],
     M:["mantarraya","mariscos","medusa","mejillon","morena"],
     N:["narval","nautilo"],
-    O:["ostra","orca","octopus","pez payaso"],
+    O:["ostra","orca","octopus"],
     P:["pelicano","pinguino","pirahna","pulpo","plancton"],
     R:["raya","roca","tiburon"],
     S:["salmon","sardina","sepia","tiburon"],
-    T:["atun","tortuga marina","turbot"],
+    T:["tortuga marina","turbot"],
     V:["vibora de mar"],},
   medievale:{
 
@@ -3179,10 +3181,10 @@ const VALID_WORDS_ES = {
 
     A:["abadia","anfiteatro","arco","atrio"],
     B:["balcon","barroco","basilica","bunker"],
-    C:["castillo","catedral","capilla","claustro","columna"],
-    D:["cupula","mazmorra"],
+    C:["castillo","catedral","capilla","claustro","columna","cupula"],
+    D:["decoracion","dintel","dovela"],
     G:["gargola","gotico"],
-    M:["mansion","minarete","modernismo"],
+    M:["mansion","mazmorra","minarete","modernismo"],
     N:["nave"],
     P:["pagoda","palacio","pilar","portal","portico"],
     R:["romanico","rotonda"],
@@ -3512,7 +3514,7 @@ const AI_ANSWERS = {
   musique:{A:["abba","adele","akon","amy winehouse","arctic monkeys","asap rocky"],B:["brel","blur","bach","booba","beatles","beyonce","bob marley","bruce springsteen"],C:["chopin","camille","cardi b","coldplay","chris brown"],D:["drake","dalida","dj snake","daft punk","david bowie","dire straits"],E:["eminem","ed sheeran","edith piaf","elton john","ella fitzgerald"],F:["fugees","frank ocean","foo fighters","florent pagny","fleetwood mac"],G:["gorillaz","green day","gainsbourg","guns n roses","george michael"],H:["hamza","hendrix","hans zimmer","harry styles"],I:["inxs","indochine","iron maiden","imagine dragons"],J:["jay z","jamiroquai","julien dore","james brown","johnny cash","john legend"],K:["keane","khalid","koffee","kid cudi","kanye west"],L:["lorde","lizzo","logic","lords","lady gaga","lauryn hill","led zeppelin"],M:["maes","moby","muse","mozart","madonna","maroon 5","miles davis","mac miller"],N:["nas","ninho","nekfeu","nirvana","notorious big"],O:["oasis"],P:["piaf","prince","pharrell","pearl jam","post malone","pink floyd"],R:["rone","rihanna","r kelly","raphael","radiohead","rage against the machine"],S:["sting","skepta","summer","shakira","snoop dogg","sam smith","sex pistols"],T:["toto","the cure","the doors","the weeknd","talking heads","taylor swift"],U:["u2"],V:["vald","vianney","vivaldi","vampire weekend"],W:["weeknd"]},
   cuisine:{A:["ail","aloo","adobo","acras","aligot","artichaut","assiette"],B:["boeuf","blini","burek","bisque","baguette","boeuf bourguignon","baklava"],C:["crepe","curry","chili","confit","cassoulet","coquilles saint jacques","carpaccio"],D:["daube","dashi","dolma","dinde","dorade"],E:["etuvee","epinard","escalope","empanada"],F:["farce","frito","fondue","fajita","foie gras","felafel"],G:["gyoza","gyros","glace","gratin","gaspacho"],H:["hummus","hotpot","harira","harissa","hamburger"],I:["idli","injera","iskender","involtini"],J:["jerk","jiaozi","julienne","jambalaya"],K:["kefta","kebbeh","kimchi","kibbeh","kebab"],L:["laksa","lardo","lapin","leche","lasagne","lentille"],M:["mole","miso","makis","migas","moussaka","mousse"],N:["naan","nems","nougat","nachos"],O:["osso buco","omelette"],P:["pho","pate","pizza","poele","paella","pois chiches","polenta"],Q:["quiche"],R:["roti","ramen","rosbif","risotto","ratatouille"],S:["sushi","soupe","steak","sauce","saumon","salade"],T:["taco","tofu","tarte","tapas","tiramisu"],U:["udon"],V:["veau","vatapa","veloute","volaille"],W:["waffle","wok"],Y:["yaourt"],Z:["zaatar"]},
   vehicule:{A:["atv","audi","avion","aviso","ambulance","autobus","autocar"],B:["bus","bac","bmw","bob","bateau","bulldozer","bicyclette"],C:["cab","car","char","canoe","camion","cable car","catamaran"],D:["drone","dumper","drakkar","dragster","dirigeable"],E:["engin","escalator","excavateur","embarcation"],F:["fiat","ford","fusee","frigat","ferry"],G:["grue","galere","grader","go kart","gondole"],H:["hot rod","hydrofoil","hydravion","hovercraft","helicoptere"],I:["isetta"],J:["jet","jeep","jonque","jet ski"],K:["kayak","karting"],L:["luge","landau","lancia","libelle","limousine","locomotive"],M:["moto","metro","mazda","moped","minibus"],N:["nef","navire","navette"],O:["ocean liner"],P:["pelle","patrol","peugeot","planeur","parachute"],Q:["quad"],R:["rame","radeau","renault","remorque","rocket","raft"],S:["suv","skate","segway","suzuki","scooter","sous marin","speedboat"],T:["tank","taxi","tram","train","tracteur"],U:["uber"],V:["van","velo","vespa","viking"],W:["watercraft"],Z:["zeppelin"]},
-  capital:{A:["apia","alger","amman","accra","abou dabi","abuja","addis abeba","andorre la vielle","ankara","antananarivo","ashgabat","assouan","astana","asmara","athens"],B:["berne","bagdad","berlin","bamako","banjul","bangui","belmopan","belgrade","beyrouth","bishkek","bissau","bogota","brasilia","bratislava","brazzaville","bridgetown","bruxelles","bujumbura","budapest"],C:["cairo","colombo","conakry","caracas","canberra","castries","chisinau","copenhague"],D:["doha","dili","dacca","dakar","dhaka","djibouti","dodoma","douglas"],E:["erevan","edinburgh"],F:["funafuti","freetown"],G:["gaborone","georgetown","guatemala city"],H:["harare","havane","honiara","helsinki"],I:["islamabad"],J:["jeddah","jakarta","jerusalem","jamestown"],K:["kiev","kaboul","kigali","kampala","katmandou","khartoum","kingston","kinshasa","kuala lumpur"],L:["lima","lome","luanda","lusaka","la paz","libreville","lilongwe","lisbonne","londres","la valette"],M:["male","minsk","madrid","moscou","managua","manille","maputo","maseru","mbabane","mogadiscio","monrovia","montevideo","moroni","muscat"],N:["nassau","niamey","nairobi","nicosia","ndjamena","naypyidaw","nukualofa","nueva delhi"],O:["oslo","ottawa"],P:["paris","prague","panama","palikir","phnom penh","port au prince","port moresby","porto novo","pretoria"],Q:["quito"],R:["riad","rome","riga","rabat","reykjavik"],S:["suva","seoul","sofia","skopje","san jose","santiago","santo domingo","sao tome","sarajevo","singapour","stockholm","sucre"],T:["tokyo","tunis","tirana","teheran","taipei","tachkent","tbilissi","tegucigalpa","thimphu","tripoli","tallinn"],U:["ulu","ulaanbaatar"],V:["vaduz","vienne","vilnius","valleta"],W:["varsovie","washington","windhoek"],Y:["yaounde","yangon"],Z:["zagreb","zamboanga"]},
+  capital:{A:["apia","alger","amman","accra","abou dabi","abuja","addis abeba","andorre la vielle","ankara","antananarivo","ashgabat","assouan","astana","asmara","athens"],B:["berne","bagdad","berlin","bamako","banjul","bangui","belmopan","belgrade","beyrouth","bishkek","bissau","bogota","brasilia","bratislava","brazzaville","bridgetown","bruxelles","bujumbura","budapest"],C:["cairo","colombo","conakry","caracas","canberra","castries","chisinau","copenhague"],D:["doha","dili","dacca","dakar","dhaka","djibouti","dodoma","douglas"],E:["erevan","edinburgh"],F:["funafuti","freetown"],G:["gaborone","georgetown","guatemala city"],H:["harare","havane","honiara","helsinki"],I:["islamabad"],J:["jakarta","jerusalem","jamestown"],K:["kiev","kaboul","kigali","kampala","katmandou","khartoum","kingston","kinshasa","kuala lumpur"],L:["lima","lome","luanda","lusaka","la paz","libreville","lilongwe","lisbonne","londres","la valette"],M:["male","minsk","madrid","moscou","managua","manille","maputo","maseru","mbabane","mogadiscio","monrovia","montevideo","moroni","muscat"],N:["nassau","niamey","nairobi","nicosia","ndjamena","naypyidaw","nukualofa","nueva delhi"],O:["oslo","ottawa"],P:["paris","prague","panama","palikir","phnom penh","port au prince","port moresby","porto novo","pretoria"],Q:["quito"],R:["riad","rome","riga","rabat","reykjavik"],S:["suva","seoul","sofia","skopje","san jose","santiago","santo domingo","sao tome","sarajevo","singapour","stockholm","sucre"],T:["tokyo","tunis","tirana","teheran","taipei","tachkent","tbilissi","tegucigalpa","thimphu","tripoli","tallinn"],U:["ulu","ulaanbaatar"],V:["vaduz","vienne","vilnius","valleta"],W:["varsovie","washington","windhoek"],Y:["yaounde","yangon"],Z:["zagreb","zamboanga"]},
   monument:{A:["agra","alta","agora","arche","alhambra","angkor","arc de triomphe"],B:["big ben","beffroi","basilique","borobudur","buckingham"],C:["chora","cluny","cheops","crypte","colisee","christ the redeemer"],D:["delphi","dolmen","dome du rocher","dome des rochers"],E:["ephese","escorial","tour eiffel","easter island"],F:["forum romain","fortification","forbidden city","fontaine de trevi"],G:["gaudi","grotte","glacier","golden gate","grande pyramide","grande muraille"],H:["himeji","hadrien","hradcany","hollywood","hagia sophia"],I:["invalides"],J:["jardin","jerash","jungfrau"],K:["kaaba","karnak","kremlin","kilimanjaro"],L:["luxor","louvre","leptis magna","leaning tower"],M:["moai","minar","minaret","mosquee","machu picchu","mont saint michel"],N:["nazca","niagara","notre dame"],O:["olympe"],P:["petra","pompei","pagode","pergame","parthenon","pyramides"],Q:["qoqand"],R:["rialto","rempart","red fort","reichstag"],S:["sphinx","sistine","sigiriya","serengeti","stonehenge","sagrada familia","statue de la liberte"],T:["tour","torii","temple","tianmen","taj mahal"],V:["vatican","versailles","victoria falls"]},
   langue:{A:["akan","arabe","azeri","aymara","afrikaans","albanais","amharique","armenien"],B:["birman","basque","breton","buryat","bengali","bosnien","bulgare","bielorusse"],C:["corse","coreen","croate","chinois","catalan","cantonnais"],D:["dari","danois","dzongkha","dialecte"],E:["ewe","espagnol","estonien","esperanto","anglais"],F:["farsi","frison","finnois","fidjien","flamand","francais"],G:["grec","gallois","guarani","georgien","gujarati","gaelique"],H:["hindi","hebrew","hebreu","haoussa","hongrois"],I:["igbo","italien","islandais","indonesien"],J:["japonais","javanais"],K:["khmer","kongo","kurde","kazakh","kinyarwanda","kirghiz"],L:["latin","letton","luganda","lituanien","laotien"],M:["malais","mongol","maltais","marathi","macedonien","mandarin"],N:["nepalais","norvegien"],O:["ourdou","occitan"],P:["persan","pashto","punjabi","polonais","portugais"],Q:["quechua"],R:["russe","roumain"],S:["serbe","somali","sindhi","suedois","swahili","slovaque","slovene"],T:["turc","thai","tatar","tamoul","tibetain","telougou"],U:["ukrainien","ouzbek"],V:["valencien","vietnamien"],W:["wolof","welsh"],X:["xhosa"],Y:["yoruba"],Z:["zoulou"]},
   instrument:{A:["alto","arpa","appeau","alphorn","accordeon"],B:["banjo","basse","bongo","bugle","basson","berimbau","bouzouki"],C:["cor","cajon","caixa","clave","clarinette","clavecin","cello"],D:["daf","dre","dhol","didgeridoo","djembe","dulcimer"],E:["epinette","euphonium"],F:["fife","flute","fifre","flageolet","fiddle"],G:["gong","gaita","geige","guitare","gamelan","glockenspiel"],H:["harpe","helicon","hautbois","harmonica","harmoniume","harpe","harpsichord"],I:["imbila"],J:["jouhikko","jews harp"],K:["koto","kora","kazoo","kecak","kalimba"],L:["lur","lir","luth","lyre"],M:["mbira","maracas","melodeon","melodica","mandoline","marimba"],N:["nay","ngoni","nyckelharpa"],O:["orgue","oboe"],P:["pipa","piano","piccolo","psalterion","pan flute"],Q:["quena"],R:["rebab","rebec","rubab","recorder"],S:["saxo","sitar","sarod","sanza","synthé","steel drum"],T:["tar","tuba","tabla","tiple","trompette","trombone","triangle","tambour"],U:["ukulele"],V:["viol","viole","viola","veena","violon","vibraphone"],X:["xylophone"],Z:["zither"]},
@@ -3521,10 +3523,10 @@ const AI_ANSWERS = {
   mythologie:{A:["ares","ajax","aedes","amour"],B:["borée","boree","bacchus","briares"],C:["circe","cerere","cronos","cronus"],D:["dieu","diana","dieux","diane"],E:["echo","eros","erebe","europe"],F:["faune","fates","furies"],G:["gaia","graces","gorgone","gorgones"],H:["hera","hades","hydre","hygie"],I:["iris","icare","ithaque"],J:["juno","jason","janus","jupiter"],K:["kronos"],L:["lethe","laocoon","licorne","lachesis"],M:["mars","midas","medee","muses"],N:["nike","neptune","nymphes","narcisse"],O:["orphee","olympe","oracle","odyssee"],P:["paris","persee","pegase","pluton"],R:["rhea","romulus","rhadamanthe"],S:["styx","sphinx","saturne","sisyphe"],T:["titans","thesee","themis","triton"],V:["venus","vulcain"]},
 
   espace:{A:["amas","astre","astres","aurora"],B:["binaire","big bang","boucle cosmique"],C:["comete","cosmos","crater","cosmologie"],D:["derive","deimos","debris","disque galactique"],E:["etoile","eclipse","equinoxe","expansion"],F:["fusee","fission","force gravitationnelle"],G:["galaxie","gravite","gravitation","geante rouge"],H:["horizon des evenements"],I:["iss","impact meteoritique"],J:["jupiter"],K:["kepler"],L:["lune","laser","lumiere","luminosite"],M:["mars","meteore","milky way","magnitude"],N:["nasa","neutron","nebuleuse","naine brune"],O:["orbite","onde gravitationnelle"],P:["pluton","pulsar","planete","perigee"],R:["rover","rotation","radiation"],S:["sonde","soleil","saturne","supernova"],T:["transit","telescope","trou noir"],V:["venus","voie lactee"]},
-  oceane:{A:["algue","atoll","ambre","anemone"],B:["baleine","benitier","bernacle","baudroie"],C:["crabe","carpe","coral","corail"],D:["delta","dugong","dauphin","delphinapterus"],E:["espadon","epaulard","etoile de mer","ecosysteme marin"],F:["flet","fanon","faque","fletan"],G:["gobie","grand requin","grotte sous-marine","grotte sous marine"],H:["homard","hareng","huitre","hippocampe"],I:["ile","ichtyologie","iguane marin"],J:["jellyfish"],K:["krill","kayak marin"],L:["lamproie","lamantin","langouste","lion de mer"],M:["morse","meduse","murene","marsouin"],N:["narval","nautile","naufrage"],O:["orque","octopus"],P:["phoque","pieuvre","pingouin","plancton"],R:["raie","recif","requin","rascasse"],S:["sole","saumon","seiche","sardine"],T:["thon","turbot","tortue marine"],V:["vive","variete marine"]},
-  medievale:{A:["autel","armure","abbaye","annales"],B:["buste","barde","blason","beffroi"],C:["clerc","chateau","croisade","couvents"],D:["drac","duel","dame","dont"],E:["ecu","epee","ecuyer","ecurie"],F:["fort","fief","faucon","fleche"],G:["glaive","gardes","guildes","gargouille"],H:["herse","heraut","haubert","hommage"],I:["impot"],J:["joute","jeanne d arc"],K:["keep"],L:["luth","lance","lutrin","laique"],M:["motte","moine","merlin","manoir"],N:["nef","noble"],O:["oriflamme","ordre"],P:["page","prieure","palefroi","parchemin"],R:["roi","rempart","relique","roi arthur"],S:["serf","siege","scribe","serment"],T:["tour","trone","tribut","templier"],V:["vassal","vitrail","vicomte"]},
+  oceane:{A:["algue","atoll","ambre","anemone"],B:["baleine","benitier","bernacle","baudroie"],C:["crabe","carpe","coral","corail"],D:["delta","dugong","dauphin","delphinapterus"],E:["espadon","epaulard","etoile de mer","ecosysteme marin"],F:["flet","fanon","faque","fletan"],G:["gobie","grand requin","grotte sous-marine","grotte sous marine"],H:["homard","hareng","huitre","hippocampe"],I:["ile","ichtyologie","iguane marin"],J:["janthine"],K:["krill","kayak marin"],L:["lamproie","lamantin","langouste","lion de mer"],M:["morse","meduse","murene","marsouin"],N:["narval","nautile","naufrage"],O:["orque","octopus"],P:["phoque","pieuvre","pingouin","plancton"],R:["raie","recif","requin","rascasse"],S:["sole","saumon","seiche","sardine"],T:["thon","turbot","tortue marine"],V:["vive","variete marine"]},
+  medievale:{A:["autel","armure","abbaye","annales"],B:["buste","barde","blason","beffroi"],C:["clerc","chateau","croisade","couvents"],D:["drac","duel","dame"],E:["ecu","epee","ecuyer","ecurie"],F:["fort","fief","faucon","fleche"],G:["glaive","gardes","guildes","gargouille"],H:["herse","heraut","haubert","hommage"],I:["impot"],J:["joute","jeanne d arc"],K:["keep"],L:["luth","lance","lutrin","laique"],M:["motte","moine","merlin","manoir"],N:["nef","noble"],O:["oriflamme","ordre"],P:["page","prieure","palefroi","parchemin"],R:["roi","rempart","relique","roi arthur"],S:["serf","siege","scribe","serment"],T:["tour","trone","tribut","templier"],V:["vassal","vitrail","vicomte"]},
   technologie:{A:["api","ascii","arduino","antivirus"],B:["bug","binaire","bluetooth","blockchain"],C:["cpu","code","cloud","crypto"],D:["data","drone","debug","donnees"],E:["email","ethernet","encryption","electronique"],F:["firewall","framework","fibre optique"],G:["gps","gpu","github","graphique"],H:["hack","html","http","hardware"],I:["internet","interface","inteligence artificielle","intelligence artificielle"],J:["java","javascript"],K:["kotlin","kernel","kubernetes"],L:["linux","langage","logiciel"],M:["mongodb","memoire","megadonnees","microprocesseur"],N:["nuage","network","numerique","navigation"],O:["ordinateur","open source"],P:["pixel","python","protocole","processeur"],R:["ram","reseaux","reactjs","robotique"],S:["sql","serveur","systeme","streaming"],T:["terminal","transistor","traitement","technologie"],V:["virus","virtualisation","virtual reality"]},
-  danse:{A:["adagio","allegro","afrobeat","arabesque"],B:["barre","ballet","bolero","battement"],C:["cha cha","cabaret","cossack","country"],D:["disco","danzon","danse moderne","danse classique"],E:["entrechat","expression corporelle"],F:["funk","foxtrot","flamenco","fandango"],G:["gigue","glissade"],H:["hula","hora","hip hop"],I:["improvisation"],J:["jazz","jive","jazzjive"],K:["kathak","kuduro","kizomba"],L:["lambada","locking","lindy hop","leg warmers"],M:["mazurka","merengue","moonwalk","mouvements"],N:["neofolk","neosoul","ndombolo"],O:["oriental"],P:["polka","pointe","popping","pirouette"],R:["rock","rumba","reggaeton"],S:["step","salsa","samba","swing"],T:["tango","twist","tutting","tap dance"],V:["valse","vogue","voguing"]},
+  danse:{A:["adagio","allegro","afrobeat","arabesque"],B:["barre","ballet","bolero","battement"],C:["cha cha","cabaret","cossack","country"],D:["disco","danzon","danse moderne","danse classique"],E:["entrechat","expression corporelle"],F:["funk","foxtrot","flamenco","fandango"],G:["gigue","glissade"],H:["hula","hora","hip hop"],I:["improvisation"],J:["jazz","jive"],K:["kathak","kuduro","kizomba"],L:["lambada","locking","lindy hop","leg warmers"],M:["mazurka","merengue","moonwalk","mouvements"],N:["neofolk","neosoul","ndombolo"],O:["oriental"],P:["polka","pointe","popping","pirouette"],R:["rock","rumba","reggaeton"],S:["step","salsa","samba","swing"],T:["tango","twist","tutting","tap dance"],V:["valse","vogue","voguing"]},
   architecture:{A:["agora","arche","arcade","abside"],B:["beton","balcon","bunker","beffroi"],C:["cour","cloitre","coupole","creneau"],D:["dome","decor","donjon","dallage"],E:["eglise","escalier","entablement"],F:["frise","facade","fenetre","fronton"],G:["gothique","gargouille","gratte ciel"],H:["hall","hotel","hospice"],I:["igloo","immeuble"],J:["jambage"],K:["kiosque"],L:["loggia","louvre","linteau"],M:["meneau","minaret","mansarde","modillon"],N:["nef","narthex"],O:["ogive","obélisque"],P:["pilier","porche","podium","palais"],R:["rosace","rotonde","rempart","romanesque"],S:["stupa","salle","sanctuaire","soubassement"],T:["tour","tympan","temple","tribune"],V:["vault","voute","vestibule"]},
   sport_star:{A:["ali","ashe","agassi","anelka"],B:["bolt","bird","best","biles"],C:["curry","carlos","cantona","clemson"],D:["durant","drogba","djokovic","deschamps"],E:["eto o","eusebio"],F:["figo","federer"],G:["grace","gasquet","griezmann","guardiola"],H:["hamm","henry","hatton","hamilton"],I:["ibrahimovic"],J:["james","jordan","jorginho","james lebron"],K:["kobe","kante","kylian"],L:["lin","lewis","lebron","lewandowski"],M:["messi","maldini","maradona","mourinho"],N:["nadal","neymar"],O:["owen","okoye"],P:["pele","pogba","platini"],R:["rafael","robben","ronaldo","robinson"],S:["salah","serena","sneijder","schumacher"],T:["tyson","totti"],V:["villa","vieira","van basten"]},
   personnage:{A:["alice","ariel","anakin","aragorn"],B:["bond","belle","bambi","batman"],C:["conan","cendrillon","captain jack","capitaine haddock"],D:["dory","dumbledore","darth vader","don quichotte"],E:["elsa","ethan hunt","emma bovary"],F:["frodo","frollo","forrest"],G:["groot","gollum","gaston","gandalf"],H:["hulk","hamlet","hermione","harry potter"],I:["ironman"],J:["joker","james bond","jean valjean"],K:["katniss","king kong"],L:["leia","luke","lolita","lecter"],M:["moana","merlin","matrice","magneto"],N:["neo","nemo"],O:["obelix","obiwan"],P:["padme","potter","pinocchio"],R:["rocky","romeo","rapunzel"],S:["scar","simba","sherlock","scarlett"],T:["thor","thanos","terminator"],V:["vaiana","voldemort"]},
@@ -6163,6 +6165,12 @@ function SetupScreen({
   }
 
   useEffect(() => { if (!roundsOpts.includes(rounds)) setRounds(roundsOpts[0]); }, [tier]);
+  // Auto-expand categories when tier upgrades: si seulement les cats gratuites sont sélectionnées et qu'on devient PRO+, on sélectionne tout
+  useEffect(() => {
+    const freIds = FREE_CATS.map(c => c.id);
+    const onlyFree = cats.length > 0 && cats.every(id => freIds.includes(id));
+    if (canPro && onlyFree) setCats(ALL_BASE.map(c => c.id));
+  }, [canPro]);
 
   return (
     <div style={{ display: "flex", flexDirection: "column", height: "100vh" }}>
@@ -6205,7 +6213,7 @@ function SetupScreen({
             </p>
             <div className="rounds-grid">{[3, 5].map(n => (
               <button key={n} className={`rb ${mortCatCount === n ? "sel" : ""}`} onClick={() => setMortCatCount(n)}>
-                {n} {t("cats_per_round","cats")}
+                {n}
               </button>
             ))}</div>
           </div>
