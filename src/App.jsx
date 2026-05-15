@@ -392,6 +392,34 @@ const TRANSLATIONS = {
     tab_tournoi: "🏆 Tournoi",
     no_tournoi_players: "Sois le premier à jouer ce tournoi !",
     no_global_players: "Aucun joueur encore",
+    // Friends
+    friends_title: "Amis",
+    friends_count: "ami(s)",
+    friends_tab: "Amis",
+    add_tab: "Ajouter",
+    requests_tab: "Demandes",
+    no_friends: "Aucun ami pour l'instant",
+    no_friends_hint: "Ajoute des amis via leur code unique !",
+    my_code: "Mon code ami",
+    copy: "Copier",
+    copied: "Copié !",
+    add_by_code: "Ajouter par code",
+    enter_code: "Ex: PBXYZ123",
+    scan_qr: "Scanner QR",
+    add_friend_btn: "Envoyer la demande",
+    add_self_error: "C'est ton propre code !",
+    add_already_error: "Déjà ami avec cette personne !",
+    add_not_found: "Code introuvable. Vérifie et réessaie.",
+    add_sent: "Demande envoyée !",
+    no_requests: "Pas de demandes en attente",
+    wants_to_add: "veut vous ajouter",
+    friends_btn: "👥 Amis",
+    qr_not_supported: "Scan QR non supporté. Entre le code manuellement.",
+    camera_denied: "Accès caméra refusé.",
+    remove_friend: "Retirer",
+    friend_added: "Ami ajouté !",
+    friend_removed: "Ami retiré",
+    offline_friends: "Mode hors-ligne : amis indisponibles",
   },
   en: {
     appName: "Le Petit Bac",
@@ -728,6 +756,34 @@ const TRANSLATIONS = {
     tab_tournoi: "🏆 Tournament",
     no_tournoi_players: "Be the first to play this tournament!",
     no_global_players: "No players yet",
+    // Friends
+    friends_title: "Friends",
+    friends_count: "friend(s)",
+    friends_tab: "Friends",
+    add_tab: "Add",
+    requests_tab: "Requests",
+    no_friends: "No friends yet",
+    no_friends_hint: "Add friends using their unique code!",
+    my_code: "My friend code",
+    copy: "Copy",
+    copied: "Copied!",
+    add_by_code: "Add by code",
+    enter_code: "e.g. PBXYZ123",
+    scan_qr: "Scan QR",
+    add_friend_btn: "Send request",
+    add_self_error: "That's your own code!",
+    add_already_error: "Already friends with this person!",
+    add_not_found: "Code not found. Check and try again.",
+    add_sent: "Request sent!",
+    no_requests: "No pending requests",
+    wants_to_add: "wants to add you",
+    friends_btn: "👥 Friends",
+    qr_not_supported: "QR scan not supported. Enter the code manually.",
+    camera_denied: "Camera access denied.",
+    remove_friend: "Remove",
+    friend_added: "Friend added!",
+    friend_removed: "Friend removed",
+    offline_friends: "Offline mode: friends unavailable",
   },
   es: {
     appName: "El Baccalaureato",
@@ -1064,6 +1120,34 @@ const TRANSLATIONS = {
     tab_tournoi: "🏆 Torneo",
     no_tournoi_players: "¡Sé el primero en jugar este torneo!",
     no_global_players: "Aún no hay jugadores",
+    // Friends
+    friends_title: "Amigos",
+    friends_count: "amigo(s)",
+    friends_tab: "Amigos",
+    add_tab: "Añadir",
+    requests_tab: "Solicitudes",
+    no_friends: "Sin amigos por ahora",
+    no_friends_hint: "¡Añade amigos con su código único!",
+    my_code: "Mi código de amigo",
+    copy: "Copiar",
+    copied: "¡Copiado!",
+    add_by_code: "Añadir por código",
+    enter_code: "Ej: PBXYZ123",
+    scan_qr: "Escanear QR",
+    add_friend_btn: "Enviar solicitud",
+    add_self_error: "¡Ese es tu propio código!",
+    add_already_error: "¡Ya eres amigo de esta persona!",
+    add_not_found: "Código no encontrado. Verifica e inténtalo de nuevo.",
+    add_sent: "¡Solicitud enviada!",
+    no_requests: "Sin solicitudes pendientes",
+    wants_to_add: "quiere añadirte",
+    friends_btn: "👥 Amigos",
+    qr_not_supported: "Escaneo QR no compatible. Introduce el código manualmente.",
+    camera_denied: "Acceso a la cámara denegado.",
+    remove_friend: "Eliminar",
+    friend_added: "¡Amigo añadido!",
+    friend_removed: "Amigo eliminado",
+    offline_friends: "Modo sin conexión: amigos no disponibles",
   }
 };
 
@@ -4371,6 +4455,10 @@ select.inp{appearance:none;cursor:pointer}
 @keyframes fadeInUp{from{transform:translateY(16px);opacity:0}to{transform:translateY(0);opacity:1}}
 @keyframes shimmer{0%{background-position:-200% center}100%{background-position:200% center}}
 
+/* ─── FRIENDS ─── */
+.friend-status-err{color:var(--rd,#e74c3c);font-size:13px;font-weight:700;margin-bottom:10px;padding:8px 12px;background:var(--rds,rgba(231,76,60,.08));border-radius:10px}
+.friend-status-ok{color:var(--gn,#00b894);font-size:13px;font-weight:700;margin-bottom:10px;padding:8px 12px;background:var(--gns,rgba(0,184,148,.08));border-radius:10px}
+
 /* ─── POINTS PILLS ─── */
 .pts-pill{display:inline-flex;align-items:center;gap:5px;padding:4px 12px;border-radius:20px;font-size:11px;font-weight:800}
 .pts-pill-gn{background:var(--gns);color:var(--gn)}
@@ -4725,6 +4813,105 @@ const FB = (() => {
       }
       return null;
     },
+
+    // ── FRIENDS ─────────────────────────────────────────────────
+    async getFriendCode(uid) {
+      // Try local storage first (works offline)
+      let localCode = null;
+      try { localCode = localStorage.getItem("pb_friendcode"); } catch(e) {}
+
+      if (db) {
+        try {
+          const snap = await dbGet(dbRef(db, `users/${uid}/friendCode`));
+          if (snap.val()) {
+            // Ensure local is synced
+            try { localStorage.setItem("pb_friendcode", snap.val()); } catch(e) {}
+            return snap.val();
+          }
+        } catch(e) {}
+        // Generate new code
+        const code = "PB" + Math.random().toString(36).substring(2, 8).toUpperCase();
+        try {
+          await dbSet(dbRef(db, `users/${uid}/friendCode`), code);
+          await dbSet(dbRef(db, `friendCodes/${code}`), uid);
+          try { localStorage.setItem("pb_friendcode", code); } catch(e) {}
+        } catch(e) { console.warn("FB friendCode write failed:", e); }
+        return code;
+      }
+      // Offline: generate and persist locally
+      if (localCode) return localCode;
+      const code = "PB" + Math.random().toString(36).substring(2, 8).toUpperCase();
+      try { localStorage.setItem("pb_friendcode", code); } catch(e) {}
+      return code;
+    },
+
+    async syncUserProfile(uid, name, xp) {
+      if (!db || !uid) return;
+      try {
+        await dbUpdate(dbRef(db, `users/${uid}`), { name: name || "Joueur", xp: xp || 0, updatedAt: Date.now() });
+      } catch(e) {}
+    },
+
+    async lookupByFriendCode(code) {
+      if (!db) return null;
+      try {
+        const snap = await dbGet(dbRef(db, `friendCodes/${code}`));
+        return snap.val(); // uid or null
+      } catch(e) { return null; }
+    },
+
+    async sendFriendRequest(fromUid, fromName, toUid) {
+      if (!db) throw new Error("offline");
+      await dbSet(dbRef(db, `friendRequests/${toUid}/${fromUid}`), {
+        name: fromName || "Joueur", sentAt: Date.now()
+      });
+    },
+
+    async acceptFriendRequest(myUid, fromUid) {
+      if (!db) return;
+      const [theirSnap, mySnap] = await Promise.all([
+        dbGet(dbRef(db, `users/${fromUid}`)),
+        dbGet(dbRef(db, `users/${myUid}`)),
+      ]);
+      const them = theirSnap.val() || {};
+      const me = mySnap.val() || {};
+      await Promise.all([
+        dbSet(dbRef(db, `friends/${myUid}/${fromUid}`), { name: them.name || "Joueur", xp: them.xp || 0, addedAt: Date.now() }),
+        dbSet(dbRef(db, `friends/${fromUid}/${myUid}`), { name: me.name || "Joueur", xp: me.xp || 0, addedAt: Date.now() }),
+        dbSet(dbRef(db, `friendRequests/${myUid}/${fromUid}`), null),
+      ]);
+    },
+
+    async rejectFriendRequest(myUid, fromUid) {
+      if (!db) return;
+      await dbSet(dbRef(db, `friendRequests/${myUid}/${fromUid}`), null);
+    },
+
+    listenFriendRequests(uid, cb) {
+      if (!db) { cb({}); return () => {}; }
+      try {
+        const ref = dbRef(db, `friendRequests/${uid}`);
+        const unsub = dbOnValue(ref, snap => cb(snap.val() || {}));
+        return unsub;
+      } catch(e) { cb({}); return () => {}; }
+    },
+
+    listenFriends(uid, cb) {
+      if (!db) { cb({}); return () => {}; }
+      try {
+        const ref = dbRef(db, `friends/${uid}`);
+        const unsub = dbOnValue(ref, snap => cb(snap.val() || {}));
+        return unsub;
+      } catch(e) { cb({}); return () => {}; }
+    },
+
+    async removeFriend(myUid, friendUid) {
+      if (!db) return;
+      await Promise.all([
+        dbSet(dbRef(db, `friends/${myUid}/${friendUid}`), null),
+        dbSet(dbRef(db, `friends/${friendUid}/${myUid}`), null),
+      ]);
+    },
   };
 })();
 
@@ -4873,6 +5060,13 @@ export default function App() {
   const [showLegal, setShowLegal] = useState(null); // "cgu" | "privacy" | null
   const [profilePhoto, setProfilePhoto] = useState(() => { try { return JSON.parse(localStorage.getItem("pb_photo")); } catch(e) { return null; } }); // { type, data/emoji, bg }
   const [uid, setUid] = useState(null);
+  // Friends system
+  const [myFriendCode, setMyFriendCode] = useState(() => {
+    try { return localStorage.getItem("pb_friendcode") || ""; } catch(e) { return ""; }
+  });
+  const [friends, setFriends] = useState({});
+  const [friendRequests, setFriendRequests] = useState({});
+  const [showFriends, setShowFriends] = useState(false);
   // Profile data
   const [wordHistory, setWordHistory] = useState(() => {
     try { return JSON.parse(localStorage.getItem("pb_words") || "[]"); } catch(e) { return []; }
@@ -4911,6 +5105,26 @@ export default function App() {
       if (typeof localStorage !== "undefined") localStorage.setItem("pb_theme", theme);
     } catch(e) {}
   }, [theme]);
+
+  // ── Friend system initialization ──────────────────────────────
+  useEffect(() => {
+    if (!uid) return;
+    FB.getFriendCode(uid).then(code => {
+      setMyFriendCode(code);
+      FB.syncUserProfile(uid, settings.playerName, xp);
+    });
+    // Listen for incoming friend requests in real-time
+    const unsubReq = FB.listenFriendRequests(uid, setFriendRequests);
+    // Listen for friend list in real-time
+    const unsubFriends = FB.listenFriends(uid, setFriends);
+    return () => { unsubReq(); unsubFriends(); };
+  }, [uid]);
+
+  // Sync player name/XP to Firebase users profile
+  useEffect(() => {
+    if (!uid || !myFriendCode) return;
+    FB.syncUserProfile(uid, settings.playerName, xp);
+  }, [settings.playerName, xp, uid, myFriendCode]);
 
   function goSetup(mode) { setGameState({ mode }); setScreen("setup"); }
   function goOnline(mode) {
@@ -5222,7 +5436,19 @@ export default function App() {
           onShare={() => { setShowProfile(false); setShowShare(true); }}
           onRateApp={() => { setShowProfile(false); setShowRateApp(true); }}
           onBugReport={() => { setShowProfile(false); setShowBugReport(true); }}
+          onFriends={() => { setShowProfile(false); setShowFriends(true); }}
+          friendRequestCount={Object.keys(friendRequests).length}
           lang={lang} />}
+      {showFriends && <FriendsPanel
+          uid={uid}
+          myFriendCode={myFriendCode}
+          playerName={settings.playerName}
+          friends={friends}
+          friendRequests={friendRequests}
+          onClose={() => setShowFriends(false)}
+          onRefresh={() => {}}
+          lang={lang}
+        />}
       {showOnboarding && <OnboardingScreen onDone={(name) => {
           const finalName = name || t("ob5_placeholder","Joueur");
           setSettings(s => ({ ...s, playerName: finalName }));
@@ -5476,7 +5702,375 @@ function HomeScreen({ onSolo, onOnline, on2v2, onMort, onOnline2v2, onOnlineMort
 }
 
 // ─── PROFILE PANEL ────────────────────────────────────────────────
-function ProfilePanel({ stats, playerName, wordHistory, catHistory, tier, onClose, xp, unlockedBadges, onLeaderboard, onThemes, onEditProfile, onShare, onRateApp, onBugReport, lang }) {
+// ─── FRIENDS PANEL ────────────────────────────────────────────────
+function FriendsPanel({ uid, myFriendCode, playerName, friends, friendRequests, onClose, onRefresh, lang }) {
+  const t = useT(lang || "fr");
+  const [tab, setTab] = useState("friends"); // friends | add | requests
+  const [addCode, setAddCode] = useState("");
+  const [addStatus, setAddStatus] = useState(null); // null | sending | sent | error | self | already
+  const [qrDataUrl, setQrDataUrl] = useState(null);
+  const [scanning, setScanning] = useState(false);
+  const [copied, setCopied] = useState(false);
+  const videoRef = useRef(null);
+  const streamRef = useRef(null);
+  const scanIntervalRef = useRef(null);
+  const requestCount = Object.keys(friendRequests || {}).length;
+  const friendList = Object.entries(friends || {}).map(([fuid, data]) => ({ uid: fuid, ...data }))
+    .sort((a, b) => (b.xp || 0) - (a.xp || 0));
+
+  // Generate QR code asynchronously using the qrcode package
+  useEffect(() => {
+    if (!myFriendCode) return;
+    import("qrcode").then(mod => {
+      const QRCode = mod.default || mod;
+      QRCode.toDataURL(myFriendCode, {
+        width: 200, margin: 2,
+        color: { dark: "#18171a", light: "#ffffff" },
+        errorCorrectionLevel: "M",
+      }).then(url => setQrDataUrl(url)).catch(() => {});
+    }).catch(() => {});
+  }, [myFriendCode]);
+
+  // Cleanup camera on unmount
+  useEffect(() => () => stopScanner(), []);
+
+  function stopScanner() {
+    if (streamRef.current) { streamRef.current.getTracks().forEach(tr => tr.stop()); streamRef.current = null; }
+    if (scanIntervalRef.current) { clearInterval(scanIntervalRef.current); scanIntervalRef.current = null; }
+    setScanning(false);
+  }
+
+  async function startScanner() {
+    if (typeof window === "undefined" || !("BarcodeDetector" in window)) {
+      alert(t("qr_not_supported"));
+      return;
+    }
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
+      streamRef.current = stream;
+      setScanning(true);
+      setTimeout(() => {
+        if (!videoRef.current) return;
+        videoRef.current.srcObject = stream;
+        const detector = new window.BarcodeDetector({ formats: ["qr_code"] });
+        scanIntervalRef.current = setInterval(async () => {
+          if (!videoRef.current) return;
+          try {
+            const barcodes = await detector.detect(videoRef.current);
+            if (barcodes.length > 0) {
+              const raw = barcodes[0].rawValue.trim().toUpperCase();
+              setAddCode(raw);
+              setAddStatus(null);
+              stopScanner();
+            }
+          } catch(e) {}
+        }, 500);
+      }, 400);
+    } catch(e) {
+      alert(t("camera_denied"));
+    }
+  }
+
+  async function handleAddFriend() {
+    const code = addCode.trim().toUpperCase();
+    if (!code) return;
+    if (code === myFriendCode) { setAddStatus("self"); return; }
+    if (Object.keys(friends || {}).some(fuid => (friends[fuid]?.code === code))) { setAddStatus("already"); return; }
+    setAddStatus("sending");
+    try {
+      const targetUid = await FB.lookupByFriendCode(code);
+      if (!targetUid) { setAddStatus("error"); return; }
+      if (targetUid === uid) { setAddStatus("self"); return; }
+      // Check not already friends
+      if (friends && friends[targetUid]) { setAddStatus("already"); return; }
+      await FB.sendFriendRequest(uid, playerName || "Joueur", targetUid);
+      setAddStatus("sent");
+      setAddCode("");
+    } catch(e) {
+      setAddStatus("error");
+    }
+  }
+
+  async function handleAccept(fromUid) {
+    await FB.acceptFriendRequest(uid, fromUid);
+    onRefresh();
+  }
+  async function handleReject(fromUid) {
+    await FB.rejectFriendRequest(uid, fromUid);
+    onRefresh();
+  }
+  async function handleRemove(friendUid) {
+    await FB.removeFriend(uid, friendUid);
+    onRefresh();
+  }
+
+  function handleCopy() {
+    navigator.clipboard?.writeText(myFriendCode).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }).catch(() => {
+      // Fallback for non-secure contexts
+      try {
+        const ta = document.createElement("textarea");
+        ta.value = myFriendCode;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand("copy");
+        document.body.removeChild(ta);
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+      } catch(e) {}
+    });
+  }
+
+  return (
+    <div className="profile-ov" onClick={onClose}>
+      <div className="profile-panel" onClick={e => e.stopPropagation()}>
+        {/* Header */}
+        <div className="profile-hero" style={{ padding: "28px 22px 24px" }}>
+          <div style={{ flex: 1 }}>
+            <div className="profile-name">👥 {t("friends_title")}</div>
+            <div className="profile-sub">{friendList.length} {t("friends_count")}</div>
+          </div>
+          <button onClick={onClose} style={{
+            background: "rgba(255,255,255,.18)", border: "none", borderRadius: 12,
+            color: "#fff", padding: "8px 14px", cursor: "pointer", fontWeight: 900, fontSize: 16
+          }}>✕</button>
+        </div>
+
+        <div className="profile-body">
+          {/* Tabs */}
+          <div style={{ display: "flex", gap: 8, marginBottom: 20 }}>
+            {[
+              { id: "friends", label: `👥 ${t("friends_tab")}` },
+              { id: "add", label: `➕ ${t("add_tab")}` },
+              { id: "requests", label: null },
+            ].map(tb => (
+              <button key={tb.id}
+                className={`btn ${tab === tb.id ? "bp" : "bs"}`}
+                style={{ flex: 1, fontSize: 12, padding: "10px 6px", position: "relative" }}
+                onClick={() => setTab(tb.id)}>
+                {tb.id === "requests" ? (
+                  <>
+                    🔔 {t("requests_tab")}
+                    {requestCount > 0 && (
+                      <span style={{
+                        position: "absolute", top: -7, right: -5,
+                        background: "#e74c3c", color: "#fff", borderRadius: "50%",
+                        width: 20, height: 20, fontSize: 10, fontWeight: 900,
+                        display: "flex", alignItems: "center", justifyContent: "center",
+                        boxShadow: "0 2px 8px rgba(231,76,60,.4)",
+                      }}>{requestCount}</span>
+                    )}
+                  </>
+                ) : tb.label}
+              </button>
+            ))}
+          </div>
+
+          {/* ── FRIENDS LIST ── */}
+          {tab === "friends" && (
+            friendList.length === 0 ? (
+              <div style={{ textAlign: "center", padding: "44px 20px", color: "var(--txm)" }}>
+                <div style={{ fontSize: 52, marginBottom: 14 }}>👥</div>
+                <div style={{ fontWeight: 800, fontSize: 16, marginBottom: 6, color: "var(--tx)" }}>{t("no_friends")}</div>
+                <div style={{ fontSize: 13 }}>{t("no_friends_hint")}</div>
+                <button className="btn bp" style={{ marginTop: 20 }} onClick={() => setTab("add")}>
+                  ➕ {t("add_friend_btn")}
+                </button>
+              </div>
+            ) : (
+              <>
+                {friendList.map(f => (
+                  <div key={f.uid} style={{
+                    display: "flex", alignItems: "center", gap: 12,
+                    padding: "12px 14px", background: "var(--sf2)",
+                    borderRadius: 16, border: "1.5px solid var(--br)", marginBottom: 10,
+                  }}>
+                    <div style={{
+                      width: 42, height: 42, borderRadius: "50%",
+                      background: "var(--acs)", flexShrink: 0,
+                      display: "flex", alignItems: "center", justifyContent: "center",
+                      fontSize: 20, fontWeight: 900, color: "var(--ac)",
+                    }}>{(f.name || "?").charAt(0).toUpperCase()}</div>
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{ fontWeight: 800, fontSize: 14, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{f.name || "Joueur"}</div>
+                      <div style={{ fontSize: 11, color: "var(--txm)", marginTop: 2 }}>{f.xp || 0} XP</div>
+                    </div>
+                    <button
+                      onClick={() => handleRemove(f.uid)}
+                      style={{
+                        background: "none", border: "1.5px solid var(--br)",
+                        borderRadius: 10, padding: "6px 10px",
+                        cursor: "pointer", color: "var(--txm)", fontSize: 12, flexShrink: 0,
+                      }}
+                      title={t("remove_friend")}
+                    >✕</button>
+                  </div>
+                ))}
+              </>
+            )
+          )}
+
+          {/* ── ADD FRIEND ── */}
+          {tab === "add" && (
+            <>
+              {/* My code + QR */}
+              <div className="profile-section">
+                <div className="profile-section-title">{t("my_code")}</div>
+                <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 16 }}>
+                  {/* QR Code */}
+                  <div style={{
+                    background: "#fff", borderRadius: 20, padding: 14,
+                    boxShadow: "0 6px 24px rgba(0,0,0,.12)",
+                  }}>
+                    {qrDataUrl
+                      ? <img src={qrDataUrl} alt="QR Code" style={{ width: 160, height: 160, display: "block", borderRadius: 8 }} />
+                      : <div style={{ width: 160, height: 160, display: "flex", alignItems: "center", justifyContent: "center", color: "#aaa", fontSize: 13 }}>⏳</div>
+                    }
+                  </div>
+                  {/* Text code + copy */}
+                  <div style={{
+                    display: "flex", alignItems: "center", gap: 10,
+                    background: "var(--sf2)", border: "1.5px solid var(--br)",
+                    borderRadius: 16, padding: "12px 16px", width: "100%",
+                  }}>
+                    <span style={{
+                      flex: 1, fontFamily: "JetBrains Mono, monospace", fontWeight: 900,
+                      fontSize: 18, letterSpacing: 3, color: "var(--ac)", textAlign: "center",
+                    }}>{myFriendCode || "…"}</span>
+                    <button
+                      onClick={handleCopy}
+                      style={{
+                        background: copied ? "var(--ac)" : "var(--acs)",
+                        border: "none", borderRadius: 10,
+                        padding: "8px 12px", cursor: "pointer",
+                        color: copied ? "#fff" : "var(--ac)",
+                        fontWeight: 800, fontSize: 12, flexShrink: 0,
+                        transition: "all .2s",
+                      }}
+                    >{copied ? `✓ ${t("copied")}` : `📋 ${t("copy")}`}</button>
+                  </div>
+                </div>
+              </div>
+
+              {/* Add by code input */}
+              <div className="profile-section">
+                <div className="profile-section-title">{t("add_by_code")}</div>
+                {/* QR scanner viewport */}
+                {scanning && (
+                  <div style={{ position: "relative", borderRadius: 18, overflow: "hidden", marginBottom: 12, aspectRatio: "1 / 1" }}>
+                    <video ref={videoRef} autoPlay playsInline muted
+                      style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                    {/* Overlay reticle */}
+                    <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                      <div style={{
+                        width: "58%", height: "58%",
+                        border: "2.5px solid rgba(255,255,255,.9)",
+                        borderRadius: 12,
+                        boxShadow: "0 0 0 9999px rgba(0,0,0,.45)",
+                      }} />
+                    </div>
+                    <button onClick={stopScanner} style={{
+                      position: "absolute", top: 10, right: 10,
+                      background: "rgba(0,0,0,.6)", border: "none",
+                      borderRadius: 10, color: "#fff", padding: "6px 10px",
+                      cursor: "pointer", fontWeight: 700,
+                    }}>✕</button>
+                  </div>
+                )}
+                <div style={{ display: "flex", gap: 8, marginBottom: 8 }}>
+                  <input
+                    value={addCode}
+                    onChange={e => { setAddCode(e.target.value.toUpperCase()); setAddStatus(null); }}
+                    onKeyDown={e => { if (e.key === "Enter") handleAddFriend(); }}
+                    placeholder={t("enter_code")}
+                    maxLength={12}
+                    style={{
+                      flex: 1, background: "var(--sf2)", border: "1.5px solid var(--br)",
+                      borderRadius: 12, padding: "12px 14px", color: "var(--tx)",
+                      fontFamily: "JetBrains Mono, monospace", fontWeight: 700,
+                      fontSize: 14, outline: "none",
+                    }}
+                  />
+                  {!scanning && (
+                    <button
+                      onClick={startScanner}
+                      title={t("scan_qr")}
+                      style={{
+                        background: "var(--sf2)", border: "1.5px solid var(--br)",
+                        borderRadius: 12, padding: "0 14px",
+                        cursor: "pointer", fontSize: 22, flexShrink: 0,
+                      }}>📷</button>
+                  )}
+                </div>
+                {/* Status messages */}
+                {addStatus === "self"    && <div className="friend-status-err">{t("add_self_error")}</div>}
+                {addStatus === "already" && <div className="friend-status-err">{t("add_already_error")}</div>}
+                {addStatus === "error"   && <div className="friend-status-err">{t("add_not_found")}</div>}
+                {addStatus === "sent"    && <div className="friend-status-ok">✅ {t("add_sent")}</div>}
+                <button
+                  className="btn bp"
+                  onClick={handleAddFriend}
+                  disabled={addStatus === "sending" || !addCode.trim()}
+                  style={{ marginTop: 4 }}>
+                  {addStatus === "sending" ? "⏳" : `➕ ${t("add_friend_btn")}`}
+                </button>
+              </div>
+            </>
+          )}
+
+          {/* ── FRIEND REQUESTS ── */}
+          {tab === "requests" && (
+            Object.entries(friendRequests || {}).length === 0 ? (
+              <div style={{ textAlign: "center", padding: "44px 20px", color: "var(--txm)" }}>
+                <div style={{ fontSize: 52, marginBottom: 14 }}>🔔</div>
+                <div style={{ fontWeight: 800, fontSize: 15, color: "var(--tx)" }}>{t("no_requests")}</div>
+              </div>
+            ) : Object.entries(friendRequests).map(([fromUid, req]) => (
+              <div key={fromUid} style={{
+                display: "flex", alignItems: "center", gap: 12,
+                padding: "12px 14px", background: "var(--sf2)",
+                borderRadius: 16, border: "1.5px solid var(--br)", marginBottom: 10,
+              }}>
+                <div style={{
+                  width: 42, height: 42, borderRadius: "50%",
+                  background: "var(--acs)", flexShrink: 0,
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  fontSize: 20, fontWeight: 900, color: "var(--ac)",
+                }}>{(req.name || "?").charAt(0).toUpperCase()}</div>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ fontWeight: 800, fontSize: 14, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{req.name || "Joueur"}</div>
+                  <div style={{ fontSize: 11, color: "var(--txm)", marginTop: 2 }}>{t("wants_to_add")}</div>
+                </div>
+                <div style={{ display: "flex", gap: 6, flexShrink: 0 }}>
+                  <button
+                    onClick={() => handleAccept(fromUid)}
+                    style={{
+                      background: "#00b894", border: "none", borderRadius: 10,
+                      padding: "8px 12px", cursor: "pointer",
+                      color: "#fff", fontWeight: 900, fontSize: 15,
+                    }}>✓</button>
+                  <button
+                    onClick={() => handleReject(fromUid)}
+                    style={{
+                      background: "none", border: "1.5px solid var(--br)",
+                      borderRadius: 10, padding: "8px 12px",
+                      cursor: "pointer", color: "var(--txm)", fontSize: 14,
+                    }}>✕</button>
+                </div>
+              </div>
+            ))
+          )}
+
+          <button className="btn bs" style={{ marginTop: 4 }} onClick={onClose}>{t("close")}</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ProfilePanel({ stats, playerName, wordHistory, catHistory, tier, onClose, xp, unlockedBadges, onLeaderboard, onThemes, onEditProfile, onShare, onRateApp, onBugReport, onFriends, friendRequestCount, lang }) {
   const t = useT(lang || "fr");
   const initials = (playerName || "J").charAt(0).toUpperCase();
   const tierLabel = tier === TIER.VIP ? "VIP ★" : tier === TIER.PRO ? "PRO ◆" : t("free_label","◇");
@@ -5611,6 +6205,19 @@ function ProfilePanel({ stats, playerName, wordHistory, catHistory, tier, onClos
             <button className="btn bs" style={{ flex: 1, fontSize: 12 }} onClick={onLeaderboard}>🏆 {t("nav_rank")}</button>
             <button className="btn bs" style={{ flex: 1, fontSize: 12 }} onClick={onThemes}>{t("themes_title")}</button>
           </div>
+          {/* Friends */}
+          <button className="btn bs mb8" style={{ marginBottom: 8, position: "relative" }} onClick={onFriends}>
+            {t("friends_btn")}
+            {friendRequestCount > 0 && (
+              <span style={{
+                position: "absolute", top: -6, right: -4,
+                background: "#e74c3c", color: "#fff", borderRadius: "50%",
+                width: 20, height: 20, fontSize: 10, fontWeight: 900,
+                display: "inline-flex", alignItems: "center", justifyContent: "center",
+                boxShadow: "0 2px 8px rgba(231,76,60,.4)",
+              }}>{friendRequestCount}</span>
+            )}
+          </button>
           {/* Profile photo */}
           <button className="btn bs mb8" style={{ marginBottom: 8 }} onClick={onEditProfile}>
             {t("edit_photo")}
