@@ -5296,7 +5296,7 @@ export default function App() {
       })() : null,
       isHost: roomData.hostId === uid,
       lang: lang, // BUG 6 FIX: include lang in online game state
-      usedLetters: [],
+      usedLetters: roomData.usedLetters || [], // BUG 3 FIX: restaurer les lettres déjà utilisées
     });
     setScreen("game");
   }
@@ -6949,12 +6949,17 @@ function GameScreen({
       if (!room) return;
       setGameState(g => {
         let next = g;
-        // Sync retour à la roulette (nouvelle manche initiée par l'hôte)
+        // Sync retour à la roulette (nouvelle manche – signal de l'hôte)
         if (room.phase === "roulette" && g.phase !== "roulette") {
           next = { ...next, phase: "roulette",
             spinnerOrder: room.spinnerOrder || g.spinnerOrder,
             spinnerIndex: room.spinnerIndex != null ? room.spinnerIndex : g.spinnerIndex,
+            currentRound: room.currentRound || g.currentRound,
             pendingLetter: null,
+            letter: null,
+            usedLetters: room.usedLetters || g.usedLetters || [],
+            answers: Object.fromEntries((g.activeCategories || g.categories || []).map(c => [c.id, ""])),
+            players: g.players.map(p => ({ ...p, answers: {}, done: false })),
           };
         }
         // Transition roulette → playing : stocker pendingLetter pour LetterRoulette
@@ -6967,8 +6972,8 @@ function GameScreen({
         if (g.phase === "playing" && room.letter && room.letter !== g.letter) {
           next = { ...next, letter: room.letter };
         }
-        // Réponses des autres joueurs (ne touche pas au timer)
-        if (room.playerAnswers) {
+        // Réponses des autres joueurs pendant le round (ne touche pas au timer)
+        if (room.playerAnswers && g.phase === "playing") {
           const updatedPlayers = g.players.map(p => ({
             ...p,
             answers: room.playerAnswers?.[p.id || p.uid] || p.answers,
@@ -6976,11 +6981,35 @@ function GameScreen({
           }));
           next = { ...next, players: updatedPlayers };
         }
+        // ── BUG 1+4 FIX: fin de round signalée par Firebase ──────────
+        // Sync toutes les réponses finales puis déclencher computeRoundScores
+        // sur TOUS les clients simultanément via la phase "round_ended_sync"
+        if (room.phase === "round_ended" && g.phase === "playing") {
+          const updatedPlayers = g.players.map(p => {
+            if (p.isBot) {
+              // Générer les réponses des bots si pas encore fait
+              const a = {};
+              (g.activeCategories || g.categories || []).forEach(cat => {
+                a[cat.id] = p.answers?.[cat.id] || getAiAnswer(cat.id, g.letter, g.lang || "fr");
+              });
+              return { ...p, answers: a, done: true };
+            }
+            const pid = p.id || p.uid;
+            return { ...p, answers: room.playerAnswers?.[pid] || p.answers || {}, done: true };
+          });
+          next = { ...next, players: updatedPlayers, phase: "round_ended_sync" };
+        }
         return next;
       });
     });
     return () => { if (unsubscribe) unsubscribe(); };
   }, [gameState.mode, gameState.roomCode]);
+
+  // ── BUG 1+4 FIX: déclencher computeRoundScores sur tous les clients ──
+  useEffect(() => {
+    if (gameState.phase !== "round_ended_sync") return;
+    computeRoundScores(gameState);
+  }, [gameState.phase]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => { aiRef.current = false; doneRef.current = false; }, [currentRound]);
 
@@ -7017,15 +7046,20 @@ function GameScreen({
       const a = {}; activeCategories.forEach(cat => { a[cat.id] = p.answers?.[cat.id] || getAiAnswer(cat.id, gameState.letter, gameState?.lang || lang); });
       return { ...p, answers: a, done: true };
     });
-    // En mode online: pousser les réponses du joueur local vers Firebase
+    // En mode online: pousser les réponses + signaler la fin du round à tous les clients
     if (gameState.roomCode && gameState.myId) {
       try {
         FB.updateRoom(gameState.roomCode, {
           [`playerAnswers/${gameState.myId}`]: gameState.answers || {},
           [`playerDone/${gameState.myId}`]: true,
+          phase: "round_ended",
+          roundEndedAt: Date.now(),
         });
       } catch(e) {}
+      // Le listener Firebase synce les réponses de tous et déclenche computeRoundScores
+      return;
     }
+    // Mode offline uniquement
     computeRoundScores({ ...gameState, players: finalPlayers });
   }
 
@@ -7171,6 +7205,7 @@ function GameScreen({
                 letter: l,
                 phase: "playing",
                 letterChosenAt: Date.now(),
+                usedLetters: [...(gameState.usedLetters || []), l], // BUG 3 FIX: persister les lettres utilisées
               });
             } catch(e) {}
           }
@@ -7195,27 +7230,38 @@ function GameScreen({
   if (phase === "round_results") {
     return (
     <RoundResultsOverlay gameState={gameState} onNext={() => {
-      setGameState(g => {
-        // Mort Subite: tirer de nouvelles catégories pour ce round
-        let nextActiveCats = g.activeCategories || g.categories;
-        if (g.mode === "mort" && g.mortCatCount) {
-          const pool = g.categories;
-          const shuffled = [...pool].sort(() => Math.random() - 0.5);
-          nextActiveCats = shuffled.slice(0, Math.min(g.mortCatCount, shuffled.length));
-        }
-        return {
-          ...g,
-          currentRound: g.currentRound + 1,
-          spinnerIndex: (g.spinnerIndex + 1) % g.players.filter(p => !p.eliminated).length,
-          letter: null,
-          pendingLetter: null, // FIX: reset pour que forcedLetter ne rejoue pas l'ancienne lettre
-          activeCategories: nextActiveCats,
-          answers: Object.fromEntries(nextActiveCats.map(c => [c.id, ""])),
-          players: g.players.map(p => ({ ...p, answers: {}, done: false })),
+      // Calculer le prochain état ici pour pouvoir écrire sur Firebase
+      let nextActiveCats = gameState.activeCategories || gameState.categories;
+      if (gameState.mode === "mort" && gameState.mortCatCount) {
+        const pool = gameState.categories;
+        const shuffled = [...pool].sort(() => Math.random() - 0.5);
+        nextActiveCats = shuffled.slice(0, Math.min(gameState.mortCatCount, shuffled.length));
+      }
+      const nextRound = gameState.currentRound + 1;
+      const nextSpinner = (gameState.spinnerIndex + 1) % gameState.players.filter(p => !p.eliminated).length;
+      setGameState(g => ({
+        ...g,
+        currentRound: nextRound,
+        spinnerIndex: nextSpinner,
+        letter: null,
+        pendingLetter: null, // FIX: reset pour que forcedLetter ne rejoue pas l'ancienne lettre
+        activeCategories: nextActiveCats,
+        answers: Object.fromEntries(nextActiveCats.map(c => [c.id, ""])),
+        players: g.players.map(p => ({ ...p, answers: {}, done: false })),
+        phase: "roulette",
+        timeLeft: g.totalTime,
+      }));
+      // En mode online: l'hôte broadcast la nouvelle manche à tous les clients
+      if (gameState.roomCode && gameState.isHost) {
+        FB.updateRoom(gameState.roomCode, {
           phase: "roulette",
-          timeLeft: g.totalTime,
-        };
-      });
+          currentRound: nextRound,
+          spinnerIndex: nextSpinner,
+          letter: null,
+          playerAnswers: null,
+          playerDone: null,
+        }).catch(() => {});
+      }
     }} lang={lang} />
   );
   }
