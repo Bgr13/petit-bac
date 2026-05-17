@@ -1,0 +1,19 @@
+{
+  "name": "Le Petit Bac",
+  "short_name": "Petit Bac",
+  "description": "Le jeu de lettres classique — solo, multijoueur et mort subite",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#F8FAFF",
+  "theme_color": "#6C5CE7",
+  "orientation": "portrait",
+  "lang": "fr",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

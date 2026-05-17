@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo, Component } from "react";
 // BUG 1 FIX: Import Firebase npm modular API
 import { initializeApp, getApps } from "firebase/app";
 import { getDatabase, ref as dbRef, set as dbSet, get as dbGet, update as dbUpdate, onValue as dbOnValue, query as dbQuery, orderByChild, equalTo, limitToLast } from "firebase/database";
@@ -385,7 +385,6 @@ const TRANSLATIONS = {
     letter: "Lettre",
     score: "Score",
     rounds: "rounds",
-    xp: "XP",
     leaderboard_my_rank: "Ta position : #{rank} • {xp} XP",
     leaderboard_my_rank_tournoi: "Ta position tournoi : #{rank}",
     tab_mondial: "🌍 Mondial",
@@ -749,7 +748,6 @@ const TRANSLATIONS = {
     letter: "Letter",
     score: "Score",
     rounds: "rounds",
-    xp: "XP",
     leaderboard_my_rank: "Your rank: #{rank} • {xp} XP",
     leaderboard_my_rank_tournoi: "Your tournament rank: #{rank}",
     tab_mondial: "🌍 Global",
@@ -1113,7 +1111,6 @@ const TRANSLATIONS = {
     letter: "Letra",
     score: "Puntos",
     rounds: "rondas",
-    xp: "XP",
     leaderboard_my_rank: "Tu posición: #{rank} • {xp} XP",
     leaderboard_my_rank_tournoi: "Tu posición en torneo: #{rank}",
     tab_mondial: "🌍 Global",
@@ -1305,7 +1302,7 @@ function getCatLabel(catId, lang) {
   const daily = DAILY_CAT_POOL.find(c => c.id === catId);
   if (daily) return daily.label;
   // Fallback: nettoyer l'ID (dc_mythologie → Mythologie)
-  return catId.replace(/^dc_/, "").replace(/_/g, " ").replace(/\w/g, l => l.toUpperCase());
+  return catId.replace(/^dc_/, "").replace(/_/g, " ").replace(/\b\w/g, l => l.toUpperCase());
 }
 
 const FREE_CATS = [
@@ -1364,11 +1361,6 @@ function normalizeWord(w) {
 // Collapse consecutive duplicate letters: "balle" -> "bale", "football" -> "fotbal"
 function collapseDoubles(s) {
   return s.replace(/(.)\1+/g, "$1");
-}
-
-// Remove spaces for compound word matching: "jean pierre" -> "jeanpierre"
-function normalizeCompact(s) {
-  return normalizeWord(s).replace(/ /g, "");
 }
 
 // ─── DICTIONNAIRE DE MOTS VALIDES (enrichi) ────────────────────────
@@ -3499,16 +3491,6 @@ function getFuzzySets(lang) {
 // Returns true if the answer is valid for the category + letter
 // Tolérant aux accents, tirets et apostrophes — mot complet requis (pas de correspondance partielle)
 // ─── VALIDATION INTELLIGENTE ────────────────────────────────────
-// Patterns phonétiques : séquences valides pour prénoms/noms occidentaux
-const VALID_CONSONANT_CLUSTERS = new Set([
-  "bl","br","ch","cl","cr","dr","fl","fr","gh","gl","gr","kh","mn","ph",
-  "pl","pr","qu","rh","sc","sh","sk","sl","sm","sn","sp","st","sw","th",
-  "tr","ts","tw","tz","wh","wr","zl","zr","gn"
-]);
-const VALID_START_CLUSTERS = new Set([
-  "al","am","an","ar","au","el","em","en","er","eu","il","im","in","ir",
-  "ol","om","on","or","ul","um","un","ur"
-]);
 
 function looksLikeRealName(norm) {
   if (!norm || norm.length < 2) return false;
@@ -3518,7 +3500,7 @@ function looksLikeRealName(norm) {
   // Pas plus de 3 consonnes consécutives
   if (/[^aeiouy]{4,}/.test(norm)) return false;
   // Pas de chiffres ni caractères spéciaux (hors espace/tiret)
-  if (/[0-9@#$%^&*()+=\[\]{}|<>]/.test(norm)) return false;
+  if (/[0-9@#$%^&*()+=[\]{}|<>]/.test(norm)) return false;
   // Minimum 2 chars
   return true;
 }
@@ -3563,7 +3545,7 @@ function isValidAnswer(answer, categoryId, letter, lang) {
     // pas plus de 4 consonnes consécutives. Tout prénom phonétiquement possible est accepté.
     if (categoryId === "prenom") {
       if (norm.length < 3 || norm.length > 30) return false;
-      if (/[0-9@#$%^&*()+=\[\]{}|<>]/.test(norm)) return false;
+      if (/[0-9@#$%^&*()+=[\]{}|<>]/.test(norm)) return false;
       if (/[^aeiouy]{5,}/.test(norm)) return false; // max 4 consonnes de suite
       return true;
     }
@@ -3642,7 +3624,6 @@ function scoreAnswerTournoi(answer, allAnswers, categoryId, letter, lang, timeBo
   const norm = normalizeWord(answer);
   const filled = allAnswers.map(a => a?.trim() ? normalizeWord(a) : "").filter(Boolean);
   const count = filled.filter(a => a === norm).length;
-  const total = filled.length;
   // Unicité: seul à l'avoir = 10pts, 2 joueurs = 5pts, 3+ = 3pts
   let pts = count === 1 ? 10 : count === 2 ? 5 : 3;
   // Bonus vitesse: jusqu'à +5pts selon le temps restant
@@ -3703,7 +3684,7 @@ const THEME_VARS = {
     "--r":"20px","--rs":"12px","--rm":"16px","--tr":"0.18s cubic-bezier(0.4,0,0.2,1)",
     "--s1":"0 2px 12px rgba(108,92,231,0.06),0 1px 3px rgba(0,0,0,0.04)","--s2":"0 4px 20px rgba(108,92,231,0.1),0 2px 6px rgba(0,0,0,0.06)","--s3":"0 12px 40px rgba(108,92,231,0.15),0 4px 12px rgba(0,0,0,0.08)",
     "--scard":"0 2px 20px rgba(108,92,231,0.08)","--spk":"0 8px 25px rgba(255,107,138,0.35)","--sac":"0 8px 25px rgba(108,92,231,0.35)",
-    "--hdr-bg":"rgba(255,255,255,0.88)","--overlay-bg":"rgba(248,250,255,0.94)","--pk":"#FF6B8A","--pks":"rgba(255,107,138,0.1)","--gnb":"#00CEC9"
+    "--hdr-bg":"rgba(255,255,255,0.88)","--overlay-bg":"rgba(248,250,255,0.94)"
   },
   dark:{
     "--bg":"#0c0c10","--sf":"#16161d","--sf2":"#1e1e28","--sf3":"#26263a","--br":"#2e2e42","--brh":"#484870",
@@ -3847,7 +3828,6 @@ function applyTheme(themeId) {
 }
 
 const css = `
-@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900;1000&display=swap');
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 
 /* ─── Mobile / iOS fixes ─── */
@@ -3911,8 +3891,8 @@ input,select,textarea{font-size:16px !important;touch-action:manipulation}
   --sac:0 8px 25px rgba(108,92,231,0.35);
 }
 
-body{font-family:"Nunito",sans-serif;background:var(--bg);color:var(--tx);min-height:100vh;overflow-x:hidden;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-rendering:optimizeLegibility}
-.app{max-width:430px;margin:0 auto;min-height:100vh;display:flex;flex-direction:column;background:var(--bg)}
+body{font-family:"Nunito",sans-serif;background:var(--bg);color:var(--tx);min-height:100vh;min-height:100dvh;overflow-x:hidden;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-rendering:optimizeLegibility}
+.app{max-width:430px;margin:0 auto;min-height:100vh;min-height:100dvh;display:flex;flex-direction:column;background:var(--bg)}
 
 /* ─── HEADER ─── */
 .hdr{
@@ -4189,7 +4169,7 @@ select.inp{appearance:none;cursor:pointer}
 }
 
 /* ─── GAME SCREEN ─── */
-.gwrap{display:flex;flex-direction:column;height:100vh;overflow:hidden;background:var(--bg)}
+.gwrap{display:flex;flex-direction:column;height:100vh;height:100dvh;overflow:hidden;background:var(--bg)}
 .ghdr{
   padding:14px 18px;border-bottom:1px solid var(--br);
   display:flex;align-items:center;gap:14px;flex-shrink:0;
@@ -4693,11 +4673,11 @@ select.inp{appearance:none;cursor:pointer}
 // ─── RETOUR HAPTIQUE ─────────────────────────────────────────────
 const Haptics = {
   enabled: true,
-  light()  { if (!this.enabled) return; try { if (window.navigator?.vibrate) window.navigator.vibrate(10); } catch(e){} },
-  medium() { if (!this.enabled) return; try { if (window.navigator?.vibrate) window.navigator.vibrate(20); } catch(e){} },
-  heavy()  { if (!this.enabled) return; try { if (window.navigator?.vibrate) window.navigator.vibrate([30,10,30]); } catch(e){} },
-  success(){ if (!this.enabled) return; try { if (window.navigator?.vibrate) window.navigator.vibrate([10,50,10]); } catch(e){} },
-  error()  { if (!this.enabled) return; try { if (window.navigator?.vibrate) window.navigator.vibrate([50,30,50]); } catch(e){} },
+  light()  { if (!this.enabled) return; try { if (window.navigator?.vibrate) window.navigator.vibrate(10); } catch { /* ignore */ } },
+  medium() { if (!this.enabled) return; try { if (window.navigator?.vibrate) window.navigator.vibrate(20); } catch { /* ignore */ } },
+  heavy()  { if (!this.enabled) return; try { if (window.navigator?.vibrate) window.navigator.vibrate([30,10,30]); } catch { /* ignore */ } },
+  success(){ if (!this.enabled) return; try { if (window.navigator?.vibrate) window.navigator.vibrate([10,50,10]); } catch { /* ignore */ } },
+  error()  { if (!this.enabled) return; try { if (window.navigator?.vibrate) window.navigator.vibrate([50,30,50]); } catch { /* ignore */ } },
 };
 
 // ─── UTILITAIRE PARTAGE ──────────────────────────────────────────
@@ -4710,21 +4690,26 @@ async function shareApp() {
   try {
     if (navigator.share) { await navigator.share(shareData); return true; }
     else { await navigator.clipboard.writeText(shareData.url + " — " + shareData.text); return "copied"; }
-  } catch(e) { return false; }
+  } catch { return false; }
+}
+
+// ─── UTILS ───────────────────────────────────────────────────────
+/** Sanitize a user-visible name before writing to Firebase or displaying */
+function sanitizeName(name) {
+  if (!name || typeof name !== "string") return "Joueur";
+  return name.trim().replace(/\s+/g, " ").slice(0, 20) || "Joueur";
 }
 
 // ─── FIREBASE (npm modular API — BUG 1 FIX) ──────────────────────
 const FB = (() => {
   let db = null;
   let auth = null;
-  let initialized = false;
-
   if (FIREBASE_READY) {
     try {
       const app = getApps().length === 0 ? initializeApp(FIREBASE_CONFIG) : getApps()[0];
       db   = getDatabase(app);
       auth = getAuth(app);
-    } catch(e) {
+    } catch (e) {
       console.warn("Firebase init failed, using local mode:", e);
     }
   }
@@ -4740,7 +4725,7 @@ const FB = (() => {
         try {
           const result = await signInAnonymously(auth);
           return { uid: result.user.uid };
-        } catch(e) {}
+        } catch { /* ignore */ }
       }
       return { uid: "local_" + Math.random().toString(36).substring(2, 9) };
     },
@@ -4759,9 +4744,9 @@ const FB = (() => {
         try {
           const snap = await dbGet(dbRef(db, "rooms/" + code));
           return snap.val();
-        } catch(e) {
+        } catch (e) {
           if (e.code === "PERMISSION_DENIED") {
-            throw new Error("Accès Firebase refusé. Configure les règles: rules > rooms > .read: true");
+            throw new Error("Accès Firebase refusé. Configure les règles: rules > rooms > .read: true", { cause: e });
           }
           throw e;
         }
@@ -4790,58 +4775,58 @@ const FB = (() => {
       return () => { delete local.listeners[code]; };
     },
 
-    async findPublicRoom(country) {
+    async findPublicRoom(preferredCountry) {
+      const isJoinable = (room) =>
+        room.type === "public" &&
+        room.status === "waiting" &&
+        Object.keys(room.players || {}).length < 6;
+
       if (db) {
         const roomsRef = dbRef(db, "rooms");
         const waitingQuery = dbQuery(roomsRef, orderByChild("status"), equalTo("waiting"));
         const snap = await dbGet(waitingQuery);
-        const rooms = snap.val() || {};
-        for (const [code, room] of Object.entries(rooms)) {
-          if (room.type === "public" &&
-              room.status === "waiting" &&
-              Object.keys(room.players || {}).length < 6) {
-            return code;
-          }
-        }
-        return null;
+        const rooms = Object.entries(snap.val() || {});
+        // Prefer same-country rooms first, then fall back to any
+        const sameCountry = rooms.find(([, r]) => isJoinable(r) && r.country === preferredCountry);
+        if (sameCountry) return sameCountry[0];
+        const any = rooms.find(([, r]) => isJoinable(r));
+        return any ? any[0] : null;
       }
-      for (const [code, room] of Object.entries(local.rooms)) {
-        if (room.type === "public" && room.status === "waiting" &&
-            Object.keys(room.players || {}).length < 6) {
-          return code;
-        }
-      }
-      return null;
+      const localRooms = Object.entries(local.rooms);
+      const sameCountry = localRooms.find(([, r]) => isJoinable(r) && r.country === preferredCountry);
+      if (sameCountry) return sameCountry[0];
+      const any = localRooms.find(([, r]) => isJoinable(r));
+      return any ? any[0] : null;
     },
 
     // ── FRIENDS ─────────────────────────────────────────────────
     async getFriendCode(uid) {
       // Try local storage first (works offline)
       let localCode = null;
-      try { localCode = localStorage.getItem("pb_friendcode"); } catch(e) {}
+      try { localCode = localStorage.getItem("pb_friendcode"); } catch { /* ignore */ }
 
       if (db) {
         try {
           const snap = await dbGet(dbRef(db, `users/${uid}/friendCode`));
           if (snap.val()) {
             // Ensure local is synced
-            try { localStorage.setItem("pb_friendcode", snap.val()); } catch(e) {}
+            try { localStorage.setItem("pb_friendcode", snap.val()); } catch { /* ignore */ }
             return snap.val();
           }
-        } catch(e) {}
+        } catch { /* ignore */ }
         // Generate new code
         const code = "PB" + Math.random().toString(36).substring(2, 8).toUpperCase();
         try {
           await dbSet(dbRef(db, `users/${uid}/friendCode`), code);
           await dbSet(dbRef(db, `friendCodes/${code}`), uid);
-          try { localStorage.setItem("pb_friendcode", code); } catch(e) {}
-        } catch(e) { console.warn("FB friendCode write failed:", e); }
+          try { localStorage.setItem("pb_friendcode", code); } catch { /* ignore */ }
+        } catch (e) { console.warn("FB friendCode write failed:", e); }
         return code;
       }
       // Offline: generate and persist locally
       if (localCode) return localCode;
       const code = "PB" + Math.random().toString(36).substring(2, 8).toUpperCase();
-      try { localStorage.setItem("pb_friendcode", code); } catch(e) {}
+      try { localStorage.setItem("pb_friendcode", code); } catch { /* ignore */ }
       return code;
     },
 
@@ -4849,7 +4834,7 @@ const FB = (() => {
       if (!db || !uid) return;
       try {
         await dbUpdate(dbRef(db, `users/${uid}`), { name: name || "Joueur", xp: xp || 0, updatedAt: Date.now() });
-      } catch(e) {}
+      } catch { /* ignore */ }
     },
 
     async lookupByFriendCode(code) {
@@ -4857,7 +4842,7 @@ const FB = (() => {
       try {
         const snap = await dbGet(dbRef(db, `friendCodes/${code}`));
         return snap.val(); // uid or null
-      } catch(e) { return null; }
+      } catch { return null; }
     },
 
     async sendFriendRequest(fromUid, fromName, toUid) {
@@ -4893,7 +4878,7 @@ const FB = (() => {
         const ref = dbRef(db, `friendRequests/${uid}`);
         const unsub = dbOnValue(ref, snap => cb(snap.val() || {}));
         return unsub;
-      } catch(e) { cb({}); return () => {}; }
+      } catch { cb({}); return () => {}; }
     },
 
     listenFriends(uid, cb) {
@@ -4902,7 +4887,7 @@ const FB = (() => {
         const ref = dbRef(db, `friends/${uid}`);
         const unsub = dbOnValue(ref, snap => cb(snap.val() || {}));
         return unsub;
-      } catch(e) { cb({}); return () => {}; }
+      } catch { cb({}); return () => {}; }
     },
 
     async removeFriend(myUid, friendUid) {
@@ -4922,7 +4907,7 @@ function logEvent(eventName, params) {
     if (import.meta.env.DEV) {
       console.log("[Analytics]", eventName, params);
     }
-  } catch(e) {}
+  } catch { /* ignore */ }
 }
 
 // ─── TIERS ──────────────────────────────────────────────────────────────
@@ -4980,36 +4965,60 @@ const SoundFX = {
       gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + s.dur);
       osc.start(ctx.currentTime);
       osc.stop(ctx.currentTime + s.dur);
-    } catch(e) {}
+    } catch { /* ignore */ }
   }
 };
 
-// ─── THEME DOTS (pour SettingsPanel) ──────────────────────────────────────
-const THEME_DOTS = [
-  { id: "light",   color: "#4338ca", bg: "#fafaf8", label: "📄 Papier",   tier: "free"  },
-  { id: "dark",    color: "#818cf8", bg: "#0c0c10", label: "🌑 Minuit",   tier: "free"  },
-  { id: "sakura",  color: "#e879a0", bg: "#fff0f6", label: "🌸 Sakura",   tier: "pro"   },
-  { id: "noir",    color: "#facc15", bg: "#000000", label: "🖤 Noir",     tier: "pro"   },
-  { id: "neon",    color: "#39ff14", bg: "#0d0d1a", label: "⚡ Néon",    tier: "pro"   },
-  { id: "sand",    color: "#d97706", bg: "#fef3c7", label: "🏜️ Sahara",  tier: "pro"   },
-  { id: "nord",    color: "#5e81ac", bg: "#ecf4f8", label: "🧊 Nordique", tier: "pro"   },
-  { id: "volcano", color: "#ff3d00", bg: "#1a0505", label: "🌋 Volcan",   tier: "pro"   },
-  { id: "forest",  color: "#4ade80", bg: "#0d1f0d", label: "🌿 Forêt",   tier: "vip"   },
-  { id: "ocean",   color: "#0ea5e9", bg: "#020d18", label: "🌊 Océan",   tier: "vip"   },
-  { id: "sunset",  color: "#f97316", bg: "#1a0a1a", label: "🌅 Coucher", tier: "vip"   },
-  { id: "galaxy",  color: "#a855f7", bg: "#030014", label: "🌌 Galaxie", tier: "vip"   },
-];
-
+// ─── ERROR BOUNDARY ───────────────────────────────────────────────
+class ErrorBoundary extends Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false, error: null };
+  }
+  static getDerivedStateFromError(error) {
+    return { hasError: true, error };
+  }
+  componentDidCatch(error, info) {
+    if (import.meta.env.DEV) console.error("[ErrorBoundary]", error, info);
+  }
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div style={{ display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center",
+          minHeight:"100dvh", background:"#F8FAFF", padding:"32px 20px", fontFamily:"Nunito,sans-serif", textAlign:"center" }}>
+          <div style={{ fontSize:48, marginBottom:16 }}>😵</div>
+          <div style={{ fontSize:20, fontWeight:800, color:"#2D3436", marginBottom:8 }}>Oups, quelque chose a planté</div>
+          <div style={{ fontSize:14, color:"#636E72", marginBottom:24, maxWidth:300 }}>
+            Une erreur inattendue s'est produite. Vos données locales sont intactes.
+          </div>
+          <button
+            onClick={() => { this.setState({ hasError: false, error: null }); window.location.reload(); }}
+            style={{ background:"#6C5CE7", color:"#fff", border:"none", borderRadius:16, padding:"14px 28px",
+              fontSize:15, fontWeight:800, cursor:"pointer" }}>
+            Relancer l'app
+          </button>
+          {import.meta.env.DEV && this.state.error && (
+            <pre style={{ marginTop:24, fontSize:11, color:"#d63031", textAlign:"left",
+              background:"#fff", padding:12, borderRadius:8, maxWidth:"100%", overflow:"auto" }}>
+              {this.state.error.toString()}
+            </pre>
+          )}
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
 
 export default function App() {
   const [tab, setTab] = useState("home");
   const [screen, setScreen] = useState("home");
   const [tier, setTier] = useState("free"); // TIER.FREE = "free"
-  const [theme, setTheme] = useState(() => { try { return localStorage.getItem("pb_theme") || "light"; } catch(e) { return "light"; } });
+  const [theme, setTheme] = useState(() => { try { return localStorage.getItem("pb_theme") || "light"; } catch { return "light"; } });
   const [lang, setLang] = useState(() => {
     try {
       if (typeof localStorage !== "undefined") return localStorage.getItem("pb_lang") || "fr";
-    } catch(e) {}
+    } catch { /* ignore */ }
     return "fr";
   });
   const t = useT(lang);
@@ -5020,7 +5029,7 @@ export default function App() {
         const parsed = JSON.parse(saved);
         return { difficulty:"medium", categories:FREE_CATS.map(c=>c.id), customCategories:[], playerName:"", country:"France", totalRounds:5, soundEnabled:true, ...parsed };
       }
-    } catch(e) {}
+    } catch { /* ignore */ }
     const savedName = localStorage.getItem("pb_name") || "";
     return { difficulty:"medium", categories:FREE_CATS.map(c=>c.id), customCategories:[], playerName:savedName, country:"France", totalRounds:5, soundEnabled:true };
   });
@@ -5030,52 +5039,68 @@ export default function App() {
     try {
       const saved = localStorage.getItem("pb_stats");
       return saved ? JSON.parse(saved) : { played: 0, won: 0, best: 0, total: 0, streak: 0, totalWords: 0, uniqueWords: 0 };
-    } catch(e) {
+    } catch {
       return { played: 0, won: 0, best: 0, total: 0, streak: 0, totalWords: 0, uniqueWords: 0 };
     }
   });
   const [xp, setXp] = useState(() => {
-    try { return Number(localStorage.getItem("pb_xp")) || 0; } catch(e) { return 0; }
+    try { return Number(localStorage.getItem("pb_xp")) || 0; } catch { return 0; }
   });
   const [unlockedBadges, setUnlockedBadges] = useState(() => {
     try {
       const saved = localStorage.getItem("pb_badges");
       return saved ? JSON.parse(saved) : [];
-    } catch(e) { return []; }
+    } catch { return []; }
   });
   const [newBadges, setNewBadges] = useState([]); // badges just unlocked → show notification
   const [showTier, setShowTier] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
-  const [showOnboarding, setShowOnboarding] = useState(() => { try { const n = localStorage.getItem('pb_name'); return !n || !n.trim(); } catch(e) { return true; } });
+  const [showOnboarding, setShowOnboarding] = useState(() => { try { const n = localStorage.getItem('pb_name'); return !n || !n.trim(); } catch { return true; } });
   const [showLeaderboard, setShowLeaderboard] = useState(false);
   const [showThemes, setShowThemes] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const [dailyPlayed, setDailyPlayed] = useState(() => {
-    try { return JSON.parse(localStorage.getItem("pb_daily")); } catch(e) { return null; }
+    try { return JSON.parse(localStorage.getItem("pb_daily")); } catch { return null; }
   });
   const [showBugReport, setShowBugReport] = useState(false);
   const [showRateApp, setShowRateApp] = useState(false);
   const [showShare, setShowShare] = useState(false);
   const [showProfilePhoto, setShowProfilePhoto] = useState(false);
   const [showLegal, setShowLegal] = useState(null); // "cgu" | "privacy" | null
-  const [profilePhoto, setProfilePhoto] = useState(() => { try { return JSON.parse(localStorage.getItem("pb_photo")); } catch(e) { return null; } }); // { type, data/emoji, bg }
+  const [profilePhoto, setProfilePhoto] = useState(() => { try { return JSON.parse(localStorage.getItem("pb_photo")); } catch { return null; } }); // { type, data/emoji, bg }
   const [uid, setUid] = useState(null);
   // Friends system
   const [myFriendCode, setMyFriendCode] = useState(() => {
-    try { return localStorage.getItem("pb_friendcode") || ""; } catch(e) { return ""; }
+    try { return localStorage.getItem("pb_friendcode") || ""; } catch { return ""; }
   });
   const [friends, setFriends] = useState({});
   const [friendRequests, setFriendRequests] = useState({});
   const [showFriends, setShowFriends] = useState(false);
   // Profile data
   const [wordHistory, setWordHistory] = useState(() => {
-    try { return JSON.parse(localStorage.getItem("pb_words") || "[]"); } catch(e) { return []; }
+    try { return JSON.parse(localStorage.getItem("pb_words") || "[]"); } catch { return []; }
   });
   const [catHistory, setCatHistory] = useState(() => {
-    try { return JSON.parse(localStorage.getItem("pb_cats") || "{}"); } catch(e) { return {}; }
+    try { return JSON.parse(localStorage.getItem("pb_cats") || "{}"); } catch { return {}; }
   });
 
+  // Inject global CSS once on mount — not in render to avoid re-processing on every state change
   useEffect(() => {
+    const styleEl = document.createElement("style");
+    styleEl.textContent = css;
+    document.head.appendChild(styleEl);
+    return () => { try { document.head.removeChild(styleEl); } catch { /* ignore */ } };
+  }, []);
+
+  // Memoize heavy computations that depend on stable values
+  const levelInfo = useMemo(() => getLevelInfo(xp || 0, lang), [xp, lang]);
+  const tournament = useMemo(() => getTournamentWeek(), []);
+  const daily = useMemo(() => getDailyChallenge(), []);
+
+  const signedInRef = useRef(false);
+  useEffect(() => {
+    if (signedInRef.current) return; // Guard against StrictMode double-invoke
+    signedInRef.current = true;
     FB.signIn().then(u => setUid(u.uid));
   }, []);
 
@@ -5086,8 +5111,8 @@ export default function App() {
   useEffect(() => {
     try {
       if (typeof localStorage !== "undefined") localStorage.setItem("pb_lang", lang);
-    } catch(e) {}
-    try { document.documentElement.lang = lang; } catch(e) {}
+    } catch { /* ignore */ }
+    try { document.documentElement.lang = lang; } catch { /* ignore */ }
   }, [lang]);
 
   // Sauvegarder settings (nom, pays, difficulté...) à chaque changement
@@ -5097,16 +5122,17 @@ export default function App() {
         localStorage.setItem("pb_settings", JSON.stringify(settings));
         if (settings.playerName) localStorage.setItem("pb_name", settings.playerName);
       }
-    } catch(e) {}
+    } catch { /* ignore */ }
   }, [settings]);
 
   useEffect(() => {
     try {
       if (typeof localStorage !== "undefined") localStorage.setItem("pb_theme", theme);
-    } catch(e) {}
+    } catch { /* ignore */ }
   }, [theme]);
 
   // ── Friend system initialization ──────────────────────────────
+  // Intentional: runs once on uid change; ongoing name/xp sync is handled by the effect below
   useEffect(() => {
     if (!uid) return;
     FB.getFriendCode(uid).then(code => {
@@ -5118,7 +5144,7 @@ export default function App() {
     // Listen for friend list in real-time
     const unsubFriends = FB.listenFriends(uid, setFriends);
     return () => { unsubReq(); unsubFriends(); };
-  }, [uid]);
+  }, [uid]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Sync player name/XP to Firebase users profile
   useEffect(() => {
@@ -5133,7 +5159,6 @@ export default function App() {
   }
 
   function startTournamentGame() {
-    const tournament = getTournamentWeek();
     const activeCats = tournament.cats;
     const players = [
       { id: uid || "human", name: settings.playerName || "Joueur", isBot: false, answers: {}, done: false },
@@ -5162,7 +5187,7 @@ export default function App() {
   }
 
   function startDailyChallenge() {
-    const { cats, letter } = getDailyChallenge();
+    const { cats, letter } = daily;
     // Daily uses special categories + hard difficulty + 1 round
     const activeCats = cats.map(c => ({ ...c, tier: "pro" }));
     const players = [
@@ -5199,7 +5224,6 @@ export default function App() {
     const humanId = uid || "human";
     const is2v2 = cfg.mode === "2v2";
     const isMort = cfg.mode === "mort";
-    const isTournoi = cfg.mode === "tournoi";
 
     // Mort subite: 4 joueurs (plus de challenge)
     // 2v2: 4 joueurs en 2 équipes
@@ -5322,7 +5346,7 @@ export default function App() {
     // Collect words submitted this game
     const newWords = [];
     (gs.rounds || []).forEach(round => {
-      Object.entries(round.answers || {}).forEach(([catId, catAnswers]) => {
+      Object.entries(round.answers || {}).forEach(([, catAnswers]) => {
         const a = catAnswers?.[myId];
         if (a?.trim()) newWords.push(a.trim().toLowerCase());
       });
@@ -5332,7 +5356,7 @@ export default function App() {
     // Update word history
     setWordHistory(prev => {
       const next = [...prev, ...newWords].slice(-200);
-      try { localStorage.setItem("pb_words", JSON.stringify(next)); } catch(e) {}
+      try { localStorage.setItem("pb_words", JSON.stringify(next)); } catch { /* ignore */ }
       return next;
     });
 
@@ -5342,7 +5366,7 @@ export default function App() {
     setCatHistory(prev => {
       const next = { ...prev };
       Object.entries(catCounts).forEach(([id, n]) => { next[id] = (next[id] || 0) + n; });
-      try { localStorage.setItem("pb_cats", JSON.stringify(next)); } catch(e) {}
+      try { localStorage.setItem("pb_cats", JSON.stringify(next)); } catch { /* ignore */ }
       return next;
     });
 
@@ -5357,14 +5381,14 @@ export default function App() {
         totalWords: (prev.totalWords || 0) + wordsThisGame,
         uniqueWords: (prev.uniqueWords || 0) + new Set(newWords).size,
       };
-      try { localStorage.setItem("pb_stats", JSON.stringify(updated)); } catch(e) {}
+      try { localStorage.setItem("pb_stats", JSON.stringify(updated)); } catch { /* ignore */ }
       return updated;
     });
 
     const xpGain = calcXpGain(myScore, won, gs.totalRounds || 1);
     setXp(prev => {
       const newXp = (prev || 0) + xpGain;
-      try { localStorage.setItem("pb_xp", String(newXp)); } catch(e) {}
+      try { localStorage.setItem("pb_xp", String(newXp)); } catch { /* ignore */ }
       return newXp;
     });
 
@@ -5377,7 +5401,7 @@ export default function App() {
       if (newlyUnlocked.length > 0) {
         setUnlockedBadges(prev => {
           const updated = [...new Set([...prev, ...newlyUnlocked])];
-          try { localStorage.setItem("pb_badges", JSON.stringify(updated)); } catch(e) {}
+          try { localStorage.setItem("pb_badges", JSON.stringify(updated)); } catch { /* ignore */ }
           return updated;
         });
         setNewBadges(newlyUnlockedDefs); // Pass full badge objects for notification display
@@ -5388,10 +5412,10 @@ export default function App() {
 
     // Mark daily as played
     if (gs.isDaily) {
-      const { todayKey } = getDailyChallenge();
+      const { todayKey } = daily;
       const entry = { todayKey, score: myScore };
       setDailyPlayed(entry);
-      try { localStorage.setItem("pb_daily", JSON.stringify(entry)); } catch(e) {}
+      try { localStorage.setItem("pb_daily", JSON.stringify(entry)); } catch { /* ignore */ }
     }
 
     // Sauvegarder score tournoi dans Firebase
@@ -5404,15 +5428,14 @@ export default function App() {
           xp: xp || 0,
           updatedAt: Date.now(),
         });
-      } catch(e) {}
+      } catch { /* ignore */ }
     }
 
     logEvent("game_end", { uid, mode: gs.mode, score: myScore, won });
   }
 
   return (
-    <>
-      <style>{css}</style>
+    <ErrorBoundary>
       <div className="app">
         {screen === "home"    && <HomeScreen
           onSolo={() => goSetup("solo")}
@@ -5432,6 +5455,9 @@ export default function App() {
           profilePhoto={profilePhoto}
           onShare={() => setShowShare(true)}
           lang={lang}
+          daily={daily}
+          tournament={tournament}
+          levelInfo={levelInfo}
         />}
         {screen === "setup"   && <SetupScreen mode={gameState?.mode} settings={settings} setSettings={setSettings} onStart={startSoloGame} onBack={() => setScreen("home")} tier={tier} onTier={() => setShowTier(true)} lang={lang} />}
         {screen === "online"  && <OnlineScreen uid={uid} settings={settings} setSettings={setSettings} onEnterGame={enterOnlineGame} onBack={() => setScreen("home")} tier={tier} lang={lang} gameMode={gameState?.mode} />}
@@ -5467,7 +5493,7 @@ export default function App() {
           const finalName = name || t("ob5_placeholder","Joueur");
           setSettings(s => ({ ...s, playerName: finalName }));
           // BUG 10 FIX: persist name to localStorage
-          try { localStorage.setItem("pb_name", finalName); } catch(e) {}
+          try { localStorage.setItem("pb_name", finalName); } catch { /* ignore */ }
           setShowOnboarding(false);
         }} lang={lang} />}
       {showLeaderboard && <LeaderboardScreen onClose={() => setShowLeaderboard(false)} playerName={settings.playerName} xp={xp} uid={uid} tier={tier} lang={lang} />}
@@ -5491,17 +5517,17 @@ export default function App() {
       {showLegal && <LegalModal onClose={() => setShowLegal(null)} lang={lang} type={showLegal} />}
       {showProfilePhoto && <ProfilePhotoModal
         onClose={() => setShowProfilePhoto(false)}
-        onSave={p => { setProfilePhoto(p); try { localStorage.setItem("pb_photo", JSON.stringify(p)); } catch(e) {} }}
+        onSave={p => { setProfilePhoto(p); try { localStorage.setItem("pb_photo", JSON.stringify(p)); } catch { /* ignore */ } }}
         currentPhoto={profilePhoto?.emoji || ""}
         playerName={settings.playerName}
         lang={lang}
       />}
-    </>
+    </ErrorBoundary>
   );
 }
 
 // ─── HOME ─────────────────────────────────────────────────────────
-function HomeScreen({ onSolo, onOnline, on2v2, onMort, onOnline2v2, onOnlineMort, onDaily, onTournoi, stats, tier, onTier, onProfile, onSettings, playerName, xp, dailyPlayed, profilePhoto, onShare, lang }) {
+function HomeScreen({ onSolo, onOnline, on2v2, onMort, onOnline2v2, onDaily, onTournoi, stats, tier, onTier, onProfile, onSettings, playerName, xp, dailyPlayed, profilePhoto, lang, daily, tournament, levelInfo }) {
   const t = useT(lang || "fr");
   const bc = tier === TIER.VIP ? "bvipbadge" : tier === TIER.PRO ? "bprobadge" : "bfree";
   const bl = tier === TIER.VIP ? t("vip_label") : tier === TIER.PRO ? t("pro_label") : "◇";
@@ -5512,7 +5538,6 @@ function HomeScreen({ onSolo, onOnline, on2v2, onMort, onOnline2v2, onOnlineMort
     const timerId = setInterval(() => setTick(n => n + 1), 1000);
     return () => clearInterval(timerId);
   }, []);
-  const daily = getDailyChallenge();
   const alreadyPlayed = dailyPlayed?.todayKey === daily.todayKey;
 
   return (
@@ -5537,34 +5562,29 @@ function HomeScreen({ onSolo, onOnline, on2v2, onMort, onOnline2v2, onOnlineMort
 
       <div className="cnt">
         {/* Greeting + Level + XP */}
-        {(() => {
-          const li = getLevelInfo(xp || 0, lang);
-          return (
-            <div style={{ marginBottom: 16 }}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 8 }}>
-                <div>
-                  <div style={{ fontSize: 21, fontWeight: 800, letterSpacing: "-.5px" }}>
-                    {t("greeting")}, {playerName || t("ob5_placeholder","Joueur")} 👋
-                  </div>
-                  <div style={{ fontSize: 13, color: "var(--txm)", marginTop: 2 }}>
-                    {stats.played > 0 ? `${stats.played} partie${stats.played > 1 ? "s" : ""} · ${stats.won} victoire${stats.won > 1 ? "s" : ""}` : t("ready","Prêt à jouer ?")}
-                  </div>
-                </div>
-                <button className="level-chip" onClick={onProfile}>
-                  {li.badge} {t("level","Niv.")} {li.level}
-                </button>
+        <div style={{ marginBottom: 16 }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 8 }}>
+            <div>
+              <div style={{ fontSize: 21, fontWeight: 800, letterSpacing: "-.5px" }}>
+                {t("greeting")}, {playerName || t("ob5_placeholder","Joueur")} 👋
               </div>
-              {/* XP Bar */}
-              <div>
-                <div style={{ display: "flex", justifyContent: "space-between", fontSize: 10, color: "var(--txm)", marginBottom: 4 }}>
-                  <span>{li.name}</span>
-                  <span>{xp} / {li.next?.xpNeeded || "MAX"} XP</span>
-                </div>
-                <div className="xp-bar"><div className="xp-fill" style={{ width: `${li.progress}%` }} /></div>
+              <div style={{ fontSize: 13, color: "var(--txm)", marginTop: 2 }}>
+                {stats.played > 0 ? `${stats.played} partie${stats.played > 1 ? "s" : ""} · ${stats.won} victoire${stats.won > 1 ? "s" : ""}` : t("ready","Prêt à jouer ?")}
               </div>
             </div>
-          );
-        })()}
+            <button className="level-chip" onClick={onProfile}>
+              {levelInfo.badge} {t("level","Niv.")} {levelInfo.level}
+            </button>
+          </div>
+          {/* XP Bar */}
+          <div>
+            <div style={{ display: "flex", justifyContent: "space-between", fontSize: 10, color: "var(--txm)", marginBottom: 4 }}>
+              <span>{levelInfo.name}</span>
+              <span>{xp} / {levelInfo.next?.xpNeeded || "MAX"} XP</span>
+            </div>
+            <div className="xp-bar"><div className="xp-fill" style={{ width: `${levelInfo.progress}%` }} /></div>
+          </div>
+        </div>
 
         {/* Quick stats */}
         {stats.played > 0 && (
@@ -5617,30 +5637,25 @@ function HomeScreen({ onSolo, onOnline, on2v2, onMort, onOnline2v2, onOnlineMort
         </button>
 
         {/* Weekly Tournament Card */}
-        {(() => {
-          const tournament = getTournamentWeek();
-          return (
-            <button className="tournament-card" onClick={canPro ? onTournoi : onTier}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
-                <div style={{ flex:1 }}>
-                  <div style={{ fontSize: 10, opacity: .8, letterSpacing: 1, textTransform: "uppercase", marginBottom: 2 }}>{t("tournament_label2")}</div>
-                  <div style={{ fontSize: 15, fontWeight: 700, marginBottom: 2 }}>{t("tournament_title2")}</div>
-                  <div style={{ fontSize: 11, opacity: .85, marginBottom:6 }}>
-                    {tournament.daysLeft > 0 ? `${tournament.daysLeft} ${t("tournament_days","jours restants")}` : `${String(tournament.hoursLeft).padStart(2,"0")}h${String(tournament.minsLeft).padStart(2,"0")}m`}
-                  </div>
-                  <div style={{ fontSize:11, background:"rgba(255,255,255,0.15)", borderRadius:8, padding:"4px 8px", marginBottom:4 }}>
-                    🏆 {t("tournament_prize","Gagnant = 1 mois VIP offert !")}
-                  </div>
-                  <div style={{ fontSize:10, opacity:.75 }}>
-                    ⚡ {t("tournament_rules_short","Réponses uniques = +10pts • Faux = ❌ éliminé")}
-                  </div>
-                </div>
-                <div className="tournament-letter">{tournament.letter}</div>
+        <button className="tournament-card" onClick={canPro ? onTournoi : onTier}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+            <div style={{ flex:1 }}>
+              <div style={{ fontSize: 10, opacity: .8, letterSpacing: 1, textTransform: "uppercase", marginBottom: 2 }}>{t("tournament_label2")}</div>
+              <div style={{ fontSize: 15, fontWeight: 700, marginBottom: 2 }}>{t("tournament_title2")}</div>
+              <div style={{ fontSize: 11, opacity: .85, marginBottom:6 }}>
+                {tournament.daysLeft > 0 ? `${tournament.daysLeft} ${t("tournament_days","jours restants")}` : `${String(tournament.hoursLeft).padStart(2,"0")}h${String(tournament.minsLeft).padStart(2,"0")}m`}
               </div>
-              {!canPro && <div style={{ marginTop:8, fontSize:11, opacity:.8 }}>🔒 {t("pro_required")}</div>}
-            </button>
-          );
-        })()}
+              <div style={{ fontSize:11, background:"rgba(255,255,255,0.15)", borderRadius:8, padding:"4px 8px", marginBottom:4 }}>
+                🏆 {t("tournament_prize","Gagnant = 1 mois VIP offert !")}
+              </div>
+              <div style={{ fontSize:10, opacity:.75 }}>
+                ⚡ {t("tournament_rules_short","Réponses uniques = +10pts • Faux = ❌ éliminé")}
+              </div>
+            </div>
+            <div className="tournament-letter">{tournament.letter}</div>
+          </div>
+          {!canPro && <div style={{ marginTop:8, fontSize:11, opacity:.8 }}>🔒 {t("pro_required")}</div>}
+        </button>
 
         {/* Game modes */}
         <div style={{ fontSize: 11, fontWeight: 700, color: "var(--txm)", textTransform: "uppercase", letterSpacing: "1px", marginBottom: 10 }}>{t("game_modes2")}</div>
@@ -5777,10 +5792,10 @@ function FriendsPanel({ uid, myFriendCode, playerName, friends, friendRequests, 
               setAddStatus(null);
               stopScanner();
             }
-          } catch(e) {}
+          } catch { /* ignore */ }
         }, 500);
       }, 400);
-    } catch(e) {
+    } catch {
       alert(t("camera_denied"));
     }
   }
@@ -5800,7 +5815,7 @@ function FriendsPanel({ uid, myFriendCode, playerName, friends, friendRequests, 
       await FB.sendFriendRequest(uid, playerName || "Joueur", targetUid);
       setAddStatus("sent");
       setAddCode("");
-    } catch(e) {
+    } catch {
       setAddStatus("error");
     }
   }
@@ -5833,7 +5848,7 @@ function FriendsPanel({ uid, myFriendCode, playerName, friends, friendRequests, 
         document.body.removeChild(ta);
         setCopied(true);
         setTimeout(() => setCopied(false), 2000);
-      } catch(e) {}
+      } catch { /* ignore */ }
     });
   }
 
@@ -6281,7 +6296,7 @@ function ProfilePanel({ stats, playerName, wordHistory, catHistory, tier, onClos
 
 // ─── ONLINE SCREEN ────────────────────────────────────────────────
 function OnlineScreen({
-  uid, settings, setSettings, onEnterGame, onBack, tier, lang, gameMode
+  uid, settings, setSettings, onEnterGame, onBack, lang, gameMode
 }) {
   const t = useT(lang || "fr");
   const [step, setStep] = useState("choose");   // choose | configure | matchmaking | private_create | private_join | waiting
@@ -6292,10 +6307,9 @@ function OnlineScreen({
   const [hostDiff, setHostDiff] = useState(settings.difficulty || "medium");
   const [hostRounds, setHostRounds] = useState(settings.totalRounds || 5);
   const [hostCats, setHostCats] = useState(settings.categories || []);
-  // Fallback uid si Firebase auth pas encore prête
-  // Use useRef so the fallback ID is stable across re-renders
-  const myUidRef = useRef(uid || ("local_" + Math.random().toString(36).substring(2, 9)));
-  const myUid = uid || myUidRef.current;
+  // Fallback uid si Firebase auth pas encore prête — stable via state initializer
+  const [generatedId] = useState(() => "local_" + Math.random().toString(36).substring(2, 9));
+  const myUid = uid || generatedId;
   const [joinCode, setJoinCode] = useState("");
   const [roomData, setRoomData] = useState(null);
   const [customTeams, setCustomTeams] = useState(null);
@@ -6314,7 +6328,7 @@ function OnlineScreen({
         // Join existing room
         const room = await FB.getRoom(existingCode);
         await FB.updateRoom(existingCode, {
-          players: { ...room.players, [myUid]: { uid: myUid, name: playerName, country, isHost: false, ready: false, connected: true } },
+          players: { ...room.players, [myUid]: { uid: myUid, name: sanitizeName(playerName), country, isHost: false, ready: false, connected: true } },
         });
         setRoomCode(existingCode);
         setStep("waiting");
@@ -6329,7 +6343,7 @@ function OnlineScreen({
           code, type: "public", country,
           hostId: myUid, status: "waiting",
           settings: { difficulty: settings.difficulty, categories: settings.categories, totalRounds: settings.totalRounds, gameMode: gameMode || "solo", mortCatCount: settings.mortCatCount || 3 },
-          players: { [myUid]: { uid: myUid, name: playerName, country, isHost: true, ready: true, connected: true } },
+          players: { [myUid]: { uid: myUid, name: sanitizeName(playerName), country, isHost: true, ready: true, connected: true } },
           currentRound: 0, spinnerIndex: 0, phase: "waiting",
           cumulativeScores: { [myUid]: 0 },
         };
@@ -6355,7 +6369,7 @@ function OnlineScreen({
         code, type: "private", country,
         hostId: myUid, status: "waiting",
         settings: { difficulty: hostDiff, categories: finalCats, totalRounds: hostRounds, gameMode: gameMode || "solo", mortCatCount: settings.mortCatCount || 3 },
-        players: { [myUid]: { uid: myUid, name: playerName, country, isHost: true, ready: true, connected: true } },
+        players: { [myUid]: { uid: myUid, name: sanitizeName(playerName), country, isHost: true, ready: true, connected: true } },
         currentRound: 0, spinnerIndex: 0, phase: "waiting",
         cumulativeScores: { [myUid]: 0 },
       };
@@ -6382,9 +6396,9 @@ function OnlineScreen({
         try {
           room = await FB.getRoom(code);
           break;
-        } catch(e) {
+        } catch (e) {
           if (e.message && e.message.includes("PERMISSION_DENIED")) {
-            throw new Error("⚠️ Firebase: configure les règles sur firebase.google.com → Realtime Database → Rules → .read: true");
+            throw new Error("⚠️ Firebase: configure les règles sur firebase.google.com → Realtime Database → Rules → .read: true", { cause: e });
           }
           if (attempts === 2) throw e;
           await new Promise(r => setTimeout(r, 1000));
@@ -6397,7 +6411,7 @@ function OnlineScreen({
       if (room.status !== "waiting") {
         throw new Error(t("game_in_progress", "La partie a déjà commencé."));
       }
-      const myPlayer = { uid: myUid, name: playerName || settings.playerName || "Joueur", country, isHost: false, ready: true, connected: true };
+      const myPlayer = { uid: myUid, name: sanitizeName(playerName || settings.playerName), country, isHost: false, ready: true, connected: true };
       await FB.updateRoom(code, {
         players: { ...room.players, [myUid]: myPlayer },
         cumulativeScores: { ...(room.cumulativeScores || {}), [myUid]: 0 },
@@ -6469,7 +6483,7 @@ function OnlineScreen({
   const isHost = roomData?.hostId === myUid || roomData?.hostId === uid;
 
   if (step === "choose") return (
-    <div style={{ display: "flex", flexDirection: "column", height: "100vh" }}>
+    <div style={{ display: "flex", flexDirection: "column", height: "100dvh" }}>
       <div className="hdr">
         <button className="btn bs bsm" onClick={onBack} style={{ width: "auto" }}>{t("ob_back")}</button>
         <span style={{ fontWeight: 700, fontSize: 14 }}>{t("play_online")}</span>
@@ -6489,7 +6503,7 @@ function OnlineScreen({
         )}
         <div className="card">
           <div className="ctitle">{t("your_profile2")}</div>
-          <input className="inp mb8" style={{ marginBottom: 8 }} value={playerName} onChange={e => setPlayerName(e.target.value)} placeholder={t("your_firstname")} />
+          <input className="inp mb8" style={{ marginBottom: 8 }} value={playerName} onChange={e => setPlayerName(e.target.value)} placeholder={t("your_firstname")} maxLength={20} />
           <select className="inp" value={country} onChange={e => setCountry(e.target.value)}>
             {COUNTRIES.map(c => <option key={c} value={c}>{c}</option>)}
           </select>
@@ -6515,7 +6529,7 @@ function OnlineScreen({
   );
 
   if (step === "matchmaking") return (
-    <div style={{ display: "flex", flexDirection: "column", height: "100vh" }}>
+    <div style={{ display: "flex", flexDirection: "column", height: "100dvh" }}>
       <div className="hdr">
         <button className="btn bs bsm" onClick={() => { cleanup(); setStep("choose"); }} style={{ width: "auto" }}>{t("cancel2")}</button>
         <span style={{ fontWeight: 700, fontSize: 14 }}>{t("search_ellipsis")}</span>
@@ -6550,7 +6564,7 @@ function OnlineScreen({
   );
 
   if (step === "configure") return (
-    <div style={{ display: "flex", flexDirection: "column", height: "100vh" }}>
+    <div style={{ display: "flex", flexDirection: "column", height: "100dvh" }}>
       <div className="hdr">
         <button className="btn bs bsm" onClick={() => setStep("choose")} style={{ width: "auto" }}>{t("ob_back")}</button>
         <span style={{ fontWeight: 700, fontSize: 14 }}>⚙️ {t("game_settings","Paramètres")}</span>
@@ -6559,7 +6573,7 @@ function OnlineScreen({
       <div className="cnt">
         <div className="card">
           <div className="ctitle">{t("your_name2","Ton nom")}</div>
-          <input className="inp" value={playerName} onChange={e => setPlayerName(e.target.value)} placeholder={t("your_firstname","Prénom")} />
+          <input className="inp" value={playerName} onChange={e => setPlayerName(e.target.value)} placeholder={t("your_firstname","Prénom")} maxLength={20} />
         </div>
 
         <div className="card">
@@ -6618,7 +6632,7 @@ function OnlineScreen({
   );
 
   if (step === "private_create" || step === "private_join") return (
-    <div style={{ display: "flex", flexDirection: "column", height: "100vh" }}>
+    <div style={{ display: "flex", flexDirection: "column", height: "100dvh" }}>
       <div className="hdr">
         <button className="btn bs bsm" onClick={() => { cleanup(); setStep(step === "private_create" ? "configure" : "choose"); }} style={{ width: "auto" }}>{t("ob_back")}</button>
         <span style={{ fontWeight: 700, fontSize: 14 }}>{t("private_room")}</span>
@@ -6651,7 +6665,7 @@ function OnlineScreen({
   );
 
   if (step === "waiting") return (
-    <div style={{ display: "flex", flexDirection: "column", height: "100vh" }}>
+    <div style={{ display: "flex", flexDirection: "column", height: "100dvh" }}>
       <div className="hdr">
         <button className="btn bs bsm" onClick={() => { cleanup(); setStep("choose"); }} style={{ width: "auto" }}>✕</button>
         <span style={{ fontWeight: 700, fontSize: 14 }}>{roomData?.type === "private" ? t("private_room") : "🌍 Public"} · {gameMode === "2v2" ? "🤝 2v2" : gameMode === "mort" ? "💀 Mort Subite" : "🌍 Multijoueur"}</span>
@@ -6710,7 +6724,6 @@ function OnlineScreen({
                 return Object.entries(assigned).some(([k, v]) => k.startsWith(td.key) && v === p.uid);
               });
             });
-            const allAssigned = players.every(p => Object.values(assigned).includes(p.uid));
             return (
               <div>
                 <div style={{ fontSize: 11, color: "var(--txm)", marginBottom: 8 }}>
@@ -6795,16 +6808,19 @@ function SetupScreen({
     onStart(cfg);
   }
 
-  useEffect(() => { if (!roundsOpts.includes(rounds)) setRounds(roundsOpts[0]); }, [tier]);
-  // Auto-expand categories when tier upgrades: si seulement les cats gratuites sont sélectionnées et qu'on devient PRO+, on sélectionne tout
+  // Intentional: only reset rounds when tier changes; rounds/roundsOpts are derived from tier
+  useEffect(() => { if (!roundsOpts.includes(rounds)) setRounds(roundsOpts[0]); }, [tier]); // eslint-disable-line react-hooks/exhaustive-deps, react-hooks/set-state-in-effect
+  // Auto-expand categories when tier upgrades (derived state on tier change — intentional setState in effect)
+  /* eslint-disable react-hooks/set-state-in-effect, react-hooks/exhaustive-deps */
   useEffect(() => {
     const freIds = FREE_CATS.map(c => c.id);
     const onlyFree = cats.length > 0 && cats.every(id => freIds.includes(id));
     if (canPro && onlyFree) setCats(ALL_BASE.map(c => c.id));
   }, [canPro]);
+  /* eslint-enable react-hooks/set-state-in-effect, react-hooks/exhaustive-deps */
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", height: "100vh" }}>
+    <div style={{ display: "flex", flexDirection: "column", height: "100dvh" }}>
       <div className="hdr">
         <button className="btn bs bsm" onClick={onBack} style={{ width: "auto" }}>{t("back_btn")}</button>
         <span style={{ fontWeight: 700, fontSize: 14 }}>
@@ -6911,14 +6927,14 @@ function LetterRoulette({
       setTimeout(() => { if (!lockedRef.current) doStop(pool[Math.floor(Math.random() * pool.length)]); }, 1400 + Math.random() * 800);
     }
     return () => clearInterval(ivRef.current);
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Quand Firebase envoie la vraie lettre (mode online non-spinner)
   useEffect(() => {
     if (forcedLetter && !isMyTurn && !lockedRef.current) {
       doStop(forcedLetter);
     }
-  }, [forcedLetter]);
+  }, [forcedLetter]); // eslint-disable-line react-hooks/exhaustive-deps
 
   function doStop(forceLetter) {
     if (lockedRef.current) return;
@@ -7032,7 +7048,7 @@ function GameScreen({
       });
     });
     return () => { if (unsubscribe) unsubscribe(); };
-  }, [gameState.mode, gameState.roomCode]);
+  }, [gameState.mode, gameState.roomCode]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // ── BUG 1+4 FIX: déclencher computeRoundScores sur tous les clients ──
   useEffect(() => {
@@ -7059,11 +7075,12 @@ function GameScreen({
       });
     }, 1000);
     return () => clearInterval(timerRef.current);
-  }, [phase, letter, currentRound]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [phase, letter, currentRound]); // Intentional: omit players/lang/dc to avoid timer reset on every re-render
 
   useEffect(() => {
     if (gameState.timeLeft <= 0 && phase === "playing" && !doneRef.current) handleStop();
-  }, [gameState.timeLeft, phase]);
+  }, [gameState.timeLeft, phase]); // eslint-disable-line react-hooks/exhaustive-deps
 
   function handleStop() {
     if (doneRef.current) return;
@@ -7084,7 +7101,7 @@ function GameScreen({
           phase: "round_ended",
           roundEndedAt: Date.now(),
         });
-      } catch(e) {}
+      } catch { /* ignore */ }
       // Le listener Firebase synce les réponses de tous et déclenche computeRoundScores
       return;
     }
@@ -7207,7 +7224,6 @@ function GameScreen({
   }
 
   function upd(id, v) { setGameState(g => ({ ...g, answers: { ...g.answers, [id]: v } })); }
-  function liveTotal() { return activeCategories.reduce((s, cat) => s + (gameState.answers[cat.id]?.trim() ? 2 : 0), 0); }
   const allFilled = activeCategories.every(cat => gameState.answers[cat.id]?.trim().length > 0);
 
   if (phase === "roulette") {
@@ -7236,7 +7252,7 @@ function GameScreen({
                 letterChosenAt: Date.now(),
                 usedLetters: [...(gameState.usedLetters || []), l], // BUG 3 FIX: persister les lettres utilisées
               });
-            } catch(e) {}
+            } catch { /* ignore */ }
           }
         }}
       lang={lang} />
@@ -7301,8 +7317,6 @@ function GameScreen({
 
   const pct = (gameState.timeLeft / gameState.totalTime) * 100;
   const tc = pct > 50 ? "var(--gn)" : pct > 25 ? "var(--yw)" : "var(--rd)";
-  const donePlayers = players.filter(p => p.done);
-
   const myId2 = gameState.myId || uid || "human";
 
   return (
@@ -7425,8 +7439,8 @@ function VotePhase({ gameState, onVoteDone, lang }) {
         });
       });
     });
-    setVotes(prev => ({ ...prev, ...botVotes }));
-  }, []);
+    setVotes(prev => ({ ...prev, ...botVotes })); // eslint-disable-line react-hooks/set-state-in-effect
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   function castVote(catId, targetId, v) {
     setVotes(prev => ({ ...prev, [`${myId}:${catId}:${targetId}`]: v }));
@@ -7662,7 +7676,6 @@ function RoundResultsOverlay({
         {(() => {
           const humanPlayer = players.find(p=>!p.isBot);
           const humanId = humanPlayer?.id || humanPlayer?.uid || "";
-          const roundPts = cumulativeScores[humanId] || 0;
           return (
             <div style={{ textAlign: "center", padding: "8px 0", fontSize: 13, color: "var(--ac)", fontWeight: 700 }}>
               +{Math.max(5, (currentRoundData?.scores?.[humanId] || 0) * 3 + 5)} {t("xp")} ⚡
@@ -7681,7 +7694,7 @@ function RoundResultsOverlay({
 // ─── FINAL RESULTS ────────────────────────────────────────────────
 function FinalResultsScreen({ gameState, onPlayAgain, onHome, uid, lang }) {
   const t = useT(lang || "fr");
-  const { players, cumulativeScores, rounds, totalRounds, categories } = gameState;
+  const { players, cumulativeScores, rounds, totalRounds } = gameState;
   const sorted = [...players].sort((a, b) => (cumulativeScores[b.id] || 0) - (cumulativeScores[a.id] || 0));
   const max = cumulativeScores[sorted[0]?.id] || 0;
   const myId = gameState.myId || uid;
@@ -7820,7 +7833,7 @@ function FinalResultsScreen({ gameState, onPlayAgain, onHome, uid, lang }) {
   const podium = sorted.slice(0, 3);
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
+    <div style={{ display: "flex", flexDirection: "column", minHeight: "100dvh" }}>
       <div className="hdr">
         <div className="logo">{iWon ? "🏆 Victoire !" : t("round_history")}</div>
         <span style={{ fontSize: 12, color: "var(--txm)" }}>{totalRounds} rounds</span>
@@ -8150,7 +8163,7 @@ function OnboardingScreen({ onDone, lang }) {
 }
 
 // ─── LEADERBOARD ──────────────────────────────────────────────────
-function LeaderboardScreen({ onClose, xp, playerName, lang, uid, tier }) {
+function LeaderboardScreen({ onClose, xp, playerName, lang, uid }) {
   const t = useT(lang || "fr");
   const [tab, setTab] = useState("global");
   const [entries, setEntries] = useState([]);
@@ -8169,6 +8182,7 @@ function LeaderboardScreen({ onClose, xp, playerName, lang, uid, tier }) {
   // Charger classements Firebase (modular API)
   useEffect(() => {
     if (!uid || !FB.db) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setEntries(getMockLeaderboard(uid, playerName, xp, levelInfo));
       setTournoiEntries([]);
       setLoading(false);
@@ -8177,13 +8191,13 @@ function LeaderboardScreen({ onClose, xp, playerName, lang, uid, tier }) {
     // Sauvegarder le joueur courant dans le classement global
     try {
       dbSet(dbRef(FB.db, "leaderboard/" + uid), {
-        name: playerName || "Joueur",
+        name: sanitizeName(playerName),
         xp: xp || 0,
         badge: levelInfo.badge,
         country: "🌍",
         updatedAt: Date.now(),
       });
-    } catch(e) {}
+    } catch { /* ignore */ }
 
     const loadData = async () => {
       setLoading(true);
@@ -8203,7 +8217,7 @@ function LeaderboardScreen({ onClose, xp, playerName, lang, uid, tier }) {
           .map(([id, v]) => ({ ...v, id, isMe: id === uid }))
           .sort((a, b) => b.score - a.score);
         setTournoiEntries(tList);
-      } catch(e) {
+      } catch {
         setEntries(getMockLeaderboard(uid, playerName, xp, levelInfo));
         setTournoiEntries([]);
       }
@@ -8212,21 +8226,19 @@ function LeaderboardScreen({ onClose, xp, playerName, lang, uid, tier }) {
     loadData();
 
     // Listener temps réel pour le tournoi (modular API)
-    let tournoiRef = null;
     let tournoiUnsub = null;
     try {
       const weekKey = "week_" + tournament.weekNum;
-      tournoiRef = dbQuery(dbRef(FB.db, "tournoi/" + weekKey), orderByChild("score"), limitToLast(50));
-      tournoiUnsub = dbOnValue(tournoiRef, snap => {
+      tournoiUnsub = dbOnValue(dbQuery(dbRef(FB.db, "tournoi/" + weekKey), orderByChild("score"), limitToLast(50)), snap => {
         const data = snap.val() || {};
         const list = Object.entries(data)
           .map(([id, v]) => ({ ...v, id, isMe: id === uid }))
           .sort((a, b) => b.score - a.score);
         setTournoiEntries(list);
       });
-    } catch(e) {}
+    } catch { /* ignore */ }
     return () => { if (tournoiUnsub) tournoiUnsub(); };
-  }, [uid, xp, tab]);
+  }, [uid, xp, tab]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const myRank = entries.findIndex(e => e.isMe) + 1;
   const myTournoiRank = tournoiEntries.findIndex(e => e.isMe) + 1;
@@ -8622,7 +8634,7 @@ function BugReportModal({
 
   function submit() {
     if (!desc.trim()) return;
-    console.log("Bug report:", { category, desc, timestamp: new Date().toISOString() });
+    if (import.meta.env.DEV) console.log("Bug report:", { category, desc, timestamp: new Date().toISOString() });
     setSent(true);
     Haptics.success();
     setTimeout(onClose, 2000);
