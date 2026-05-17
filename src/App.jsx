@@ -5370,16 +5370,17 @@ export default function App() {
 
     // Check for new badges
     setStats(currentStats => {
-      const newlyUnlocked = BADGE_DEFS.filter(b =>
+      const newlyUnlockedDefs = BADGE_DEFS.filter(b =>
         !unlockedBadges.includes(b.id) && b.check(currentStats)
-      ).map(b => b.id);
+      );
+      const newlyUnlocked = newlyUnlockedDefs.map(b => b.id);
       if (newlyUnlocked.length > 0) {
         setUnlockedBadges(prev => {
           const updated = [...new Set([...prev, ...newlyUnlocked])];
           try { localStorage.setItem("pb_badges", JSON.stringify(updated)); } catch(e) {}
           return updated;
         });
-        setNewBadges(newlyUnlocked);
+        setNewBadges(newlyUnlockedDefs); // Pass full badge objects for notification display
         setTimeout(() => setNewBadges([]), 4000);
       }
       return currentStats;
