@@ -1363,7 +1363,7 @@ function normalizeWord(w) {
 
 // Collapse consecutive duplicate letters: "balle" -> "bale", "football" -> "fotbal"
 function collapseDoubles(s) {
-  return s.replace(/(.)+/g, "$1");
+  return s.replace(/(.)\1+/g, "$1");
 }
 
 // Remove spaces for compound word matching: "jean pierre" -> "jeanpierre"
@@ -5426,9 +5426,15 @@ export default function App() {
           lang={lang}
         />}
         {screen === "setup"   && <SetupScreen mode={gameState?.mode} settings={settings} setSettings={setSettings} onStart={startSoloGame} onBack={() => setScreen("home")} tier={tier} onTier={() => setShowTier(true)} lang={lang} />}
-        {screen === "online"  && <OnlineScreen uid={uid} settings={settings} setSettings={setSettings} onEnterGame={enterOnlineGame} onBack={() => setScreen("home")} tier={tier} lang={lang} />}
+        {screen === "online"  && <OnlineScreen uid={uid} settings={settings} setSettings={setSettings} onEnterGame={enterOnlineGame} onBack={() => setScreen("home")} tier={tier} lang={lang} gameMode={gameState?.mode} />}
         {screen === "game"    && gameState && <GameScreen gameState={gameState} setGameState={setGameState} uid={uid} lang={lang} onEndGame={handleGameEnd} />}
-        {screen === "results" && gameState && <FinalResultsScreen gameState={gameState} onPlayAgain={() => setScreen("setup")} onHome={() => setScreen("home")} uid={uid} lang={lang} />}
+        {screen === "results" && gameState && <FinalResultsScreen gameState={gameState} onPlayAgain={() => {
+            const m = gameState?.mode;
+            if (m === "tournoi") startTournamentGame();
+            else if (m === "daily") startDailyChallenge();
+            else if (gameState?.roomCode) setScreen("online");
+            else setScreen("setup");
+          }} onHome={() => setScreen("home")} uid={uid} lang={lang} />}
         {screen !== "game" && <BottomNav tab={tab} setTab={setTab} setScreen={setScreen} setGameState={setGameState} onLeaderboard={() => setShowLeaderboard(true)} lang={lang} />}
       </div>
       {showTier && <TierModal current={tier} onSelect={t => { setTier(t); setShowTier(false); }} onClose={() => setShowTier(false)} lang={lang} />}
@@ -5456,7 +5462,7 @@ export default function App() {
           try { localStorage.setItem("pb_name", finalName); } catch(e) {}
           setShowOnboarding(false);
         }} lang={lang} />}
-      {showLeaderboard && <LeaderboardScreen onClose={() => setShowLeaderboard(false)} playerName={settings.playerName} xp={xp} stats={stats} lang={lang} />}
+      {showLeaderboard && <LeaderboardScreen onClose={() => setShowLeaderboard(false)} playerName={settings.playerName} xp={xp} uid={uid} tier={tier} lang={lang} />}
       {showThemes && <ThemesScreen current={theme} onSelect={t => { setTheme(t); applyTheme(t); setShowThemes(false); }} onClose={() => setShowThemes(false)} tier={tier} onTier={() => { setShowThemes(false); setShowTier(true); }} lang={lang} />}
       {newBadges.length > 0 && <BadgeNotification badges={newBadges} lang={lang} />}
       {showSettings && <SettingsPanel
@@ -7355,11 +7361,11 @@ function GameScreen({
       {/* Stop bar */}
       <div className="sbar">
         {allFilled ? (
-          <button className="sbtn" style={{ background: "var(--gn)", boxShadow: "0 0 24px rgba(74,222,128,0.35)", letterSpacing: 1 }} onClick={() => { doneRef.current = false; handleStop(); }}>
+          <button className="sbtn" style={{ background: "var(--gn)", boxShadow: "0 0 24px rgba(74,222,128,0.35)", letterSpacing: 1 }} onClick={handleStop}>
             {t("filled_all")}
           </button>
         ) : (
-          <button className="sbtn" onClick={() => { doneRef.current = false; handleStop(); }}>{t("stop_btn")}</button>
+          <button className="sbtn" onClick={handleStop}>{t("stop_btn")}</button>
         )}
       </div>
     </div>
