@@ -1,0 +1,16 @@
+{
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "timeout": 120,
+            "statusMessage": "🚀 Déploiement automatique en cours…",
+            "command": "cd /Users/bgr/petit-bac && git add -A && if ! git diff --cached --quiet; then git commit -m \"auto-deploy: $(date '+%Y-%m-%d %H:%M')\"; git push origin main; fi && npx firebase deploy --only database 2>&1 || true"
+          }
+        ]
+      }
+    ]
+  }
+}
