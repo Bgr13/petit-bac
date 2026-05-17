@@ -1387,7 +1387,7 @@ const VALID_WORDS = {
     K:["kilian","karine","kevin","kim","kelly","killian","karim","karima","karl","katia","kendra","khalid","kyle","kacey","kaci","kacie","kade","kadeem","kadija","kaela","kaeli","kaelin","kaelyn","kahlil","kai","kaia","kailee","kailua","kaimi","kainat","kairi","kairo","kaisa","kaitlin","kaitlyn","kaja","kajetan","kajsa","kala","kalani","kalei","kalia","kalida","kalil","kalima","kalina","kalis","kalisha","kalla","kallie","kamara","kamden","kameko","kami","kamil","kamila","kamile","kamilia","kamilka","kamillo","kamran","kandice","kara","kareen","karelle","karen","kari","karin","karina","karisa","karissa","karla","karlos","karo","karolin","karolina","karoline","karoly","karsten","kasim","kasimir","kaspar","kassandra","kassia","kata","katarina","kate","katerina","katerine","katharina","katharine","katheleen","katherin","kathia","katinka","katja","katlin","katlyn","katrijn","katrina","katrine","katya","katy","kawan","kaya","kayden","kayla","kaylan","kaylee","kayleigh","kaylie","kaylin","kaylyn","kazimir","keiko","keilan","keiran","keith","kela","keli","kelin","kellan","kellen","kelley","kelli","kellie","kelsie","kelvin","kemal","kenji","kenna","kennedy","kennie","kenny","keo","keon","keren","kezia","khalida","khalil","kiana","kiara","kiko","kiley","kimi","kindra","kira","kirra","kirsten","kirsty","knud"],
     L:["lucas","lucie","lea","louise","lola","leon","laurie","laurent","laure","ludovic","lydia","laetitia","lana","lancelot","lara","larissa","lassana","laureline","leandro","lena","leo","leonce","leopold","lila","lilou","lina","lisa","lise","lisette","livia","loic","lorena","lorie","lorraine","lou","louisa","luca","lucette","lucian","lucile","luna","ladislava","ladislave","laela","laila","laina","laini","lais","lakshmi","lala"],
     M:["marie","maxime","mathieu","margot","marine","mathilde","manon","marc","melanie","melissa","michel","muriel","maeva","magali","malo","manoel","manuel","marceau","marco","margaux","mariana","marilyn","mario","marjorie","marlene","martial","martin","martine","maud","maxence","maximilien","maya","melodie","mia","mickael","mika","mikael","mila","milena","mireille","miriam","mona","morgane","moussa","mabel","mabeline","mabella","mabelle","mac","macaela"],
-    N:["noa","noe","noel","noemie","nicolas","noemie","nathan","nathalie","nina","nadege","noe","nadine","nadia","naomi","nassim","nassima","natalia","natasha","nayla","noah","nolan","nora","norbert","noura","nabiha","nabil","nabila","nabou","nachida","nada","nadal","nadir","nadiege","nadim","nadima","nadjia","nadka","nady","naemi","nagib","nahel","nahid","naida","naika","naila","naima","naira","nairi","nais","naiyah","naja","najat","najib","najiba","najma","nakia","nakita","nalani","nalia","nalida","nalini","namiko","nana","nane","nanee","nani","nanna","naouelle","nara","narayan","narcisa","narciso","narcisse","narda","natali","nathael","nathanael","nathania","naum","nava","naveah","nayara","nazanin","nazarena","nazareno","nazim","nazima","neha","neil","nel","nelda","neli","nelia","nelin","nell","nella","nellie","nelly","nelvin","nena","nenia","nesta","neva","nevada","nevena","neville","nia","niall","niamh","nicabar","niceta","nichola","nichole","nicola","nicolai","nicolaj","nicolaos","nicolasa","nicolo","nika","nikhil","nikita","nikki","niko","nikolaj","nikolaos","nikoletta","nikoline","nikos","nila","nilde","nilda","nilou","nils","ninette","nino","nior","nis","nisa","nives","noach","noel","noela","noelie","noeline","noella","noelle","nohemy","noin","nolita","nona","nonette","noni","nonie","norah","noreen","norma","normann","norris","nour","nouredine","nourin","noury","noushin"],
+    N:["noa","noe","noel","noemie","nicolas","nathan","nathalie","nina","nadege","nadine","nadia","naomi","nassim","nassima","natalia","natasha","nayla","noah","nolan","nora","norbert","noura","nabiha","nabil","nabila","nabou","nachida","nada","nadal","nadir","nadiege","nadim","nadima","nadjia","nadka","nady","naemi","nagib","nahel","nahid","naida","naika","naila","naima","naira","nairi","nais","naiyah","naja","najat","najib","najiba","najma","nakia","nakita","nalani","nalia","nalida","nalini","namiko","nana","nane","nanee","nani","nanna","naouelle","nara","narayan","narcisa","narciso","narcisse","narda","natali","nathael","nathanael","nathania","naum","nava","naveah","nayara","nazanin","nazarena","nazareno","nazim","nazima","neha","neil","nel","nelda","neli","nelia","nelin","nell","nella","nellie","nelly","nelvin","nena","nenia","nesta","neva","nevada","nevena","neville","nia","niall","niamh","nicabar","niceta","nichola","nichole","nicola","nicolai","nicolaj","nicolaos","nicolasa","nicolo","nika","nikhil","nikita","nikki","niko","nikolaj","nikolaos","nikoletta","nikoline","nikos","nila","nilde","nilda","nilou","nils","ninette","nino","nior","nis","nisa","nives","noach","noela","noelie","noeline","noella","noelle","nohemy","noin","nolita","nona","nonette","noni","nonie","norah","noreen","norma","normann","norris","nour","nouredine","nourin","noury","noushin"],
     O:["oscar","olivier","odile","omar","ophelie","octave","olympe","oriane","ottilie","orlando"],
     P:["pierre","pauline","philippe","paul","patricia","pascal","perrine","priscilla","penelope","pablo","pamela","paola","patricio","patrice","paulette","pedro","peggy","phedre","philippa","philomene","pierrette","priya","prudence","pace","padma","paige","palmira","pam","pamelina","pascale","pascaline","pascalino","pascalito","pastor","patrizia","patrona","paula","paulina","paulino","paulo","pax","paxon","paxton","payal","paz","pegasus","penina","perla","permelia","pero","petra","petronela","petronella","petronille","phaedra","phillipa","phillippe","phillo","philomen","philomena","pia","pier","piera","pierce","piero","pietrina","pietrino","pilar","pippa","placid","placida","placide","placido","poldo","poli","polina","polixena","polly","polyxena","pompea","pompeo","poppy","pora","portia","praxede","praxedis","precious","prima","prisciliana","prisciliano","prosperine","protais"],
     R:["romain","raphael","rachel","remi","renaud","regine","rose","roxane","roland","rachid","raissa","rakia","rama","randa","raoul","raymond","rebecca","regis","reina","remy","rene","richard","rita","robert","roberto","robin","rodrigo","romeo","romuald","rosalie","rosine","roxanne","ruben","ruth","radek","radovan","raed","raelene","raelynn","raffaela","raffaele","rainer","raisa","rajan","rakesh","ralf","ramona","rangi","raquel","rascha","rashid","rasmus","ravi","ray","rayna","raynard","rayne","raynelle","raza","rebekah","reed","reeve","reid","reiko","renata","renate","renato","rende","renilde","renita","renke","rennard","reuben","reva","rex","rhea","rhiannon","rhianon","rhona","rhonda","rian","rico","rider","riley","rinat","rino","rio","ritchie","riva","rivka","rob","robbie","robbin","roberta","robine","robino","robison","robyn","rocco","rochelle","rocky","rod","roderick","rodolfo","rodrigue","roeland","roel","roger","rohan","roisi","roisin","rolando","romaine","romano","romantilde","ron","rona","ronald","ronaldo","roni","ronit","ronie","ronja","ronni","rosa","rosalba","rosalia","rosalind","rosaline","rosalinda","rosalinde","rosalita","rosalva","rosana","rosane","rosanna","rosario","roswitha","rowena","roxana","roxanna","roxi","roxy"],
@@ -2100,8 +2100,8 @@ function getSets(lang) {
 
 const VALID_WORDS_EN = {
   prenom:{
-    A:["aaron","abby","abel","abigail","adam","adele","adrian","adriana","aiden","alan","alex","alexa","alexander","alexia","alice","alicia","alison","allison","amber","amelia","amy","andrew","andy","angela","anna","anne","anthony","ashley","austin","abigail","aiden","alicia","alyssa","amber","amelia","amy","april","aria","ariana","ariel","audrey","autumn","avery"],
-    B:["barbara","benjamin","bethany","bianca","bobby","brandon","brian","brittany","brooke","bryan","brianna","beatrice","bella","blake","bobby","bonnie","brady","brantley","brayden","brenda","brett","bridget","britney","brock","brodie","brooklyn"],
+    A:["aaron","abby","abel","abigail","adam","adele","adrian","adriana","aiden","alan","alex","alexa","alexander","alexia","alice","alicia","alison","allison","amber","amelia","amy","andrew","andy","angela","anna","anne","anthony","ashley","austin","alyssa","april","aria","ariana","ariel","audrey","autumn","avery"],
+    B:["barbara","benjamin","bethany","bianca","bobby","brandon","brian","brittany","brooke","bryan","brianna","beatrice","bella","blake","bonnie","brady","brantley","brayden","brenda","brett","bridget","britney","brock","brodie","brooklyn"],
     C:["caleb","cameron","chloe","christian","christopher","claire","cole","connie","cora","crystal","cynthia","callie","camille","caroline","carter","cassandra","cassidy","chad","charlie","chase","chelsea","chester","cody","colby","colin","colleen","conner","cooper","courtney"],
     D:["dakota","daniel","danielle","david","dawn","deborah","diana","dominic","donna","dylan","daisy","dallas","dalton","damian","damon","danika","daphne","darcy","darlene","darren","dawson","deanna","delaney","demi","denise","destiny","devlin","devin","dixie","dominique","donovan","dorian","dorothy","douglas","drew"],
     E:["eleanor","elizabeth","ella","emily","emma","eric","ethan","evan","evelyn","edgar","edith","elena","eli","elias","elijah","elise","eliza","ellie","elsie","emerson","emery","emilia","emilio","emmy","erica","erin","esther","eugenia"],
@@ -2125,7 +2125,7 @@ const VALID_WORDS_EN = {
     W:["william","wyatt","wade","wanda","warren","waverly","wendy","wes","weston","whitney","will","willow","winston","wren"],
     X:["xavier","xena","xiomara"],
     Y:["yara","yasmine","yolanda","yosef"],
-    Z:["zachary","zoe","zayne","zelda","zion","zoe"]
+    Z:["zachary","zoe","zayne","zelda","zion"]
   },
   pays:{
 
@@ -2803,7 +2803,7 @@ const VALID_WORDS_EN = {
 
 const VALID_WORDS_ES = {
   prenom:{
-    A:["aaron","abigail","abraham","adela","adriana","agustin","alba","alberto","alejandro","alex","alfredo","alicia","alonso","alvaro","amalia","amelia","ana","andres","angela","antonio","arturo","adriana","agata","agustin","aide","aileen","ainara","ainhoa","alan","alana","aldana","aldrich","alejandra"],
+    A:["aaron","abigail","abraham","adela","adriana","agustin","alba","alberto","alejandro","alex","alfredo","alicia","alonso","alvaro","amalia","amelia","ana","andres","angela","antonio","arturo","agata","aide","aileen","ainara","ainhoa","alan","alana","aldana","aldrich","alejandra"],
     B:["barbara","beatriz","benjamin","blanca","borja","belen","bernardo","bianca","brandon","brigitte","braulio","bruno","briana"],
     C:["camila","carlos","carmen","catalina","cesar","clara","claudia","concha","cristina","cristobal","camilo","carolina","cecilia","celia","christian","cloe","constanza","cynthia"],
     D:["daniel","david","diana","diego","dolores","dario","deborah","delia","denise","desmond","dominic","donaldo"],
@@ -2820,7 +2820,7 @@ const VALID_WORDS_ES = {
     O:["oscar","omar","octavio","olga","olivia","oralia","orlando","osvaldo"],
     P:["pablo","paloma","patricia","pedro","pilar","paola","pascual","paulina","paulo","piedad"],
     Q:["queenie","quintero","quique","quirino"],
-    R:["rafael","ramona","raul","rebeca","ricardo","roberto","rodrigo","rosa","ruben","ramiro","renata","reynaldo","rocio","rodrigo","rolando","roque","rosario"],
+    R:["rafael","ramona","raul","rebeca","ricardo","roberto","rodrigo","rosa","ruben","ramiro","renata","reynaldo","rocio","rolando","roque","rosario"],
     S:["samuel","sandra","santiago","sara","sebastian","silvia","sofia","salome","sergio","silvio","soledad","sonia","susana"],
     T:["teresa","tomas","tamara","tatiana","teodoro","thiago","trinidad"],
     U:["ubaldo","ulises","ulrika","uriel","ursula"],
@@ -2866,28 +2866,28 @@ const VALID_WORDS_ES = {
     F:["florencia","frankfurt","freetown","fukuoka"],
     G:["ginebra","glasgow","guangzhou","guadalajara"],
     H:["hamburgo","hanoi","harare","helsinki","hong kong","houston","hyderabad"],
-    I:["islamabad","estambul"],
-    J:["jakarta","jerusalen","johannesburgo","yeda"],
-    K:["kabul","kampala","karachi","katmandu","jartum","kigali","kinshasa","kingston","kuala lumpur","kiev"],
+    I:["islamabad"],
+    J:["jakarta","jerusalen","johannesburgo"],
+    K:["kabul","kampala","karachi","katmandu","kigali","kinshasa","kingston","kuala lumpur","kiev"],
     L:["la habana","lagos","lima","lisboa","londre","los angeles","la paz","lahore","libreville","lome","luanda","lusaka"],
-    M:["madrid","manila","marsella","medellin","ciudad de mexico","milan","minsk","mogadiscio","monrovia","montevideo","montreal","moscu","mumbai","munich"],
+    M:["madrid","manila","marsella","medellin","milan","minsk","mogadiscio","monrovia","montevideo","montreal","moscu","mumbai","munich"],
     N:["nairobi","nassau","niamey","nueva york","nueva delhi","nueva orleans"],
-    O:["osaka","oslo","uagadugu"],
-    P:["paris","pekin","phnom penh","praga","pretoria","panama","palermo","oporto","perth"],
+    O:["osaka","oslo"],
+    P:["paris","pekin","phnom penh","praga","pretoria","panama","palermo","perth"],
     Q:["quezon city","quito"],
     R:["rabat","reykjavik","riga","riad","rio de janeiro","roma","rotterdam"],
     S:["santiago","sao paulo","sarajevo","seattle","seul","shanghai","singapur","sofia","sydney","salt lake city","san antonio","san diego","san francisco","santo domingo"],
     T:["taipei","tbilisi","tegucigalpa","teheran","tesalonica","tokio","toronto","tripoli","tunez"],
     V:["vancouver","varsovia","viena","vilna","vladivostok","valencia"],
     W:["washington","winnipeg","wuhan"],
-    Y:["yangon","yaounde","erevan","yokohama"],
+    Y:["yangon","yaounde","yokohama"],
     Z:["zurich","zagreb"]
   },
   animal:{
 
     A:["abeja","aguilucho","aguila","alce","alligator","alpaca","anaconda","anemona","antilope","ardilla","armadillo"],
     B:["babosa","ballena","baracuda","buho","buey","bufalo","burro","buitre"],
-    C:["caiman","camaleón","camello","canguro","capibara","caracol","carpa","castor","cebra","ciervo","cobra","cocodrilo","conejo","corazon","cocodrilo","coyote","cucaracha","cuervo"],
+    C:["caiman","camaleón","camello","canguro","capibara","caracol","carpa","castor","cebra","ciervo","cobra","cocodrilo","conejo","corazon","coyote","cucaracha","cuervo"],
     D:["delfin","dinosaurio"],
     E:["elefante","erizo","escorpion"],
     F:["flamenco","foca","foron","frailecillo"],
@@ -2931,7 +2931,7 @@ const VALID_WORDS_ES = {
     P:["panadero","pastelero","pediatra","periodista","piloto","pintor","plomero","poeta","policia","profesor","psicologo"],
     Q:["quimico","quesero"],
     R:["radiologo","radiologe","realizador","reporter","reportero","restaurador"],
-    S:["sastre","secretario","sociologo","soldado","sommelier","surfista","veterinario"],
+    S:["sastre","secretario","sociologo","soldado","sommelier","surfista"],
     T:["tatuador","taxista","tecnico","terapeuta","torero","traductor"],
     U:["urbanista"],
     V:["vendedor","veterinario","vidriero","violinista","viticultor"],
@@ -2958,7 +2958,7 @@ const VALID_WORDS_ES = {
     O:["oliva","oregano"],
     P:["papa","papaya","pepino","pera","pimiento","piña","platano","puerro"],
     R:["rabano","remolacha","romero"],
-    S:["sandia","soja","tomate"],
+    S:["sandia","soja"],
     T:["tomate","tomillo","toronja","trufa"],
     U:["uva","uva pasa"],
     V:["vainilla","vanilla","verdolaga","verdura","vid"],
@@ -3043,12 +3043,12 @@ const VALID_WORDS_ES = {
     I:["inception","interestelar","intocables"],
     J:["jaws","joker","jurassic park"],
     K:["kill bill"],
-    L:["la la land","el leon rey","los miserables"],
+    L:["la la land","los miserables"],
     M:["matrix","mulan","manhattan","mision imposible","mad max"],
     N:["nomadland","nope"],
     P:["parasite","psicosis","pulp fiction"],
     R:["rocky","requiem"],
-    S:["scarface","shrek","lista de schindler","star wars"],
+    S:["scarface","shrek","star wars"],
     T:["titanic","tenet","the dark knight","taxi driver"],
     V:["vertigo"],},
   marque:{
@@ -3078,7 +3078,7 @@ const VALID_WORDS_ES = {
   anatomie:{
 
     A:["abdomen","aorta","apéndice","arteria"],
-    B:["biceps","boca","cerebro","columna"],
+    B:["biceps","boca","brazo","bronquio"],
     C:["calvaria","cartilago","cervical","clavicula","colon","cornea","costilla","craneo","cubito"],
     D:["deltoides","diafragma","duodeno"],
     E:["epidermis","esofago","espalda","esternon","estomago"],
@@ -3086,7 +3086,7 @@ const VALID_WORDS_ES = {
     G:["ganglio","garganta","glandula"],
     H:["hombro","hueso","humero"],
     I:["intestino"],
-    J:["mandibula"],
+    J:["juntura"],
     L:["laringe","ligamento","lobulo","lengua","labio"],
     M:["maxilar","membrana","menisco","musculo","muneca","muslo"],
     N:["nervio","nariz","nuca"],
@@ -3174,7 +3174,7 @@ const VALID_WORDS_ES = {
     N:["nebulosa","neutron","nasa"],
     O:["orbita"],
     P:["planeta","pluton","pulsar"],
-    R:["cohete","rover"],
+    R:["rover","radiacion"],
     S:["satelite","saturno","sol","supernova"],
     T:["telescopio"],
     U:["universo","urano"],
@@ -3196,8 +3196,8 @@ const VALID_WORDS_ES = {
     N:["narval","nautilo"],
     O:["ostra","orca","octopus"],
     P:["pelicano","pinguino","pirahna","pulpo","plancton"],
-    R:["raya","roca","tiburon"],
-    S:["salmon","sardina","sepia","tiburon"],
+    R:["raya","roca"],
+    S:["salmon","sardina","sepia"],
     T:["tortuga marina","turbot"],
     V:["vibora de mar"],},
   medievale:{
@@ -3223,10 +3223,10 @@ const VALID_WORDS_ES = {
     V:["vasallo","vidriera","vizconde"],},
   technologie:{
 
-    A:["algoritmo","android","antivirus","api","aplicacion","inteligencia artificial","automatizacion"],
+    A:["algoritmo","android","antivirus","api","aplicacion","automatizacion"],
     B:["banda ancha","binario","bitcoin","blockchain","bluetooth","bug"],
-    C:["chatbot","chip","nube","codigo","compilador","cpu","ciberseguridad"],
-    D:["datos","base de datos","debug","digital","drone"],
+    C:["chatbot","chip","codigo","compilador","cpu","ciberseguridad"],
+    D:["datos","debug","digital","drone"],
     E:["email","encriptacion","ethernet"],
     F:["firewall","framework","fibra optica"],
     G:["github","gps","gpu"],
@@ -3234,16 +3234,16 @@ const VALID_WORDS_ES = {
     I:["internet","interfaz","ios"],
     J:["java","javascript"],
     K:["kernel","kubernetes"],
-    L:["linux","aprendizaje automatico"],
+    L:["linux","lenguaje"],
     M:["memoria","microprocesador","monitor"],
-    N:["red","red neuronal"],
-    O:["codigo abierto","sistema operativo"],
+    N:["nube","numeracion"],
+    O:["open source","ordenador"],
     P:["pixel","procesador","programacion","protocolo","python"],
     R:["ram","robot","router"],
     S:["servidor","silicon","smartphone","software","streaming","sql"],
     T:["terminal","transistor"],
     U:["usb"],
-    V:["realidad virtual","virus"],
+    V:["virtualizacion","virus"],
     W:["wifi","web"],},
   danse:{
 
@@ -3273,7 +3273,7 @@ const VALID_WORDS_ES = {
     P:["pagoda","palacio","pilar","portal","portico"],
     R:["romanico","rotonda"],
     T:["templo","torre","transepto"],
-    V:["boveda","vestibulo","viaducto"],},
+    V:["vestibulo","viaducto","voladizo"],},
   sport_star:{
 
     A:["agassi","alcaraz","ali","anelka"],
@@ -3327,7 +3327,7 @@ const VALID_WORDS_ES = {
     E:["edimburgo","erevan"],
     F:["freetown","funafuti"],
     G:["gaborone","georgetown"],
-    H:["harare","la habana","helsinki","honiara"],
+    H:["harare","helsinki","honiara"],
     I:["islamabad"],
     J:["jakarta","jamestown","jerusalen"],
     K:["kabul","kampala","katmandu","kigali","kingston","kinshasa","kuala lumpur","kiev"],
@@ -3337,7 +3337,7 @@ const VALID_WORDS_ES = {
     O:["oslo","ottawa","ouagadougou"],
     P:["palikir","panama","paris","phnom penh","port au prince","porto novo","praga","pretoria"],
     R:["rabat","reykjavik","riga","riad","roma"],
-    S:["san jose","santiago","santo domingo","sarajevo","seul","singapur","skopje","sofia","estocolmo","suva"],
+    S:["san jose","santiago","santo domingo","sarajevo","seul","singapur","skopje","sofia","suva"],
     T:["taipei","tashkent","tbilisi","tegucigalpa","teheran","thimphu","tirana","tokio","tripoli","tunez","tallin"],
     V:["vaduz","valleta","viena","vilna"],},
   cuisine:{
@@ -3369,7 +3369,7 @@ const VALID_WORDS_ES = {
     E:["eufonio"],
     F:["flauta","fagot"],
     G:["guitarra","gong","gaita","gamelan"],
-    H:["harmonica","arpa","harmonium"],
+    H:["harmonica","harmonium","helicon"],
     I:["instrumento de cuerda"],
     J:["jews harp"],
     K:["kalimba","kazoo","koto"],
@@ -3393,14 +3393,14 @@ const VALID_WORDS_ES = {
     H:["hausa","hebreo","hindi","hungaro"],
     I:["ingles","islandes","indonesio","italiano","igbo"],
     J:["japones","javanes"],
-    K:["kazajo","jemer","kirguis","kannada","kinyarwanda","kurdo"],
+    K:["kazajo","kirguis","kannada","kinyarwanda","kurdo"],
     L:["leton","latin","lituano","luganda"],
     M:["macedonio","malagasy","malayo","maltes","mandarin","marathi","mongol"],
     N:["nepales","noruego","neerlandes"],
     O:["ourdou","oriya"],
     P:["pashto","persa","polaco","portugues","punjabi"],
     R:["rumano","ruso"],
-    S:["serbio","cingales","somalí","swahili","sueco"],
+    S:["serbio","somali","swahili","sueco","sindhi"],
     T:["tamil","telugu","tailandes","tibetano","turco"],
     V:["vietnamita","valenciano"],},
   monument:{
@@ -3408,19 +3408,19 @@ const VALID_WORDS_ES = {
     B:["big ben","borobudur","burj khalifa"],
     C:["chichen itza","cristo redentor","coliseo"],
     E:["estatua de la libertad"],
-    F:["ciudad prohibida"],
+    F:["foro romano","fontana de trevi"],
     G:["gran muralla china","gran canon","gran piramide"],
-    H:["hagia sofia","jardines colgantes"],
+    H:["hagia sofia","hradcany"],
     I:["invalides"],
     J:["jungfrau"],
     K:["kaaba","kremlin","karnak"],
-    L:["louvre","torre inclinada"],
+    L:["louvre","leaning tower","leptis magna"],
     M:["machu picchu","monte saint michel"],
     N:["notre dame","nazca"],
     O:["opera de sydney"],
     P:["partenon","petra","piramides de giza"],
     R:["reichstag"],
-    S:["sagrada familia","capilla sixtina","esfinge","stonehenge"],
+    S:["sagrada familia","stonehenge","senado romano","sigiriya"],
     T:["taj mahal","templo"],
     V:["vaticano","versalles"],},
   vehicule:{
@@ -3582,26 +3582,26 @@ function isValidAnswer(answer, categoryId, letter, lang) {
 }
 
 const AI_ANSWERS = {
-  prenom:{A:["alice","ambre","axel","adele","antoine","alexandre","amelie","anais"],B:["baptiste","bastien","brigitte","beatrice","benjamin"],C:["camille","clement","charlotte","charlotte","caroline","cedric"],D:["david","diane","dylan","delphine","damien"],E:["emma","emile","elisa","elodie","ethan","elena"],F:["felix","florian","fanny","flavie","frederic"],G:["gabriel","gaelle","gregoire","guilhem","gaetan"],H:["hugo","helene","henri","hubert","hadrien"],I:["ines","iris","ivan","ibrahima","ilona"],J:["julien","justine","jean","julie","jade"],K:["kilian","karine","kevin","kim","kelly"],L:["lucas","lucie","lea","louise","lola"],M:["marie","maxime","mathieu","margot","manon"],N:["noa","noe","noel","noemie","nicolas","nathan"],O:["oscar","olivier","odile","ophelie","olympe"],P:["pierre","pauline","philippe","paul","patricia"],Q:["quintino"],R:["romain","raphael","rachel","remi","renaud"],S:["sophie","simon","sarah","samuel","sebastien"],T:["thomas","theo","tina","thibault","tanguy"],U:["ugo","ulrik"],V:["victor","valerie","vincent","violette"],W:["william","wendy"],X:["xavier"],Y:["yasmine","yoann"],Z:["zoe","zadig"]},
-  nom:{A:["ali","adam","adams","adler","aumont","antoine","amar","albert"],B:["baron","barry","bailly","bardin","bernard","bourgeois","blanc","brunet"],C:["carr","camus","caron","carter","christoph","chauvin","clement","collin"],D:["dahan","danet","duval","daniel","dupont","durand","dubois","dufour"],E:["elie","eloy","elbaz","elias","etienne","evrard"],F:["fabre","faure","ferri","ferro","fontaine","francois","fleury"],G:["gehin","girod","garcia","girard","gilles","guerin","guibert"],H:["hamid","hardy","harel","haddad","hubert","henry","herve"],I:["icard","imbert","ibrahim"],J:["jean","jerome","jaccard","jacquet","joubert","julien"],K:["kahn","kante","keita","klein"],L:["lamy","leon","lafon","laval","lucas","leroy","lefebvre"],M:["marty","meyer","morin","macias","martin","michel","moreau"],N:["noel","naimi","neveu","nadeau","nicolas","nadia"],O:["oudin","ory","oliveira","ochoa"],P:["paul","paoli","paris","payet","petit","perrier","picard"],Q:["quentin"],R:["rene","roux","ramos","raoul","renard","rolland","roger"],S:["salle","simon","soler","salles","schmitt","simon","simon"],T:["tabet","testa","toure","tardif","thomas","touret"],V:["vidal","vigne","vinot","vallet","vincent","vallee"]},
-  pays:{A:["aceh","angola","arabie","açores","afghanistan","albanie","algerie","andorre","armenie","azerbaidjan","australie","autriche"],B:["benin","bresil","belize","bhutan","bahrein","bangladesh","bolivie","bosnie","botswana","bulgarie","burkina faso","burundi","bahamas","barbade"],C:["cuba","cook","chine","congo","cambodge","cameroun","canada","cap vert","centrafrique","tchad","chili","colombie","comores","cote divoire","croatie","chypre"],D:["danemark","djibouti","dominique","dominicaine"],E:["egypte","espagne","estonie","emirats","equateur","erythree","ethiopie","el salvador"],F:["fidji","france","finlande","formose"],G:["guam","grece","ghana","gabon","gambie","georgie","grenade","guatemala","guinee","guyane"],H:["haiti","hongrie","honduras","hollande"],I:["inde","iran","irak","italie","indonesie","irlande","islande","israel"],J:["japon","jordanie","jamaique"],K:["kenya","koweit","kosovo","kiribati","kazakhstan","kirghizistan"],L:["laos","liban","libye","liberia","lesotho","lettonie","liechtenstein","lituanie","luxembourg"],M:["mali","maroc","malte","malawi","madagascar","malaisie","maldives","mauritanie","maurice","mexique","moldavie","monaco","mongolie","montenegro","mozambique","myanmar"],N:["niue","niger","nepal","nauru","namibie","nicaragua","nigeria","norvege","nouvelle zelande"],O:["oman","ouganda","ouzbekistan"],P:["perou","panama","palaos","pologne","pakistan","palestine","papouasie","paraguay","philippines","portugal"],R:["russie","rwanda","roumanie","republique tcheque"],S:["suede","syrie","samoa","suisse","salvador","senegal","serbie","seychelles","sierra leone","singapour","slovaquie","slovenie","somalie","sri lanka","soudan"],T:["togo","tchad","tonga","timor","taiwan","tanzanie","thaïlande","trinite","tunisie","turquie","turkmenistan"],U:["ukraine","uruguay","ouzbekistan","ouganda"],V:["vietnam","vanuatu","venezuela"],W:["wallis"],Y:["yemen"],Z:["zambie","zimbabwe"]},
+  prenom:{A:["alice","ambre","axel","adele","antoine","alexandre","amelie","anais"],B:["baptiste","bastien","brigitte","beatrice","benjamin"],C:["camille","clement","charlotte","colette","caroline","cedric"],D:["david","diane","dylan","delphine","damien"],E:["emma","emile","elisa","elodie","ethan","elena"],F:["felix","florian","fanny","flavie","frederic"],G:["gabriel","gaelle","gregoire","guilhem","gaetan"],H:["hugo","helene","henri","hubert","hadrien"],I:["ines","iris","ivan","ibrahima","ilona"],J:["julien","justine","jean","julie","jade"],K:["kilian","karine","kevin","kim","kelly"],L:["lucas","lucie","lea","louise","lola"],M:["marie","maxime","mathieu","margot","manon"],N:["noa","noe","noel","noemie","nicolas","nathan"],O:["oscar","olivier","odile","ophelie","olympe"],P:["pierre","pauline","philippe","paul","patricia"],Q:["quintino"],R:["romain","raphael","rachel","remi","renaud"],S:["sophie","simon","sarah","samuel","sebastien"],T:["thomas","theo","tina","thibault","tanguy"],U:["ugo","ulrik"],V:["victor","valerie","vincent","violette"],W:["william","wendy"],X:["xavier"],Y:["yasmine","yoann"],Z:["zoe","zadig"]},
+  nom:{A:["ali","adam","adams","adler","aumont","antoine","amar","albert"],B:["baron","barry","bailly","bardin","bernard","bourgeois","blanc","brunet"],C:["carr","camus","caron","carter","christoph","chauvin","clement","collin"],D:["dahan","danet","duval","daniel","dupont","durand","dubois","dufour"],E:["elie","eloy","elbaz","elias","etienne","evrard"],F:["fabre","faure","ferri","ferro","fontaine","francois","fleury"],G:["gehin","girod","garcia","girard","gilles","guerin","guibert"],H:["hamid","hardy","harel","haddad","hubert","henry","herve"],I:["icard","imbert","ibrahim"],J:["jean","jerome","jaccard","jacquet","joubert","julien"],K:["kahn","kante","keita","klein"],L:["lamy","leon","lafon","laval","lucas","leroy","lefebvre"],M:["marty","meyer","morin","macias","martin","michel","moreau"],N:["noel","naimi","neveu","nadeau","nicolas","nadia"],O:["oudin","ory","oliveira","ochoa"],P:["paul","paoli","paris","payet","petit","perrier","picard"],Q:["quentin"],R:["rene","roux","ramos","raoul","renard","rolland","roger"],S:["salle","simon","soler","salles","schmitt","souza","sauvage"],T:["tabet","testa","toure","tardif","thomas","touret"],V:["vidal","vigne","vinot","vallet","vincent","vallee"]},
+  pays:{A:["aceh","angola","arabie","açores","afghanistan","albanie","algerie","andorre","armenie","azerbaidjan","australie","autriche"],B:["benin","bresil","belize","bhutan","bahrein","bangladesh","bolivie","bosnie","botswana","bulgarie","burkina faso","burundi","bahamas","barbade"],C:["cuba","cook","chine","congo","cambodge","cameroun","canada","cap vert","centrafrique","chili","colombie","comores","cote divoire","croatie","chypre"],D:["danemark","djibouti","dominique","dominicaine"],E:["egypte","espagne","estonie","emirats","equateur","erythree","ethiopie","el salvador"],F:["fidji","france","finlande","formose"],G:["guam","grece","ghana","gabon","gambie","georgie","grenade","guatemala","guinee","guyane"],H:["haiti","hongrie","honduras","hollande"],I:["inde","iran","irak","italie","indonesie","irlande","islande","israel"],J:["japon","jordanie","jamaique"],K:["kenya","koweit","kosovo","kiribati","kazakhstan","kirghizistan"],L:["laos","liban","libye","liberia","lesotho","lettonie","liechtenstein","lituanie","luxembourg"],M:["mali","maroc","malte","malawi","madagascar","malaisie","maldives","mauritanie","maurice","mexique","moldavie","monaco","mongolie","montenegro","mozambique","myanmar"],N:["niue","niger","nepal","nauru","namibie","nicaragua","nigeria","norvege","nouvelle zelande"],O:["oman","ouganda","ouzbekistan"],P:["perou","panama","palaos","pologne","pakistan","palestine","papouasie","paraguay","philippines","portugal"],R:["russie","rwanda","roumanie","republique tcheque"],S:["suede","syrie","samoa","suisse","salvador","senegal","serbie","seychelles","sierra leone","singapour","slovaquie","slovenie","somalie","sri lanka","soudan"],T:["togo","tchad","tonga","timor","taiwan","tanzanie","thaïlande","trinite","tunisie","turquie","turkmenistan"],U:["ukraine","uruguay"],V:["vietnam","vanuatu","venezuela"],W:["wallis"],Y:["yemen"],Z:["zambie","zimbabwe"]},
   ville:{A:["apt","aden","agra","albi","amsterdam","athenes","ankara","abidjan","alexandrie","alger","amman","addis abeba","asmara","auckland","abu dhabi"],B:["bali","brno","baku","bonn","barcelone","berlin","bogota","buenos aires","bruxelles","budapest","bagdad","bangkok","beyrouth","bangalore","birmingham","brasilia","bridgetown","bruges"],C:["caen","cebu","cali","cairo","calcutta","caracas","casablanca","chicago","colombo","copenhague","calgary","cannes","canberra","chengdu","chisinau"],D:["dax","doha","dubai","dakar","delhi","dacca","dublin","dallas","dar es salam","djakarta","dortmund","dushanbe","durban"],E:["evry","erbil","essen","enugu","edimbourg","eindhoven"],F:["fez","flers","frejus","fresno","florence","francfort","fukuoka","freetown"],G:["gap","goma","gaya","gijon","geneve","glasgow","guangzhou","guadalajara","gothenburg"],H:["hem","hanoi","haifa","hefei","hambourg","harare","helsinki","hong kong","houston","hyderabad"],I:["ife","ipoh","iasi","imus","istanbul","islamabad"],J:["jos","jinan","jinja","jambi","jakarta","jerusalem","johannesburg"],K:["kiev","kobe","kano","kinshasa","kaboul","kampala","karachi","katmandou","khartoum","kigali","kingston","kuala lumpur"],L:["lima","lyon","lome","lodz","lagos","lisbonne","los angeles","la paz","lahore","libreville","luanda","lusaka"],M:["male","metz","meru","miri","madrid","manille","marseille","medellin","milan","moscou","mumbai","munich","montreal","mogadiscio","monrovia","montevideo"],N:["nice","nimes","niort","nancy","nairobi","nassau","niamey","nueva york","nouakchott"],O:["oslo","oran","omsk","orsay","osaka","ottawa","ouagadougou"],P:["pau","pune","paris","porto","pekin","phnom penh","prague","pretoria","panama","palerme"],Q:["quito","quezon"],R:["rome","riad","riga","rabat","reykjavik","rio de janeiro","rotterdam","rangoun"],S:["sete","sens","sfax","suva","santiago","sao paulo","sarajevo","seoul","shanghai","singapour","sofia","stockholm","sydney","salt lake city"],T:["thes","tokyo","tunis","tours","taipei","tbilisi","tegucigalpa","teheran","tripoli","toronto"],U:["ulaanbaatar","utrecht"],V:["vigo","vichy","varna","vienne","varsovie","vancouver","vladivostok"],W:["washington","winnipeg","wuhan","wellington"],X:["xian","xiamen"],Y:["yangon","yaounde","yerevan","yokohama"],Z:["zurich","zagreb"]},
   animal:{A:["ane","ara","aigle","amibe"],B:["boa","bouc","bison","biche"],C:["coq","chat","cerf","chien"],D:["daim","dodo","dama","dard"],E:["elk","emeu","elan","esox"],F:["faon","flet","furet","felin"],G:["gnou","geai","guib","gecko"],H:["hase","hyla","hibou","hyene"],I:["ibis","isard","iguane","impala"],J:["jaguar","jerboa","jaguarundi"],K:["kob","kiwi","koala","kodiak"],L:["lion","loup","lynx","loir"],M:["maki","mole","morse","mante"],N:["nase","nyala","narval","nandou"],O:["ours","orque","okapi","ocelot"],P:["pic","pie","paon","plie"],R:["rat","raie","renne","renard"],S:["singe","seche","serin","saumon"],T:["taon","thon","tigre","tatou"],V:["vache","vison","varan","vipere"]},
-  fruit:{A:["ail","acai","ache","akee","abricot","amande","airelle","ananas","aneth","artichaut","asperge","avocat","anis"],B:["baie","bluet","boldo","banane","betterave","brocoli","bleuet","brugnon","basilic"],C:["chou","coing","carob","cumin","cerise","citron","coco","courge","concombre","canneberge","cassis","carotte","cannelle","ciboulette"],D:["datte","durian","daikon","damson","dill","douce"],E:["endive","epinard","edamame","epazote","estragon","eglantier"],F:["feve","figue","fruit","fraise","framboise","fenouil","fenugrec"],G:["goji","gombo","gesse","gland","groseille","grenade","gingembre","groseille rouge","guava"],H:["hysope","haricot","houblon","hibiscus","huile dolive"],I:["igname","icaque","ipomee"],J:["jujube","jasmin","jackfruit","jalapeno","julienne"],K:["kiwi","kale","kafir","kumquat","kaki"],L:["lupin","lichi","lotus","litchi","lime","lupin","lentille"],M:["mure","mais","melon","mache","mangue","mirabelle","myrtille","mandarine","menthe","morelle"],N:["nefle","navet","noisette","nectarine","noix","nori"],O:["orange","olive","oseille","origan","okra","oignon"],P:["peche","poire","prune","pomme","papaye","poivron","pamplemousse","patate","persil","physalis","pistache"],R:["rose","radis","raisin","ronces","rhubarbe","romarin","roquette"],S:["soja","sauge","sureau","sapote","sorbet","sureau","spinard"],T:["thym","taro","tomate","truffe","thé vert"],V:["vigne","vanille","valerian","violette","vesce"]},
+  fruit:{A:["ail","acai","ache","akee","abricot","amande","airelle","ananas","aneth","artichaut","asperge","avocat","anis"],B:["baie","bluet","boldo","banane","betterave","brocoli","bleuet","brugnon","basilic"],C:["chou","coing","carob","cumin","cerise","citron","coco","courge","concombre","canneberge","cassis","carotte","cannelle","ciboulette"],D:["datte","durian","daikon","damson","dill","douce"],E:["endive","epinard","edamame","epazote","estragon","eglantier"],F:["feve","figue","fruit","fraise","framboise","fenouil","fenugrec"],G:["goji","gombo","gesse","gland","groseille","grenade","gingembre","groseille rouge","guava"],H:["hysope","haricot","houblon","hibiscus","huile dolive"],I:["igname","icaque","ipomee"],J:["jujube","jasmin","jackfruit","jalapeno","julienne"],K:["kiwi","kale","kafir","kumquat","kaki"],L:["lupin","lichi","lotus","litchi","lime","lentille"],M:["mure","mais","melon","mache","mangue","mirabelle","myrtille","mandarine","menthe","morelle"],N:["nefle","navet","noisette","nectarine","noix","nori"],O:["orange","olive","oseille","origan","okra","oignon"],P:["peche","poire","prune","pomme","papaye","poivron","pamplemousse","patate","persil","physalis","pistache"],R:["rose","radis","raisin","ronces","rhubarbe","romarin","roquette"],S:["soja","sauge","sureau","sapote","sorbet","spinard"],T:["thym","taro","tomate","truffe","thé vert"],V:["vigne","vanille","valerian","violette","vesce"]},
   metier:{A:["agent","avocat","acteur","auteur","architecte","agronome","ambulancier","analyste","animateur","anthropologue","archaeologue","archiviste","astronaute","astronome"],B:["barman","berger","boucher","banquier","boulanger","biologiste","biochimiste","brodeur","briquetier"],C:["clerc","clown","coach","cirier","charpentier","chimiste","chirurgien","comptable","conseiller","cuisinier","courtier","cordonnier","cartographe"],D:["dj","doreur","driver","danseur","decorateur","dentiste","designer","detective","developpeur","directeur","diplomate","dieteticien"],E:["espion","employe","editeur","ecrivain","electricien","eleveur","ergonome","expert","ethnologue"],F:["facteur","fermier","faiseur","farrier","fleuriste","forgeron","fonctionnaire","formateur","fiscaliste"],G:["garde","guide","garcon","gobeur","geologue","geographe","graphiste","gestionnaire"],H:["huissier","hotelier","historien","humaniste","horloger","hydraulicien"],I:["infirmier","ingenieur","intendant","imprimeur","illustrateur","informaticien","inspecteur","installateur","instituteur"],J:["juge","juriste","jaugeur","jongleur","jardinier","joaillier","journaliste"],K:["kiosquier","kinesitherapeute"],L:["laveur","luthier","legiste","lisseur","libraire","linguiste","logisticien"],M:["macon","maire","marin","mineur","menuisier","medecin","meteorologue","militaire","musicien","maroquinier"],N:["notaire","negociant","navigateur","neurologue","nutritionniste"],O:["orfevre","opticien","osteopathe","oceanographe","orientaliste"],P:["pilote","potier","pompier","pecheur","peintre","pharmacien","photographe","physicien","plombier","professeur","psychiatre","psychologue","patissier","podologue"],Q:["qualitologue"],R:["routier","rondier","reporter","redacteur","radiologue","restaurateur","receptionniste"],S:["serveur","soudeur","sportif","steward","sculpteur","sociologue","sommelier","styliste","sage femme"],T:["torero","tourneur","tailleur","taxateur","technicien","therapeute","traducteur","trameur"],U:["urbaniste","urgentiste"],V:["vendeur","verrier","veilleur","vigneron","veterinaire","videographe"],W:["webmaster","webdesigner"],X:["xenobiologiste"],Y:["yogamaster"],Z:["zoologue","zoologiste"]},
   celebrite:{A:["adele","ahanu","aragon","achille"],B:["brel","briand","balzac","beyonce"],C:["camus","cesar","cesaire","colette"],D:["dali","drake","dante","dalida"],E:["eminem","erasme","euclide","einstein"],F:["freud","flaubert","frida kahlo","frank sinatra"],G:["gauss","gorki","gandhi","goethe"],H:["hugo","homer","horace","hannibal"],I:["ibsen","ice cube","idris elba","ibn battuta"],J:["jay z","jean zay","joao miro","james dean"],K:["kant","kafka","kepler","karl marx"],L:["lorca","lao tseu","lady gaga","lamartine"],M:["marx","messi","manet","mozart"],N:["neruda","newton","napoleon","nijinski"],O:["obama","omar sharif","orson welles"],P:["poe","prince","pascal","platon"],R:["rumi","rodin","racine","reagan"],S:["sade","sartre","stomae","shakira"],T:["tupac","tzara","tyson","tesla"],V:["verne","vinci","virgile","vivaldi"]},
-  sport:{A:["aviron","aikido","aerobic","agility","athletisme","alpinisme","aquagym","auto moto"],B:["bmx","boxe","billard","bowling","badminton","baseball","basketball","biathlon","bodyboard","bodybuilding","breakdance"],C:["canoe","corso","cricket","croquet","cyclisme","cheerleading","curling","crossfit","capoeira"],D:["dart","discus","diving","decathlon","danse sportive","deltaplane"],E:["escrime","escalade","exercise","endurance","equitation","enduro"],F:["fitboxe","fitness","freeski","football","flechettes","frisbee","funambulisme"],G:["golf","goalball","gymnastique","glissade","grimpette"],H:["hockey","hurling","hornuss","handball","halterophilie","hippisme"],I:["ice hockey","inline skating","ironman","indoor climbing"],J:["judo","jetski","jogging","javelin","jiu jitsu","jumping"],K:["kendo","kayak","karate","kitesurf","kickboxing","korfball"],L:["luge","lutte","lancer","lacrosse","longboard","laser"],M:["mma","moto","mushing","marathon","muay thai","motocross","mountainbike"],N:["natation","nage synchronisee","nordic ski","nage libre"],O:["open water","orienteering"],P:["polo","padel","paddle","pelote","parachutisme","parkour","patinage","pentathlon","pêche"],Q:["quad"],R:["raid","ring","rugby","rodeo","rafting","rallye","roller","rowing"],S:["ski","surf","sumo","squash","skateboard","snowboard","squash","savate"],T:["tir","trial","tennis","triathlon","tir a larc","tae kwondo","trampolino"],U:["ultimate frisbee"],V:["vtt","velo","voile","voltige","volleyball","varappe"],W:["wakeboard","water polo"],X:["xcountry"],Y:["yoga"],Z:["zumba"]},
+  sport:{A:["aviron","aikido","aerobic","agility","athletisme","alpinisme","aquagym","auto moto"],B:["bmx","boxe","billard","bowling","badminton","baseball","basketball","biathlon","bodyboard","bodybuilding","breakdance"],C:["canoe","corso","cricket","croquet","cyclisme","cheerleading","curling","crossfit","capoeira"],D:["dart","discus","diving","decathlon","danse sportive","deltaplane"],E:["escrime","escalade","exercise","endurance","equitation","enduro"],F:["fitboxe","fitness","freeski","football","flechettes","frisbee","funambulisme"],G:["golf","goalball","gymnastique","glissade","grimpette"],H:["hockey","hurling","hornuss","handball","halterophilie","hippisme"],I:["ice hockey","inline skating","ironman","indoor climbing"],J:["judo","jetski","jogging","javelin","jiu jitsu","jumping"],K:["kendo","kayak","karate","kitesurf","kickboxing","korfball"],L:["luge","lutte","lancer","lacrosse","longboard","laser"],M:["mma","moto","mushing","marathon","muay thai","motocross","mountainbike"],N:["natation","nage synchronisee","nordic ski","nage libre"],O:["open water","orienteering"],P:["polo","padel","paddle","pelote","parachutisme","parkour","patinage","pentathlon","pêche"],Q:["quad"],R:["raid","ring","rugby","rodeo","rafting","rallye","roller","rowing"],S:["ski","surf","sumo","squash","skateboard","snowboard","savate"],T:["tir","trial","tennis","triathlon","tir a larc","tae kwondo","trampolino"],U:["ultimate frisbee"],V:["vtt","velo","voile","voltige","volleyball","varappe"],W:["wakeboard","water polo"],X:["xcountry"],Y:["yoga"],Z:["zumba"]},
   objet:{A:["abri","ancre","alene","album"],B:["bol","bac","bloc","balai"],C:["cle","canif","cible","chaise"],D:["drap","dame","dard","dais"],E:["epee","etau","etui","ecran"],F:["fil","frigo","flute","fusil"],G:["gant","grue","gaffe","gaine"],H:["haie","houe","hamac","hache"],I:["icone","imprimante","impermeable"],J:["jatte","jauge","jeton","jersey"],K:["kayak"],L:["lit","lien","lampe","livre"],M:["main","micro","moule","masse"],N:["nœud","nappe","noeud","nasse"],O:["outil","oreillers","objet de collection"],P:["pieu","plume","porte","pince"],R:["roue","regle","radio","rivet"],S:["sac","soc","seau","sofa"],T:["tube","table","tapis","tasse"],V:["vase","verre","vitre","volet"]},
   film:{A:["alien","amour","avatar","amelie","apocalypse now","arrival","a beautiful mind"],B:["bambi","blade","batman","brazil","boyhood","braveheart","black swan"],C:["coco","cleo","coda","crash","casablanca","citizen kane","clockwork orange"],D:["dune","drive","daddy","django","dark knight","dead poets society"],E:["et","enigma","elysium","enfants du paradis"],F:["fargo","flash","fantomas","face off","fight club","finding nemo"],G:["ghost","grease","gravity","gattaca","godfather","gladiator"],H:["her","heat","hugo","highlander","harry potter"],I:["inception","interstellar","intouchables"],J:["jaws","joker","jarmusch","jungle book","jurassic park"],K:["kids","kong","kundun","kill bill"],L:["lion","la haine","lamerica","lady bird","lord of the rings","la la land"],M:["mulan","matrix","mad max","memento","moonlight","moulin rouge"],N:["nope","noir","notebook","nomadland"],O:["oldboy","odyssee"],P:["pan","piano","psycho","parasite","pulp fiction"],R:["ran","roma","rocky","requiem","rear window","rain man"],S:["shrek","speed","seven","shining","schindler","scarface","star wars"],T:["tenet","titanic","taxi driver","the godfather","terminator"],V:["vertigo","valerian","v pour vendetta"]},
   marque:{A:["ag","amc","audi","acne"],B:["bmw","bic","bbc","bose"],C:["canon","chanel","celine","cessna"],D:["dhl","dior","dacia","darty"],E:["ebay","epson","esprit","etnies"],F:["ford","fila","fiat","fendi"],G:["gap","gucci","google","goyard"],H:["hp","h m","head","honda"],I:["ikea","intel","imperial","in n out"],J:["joop","james","jaguar","jordan"],K:["kia","keen","kenzo","kappa"],L:["lg","lego","lacor","levis"],M:["moet","muji","mango","marni"],N:["nba","nfl","nike","nars"],O:["omega","oysho","ouibus","off white"],P:["puma","peck","polo","prada"],R:["roca","rolex","reiss","ricoh"],S:["sony","seiko","stella","stussy"],T:["tesla","total","toyota","twitter"],V:["vans","versace","viceroy","vuitton"]},
-  anatomie:{A:["anus","aine","aorte","atlas","abdomen","artere","articulation","auriculaire"],B:["bras","bulbe","biceps","bassin","bouche","bronche"],C:["cil","col","cou","cote","cerveau","colonne","cornee","cranie"],D:["dos","dents","derme","deltoid","diaphragme","duodenum"],E:["epine","epaule","estomac","epiderme","oreille","coude"],F:["foie","femur","front","flanc","fibula"],G:["genou","gorge","glande","glotte","gencive"],H:["hanche","humerus","hippocampe"],I:["iris","index","ischio","intestin"],J:["joue","jambe","jugulaire"],K:["kyste","keratine"],L:["lobe","levre","langue","ligament","larynx","lombes"],M:["muscle","moelle","mitral","mollet","membrane","menisque"],N:["nez","nerf","nuque","nasal","nombril"],O:["oreille","ovaire","omoplat","organe"],P:["peau","pied","pouce","paume","pancreas","patella","pelvis"],Q:["quadriceps"],R:["rein","radius","rectum","rotule","retine"],S:["sang","sinus","sacrum","salive","sternum"],T:["tibia","tarse","tempe","tendon","thorax"],U:["ulna","uterus"],V:["veine","valve","vagin","vertebre"]},
+  anatomie:{A:["anus","aine","aorte","atlas","abdomen","artere","articulation","auriculaire"],B:["bras","bulbe","biceps","bassin","bouche","bronche"],C:["cil","col","cou","cote","cerveau","colonne","cornee","cranie"],D:["dos","dents","derme","deltoid","diaphragme","duodenum"],E:["epine","epaule","estomac","epiderme","epiphyse","email"],F:["foie","femur","front","flanc","fibula"],G:["genou","gorge","glande","glotte","gencive"],H:["hanche","humerus","hippocampe"],I:["iris","index","ischio","intestin"],J:["joue","jambe","jugulaire"],K:["kyste","keratine"],L:["lobe","levre","langue","ligament","larynx","lombes"],M:["muscle","moelle","mitral","mollet","membrane","menisque"],N:["nez","nerf","nuque","nasal","nombril"],O:["oreille","ovaire","omoplat","organe"],P:["peau","pied","pouce","paume","pancreas","patella","pelvis"],Q:["quadriceps"],R:["rein","radius","rectum","rotule","retine"],S:["sang","sinus","sacrum","salive","sternum"],T:["tibia","tarse","tempe","tendon","thorax"],U:["ulna","uterus"],V:["veine","valve","vagin","vertebre"]},
   musique:{A:["abba","adele","akon","amy winehouse","arctic monkeys","asap rocky"],B:["brel","blur","bach","booba","beatles","beyonce","bob marley","bruce springsteen"],C:["chopin","camille","cardi b","coldplay","chris brown"],D:["drake","dalida","dj snake","daft punk","david bowie","dire straits"],E:["eminem","ed sheeran","edith piaf","elton john","ella fitzgerald"],F:["fugees","frank ocean","foo fighters","florent pagny","fleetwood mac"],G:["gorillaz","green day","gainsbourg","guns n roses","george michael"],H:["hamza","hendrix","hans zimmer","harry styles"],I:["inxs","indochine","iron maiden","imagine dragons"],J:["jay z","jamiroquai","julien dore","james brown","johnny cash","john legend"],K:["keane","khalid","koffee","kid cudi","kanye west"],L:["lorde","lizzo","logic","lords","lady gaga","lauryn hill","led zeppelin"],M:["maes","moby","muse","mozart","madonna","maroon 5","miles davis","mac miller"],N:["nas","ninho","nekfeu","nirvana","notorious big"],O:["oasis"],P:["piaf","prince","pharrell","pearl jam","post malone","pink floyd"],R:["rone","rihanna","r kelly","raphael","radiohead","rage against the machine"],S:["sting","skepta","summer","shakira","snoop dogg","sam smith","sex pistols"],T:["toto","the cure","the doors","the weeknd","talking heads","taylor swift"],U:["u2"],V:["vald","vianney","vivaldi","vampire weekend"],W:["weeknd"]},
   cuisine:{A:["ail","aloo","adobo","acras","aligot","artichaut","assiette"],B:["boeuf","blini","burek","bisque","baguette","boeuf bourguignon","baklava"],C:["crepe","curry","chili","confit","cassoulet","coquilles saint jacques","carpaccio"],D:["daube","dashi","dolma","dinde","dorade"],E:["etuvee","epinard","escalope","empanada"],F:["farce","frito","fondue","fajita","foie gras","felafel"],G:["gyoza","gyros","glace","gratin","gaspacho"],H:["hummus","hotpot","harira","harissa","hamburger"],I:["idli","injera","iskender","involtini"],J:["jerk","jiaozi","julienne","jambalaya"],K:["kefta","kebbeh","kimchi","kibbeh","kebab"],L:["laksa","lardo","lapin","leche","lasagne","lentille"],M:["mole","miso","makis","migas","moussaka","mousse"],N:["naan","nems","nougat","nachos"],O:["osso buco","omelette"],P:["pho","pate","pizza","poele","paella","pois chiches","polenta"],Q:["quiche"],R:["roti","ramen","rosbif","risotto","ratatouille"],S:["sushi","soupe","steak","sauce","saumon","salade"],T:["taco","tofu","tarte","tapas","tiramisu"],U:["udon"],V:["veau","vatapa","veloute","volaille"],W:["waffle","wok"],Y:["yaourt"],Z:["zaatar"]},
   vehicule:{A:["atv","audi","avion","aviso","ambulance","autobus","autocar"],B:["bus","bac","bmw","bob","bateau","bulldozer","bicyclette"],C:["cab","car","char","canoe","camion","cable car","catamaran"],D:["drone","dumper","drakkar","dragster","dirigeable"],E:["engin","escalator","excavateur","embarcation"],F:["fiat","ford","fusee","frigat","ferry"],G:["grue","galere","grader","go kart","gondole"],H:["hot rod","hydrofoil","hydravion","hovercraft","helicoptere"],I:["isetta"],J:["jet","jeep","jonque","jet ski"],K:["kayak","karting"],L:["luge","landau","lancia","libelle","limousine","locomotive"],M:["moto","metro","mazda","moped","minibus"],N:["nef","navire","navette"],O:["ocean liner"],P:["pelle","patrol","peugeot","planeur","parachute"],Q:["quad"],R:["rame","radeau","renault","remorque","rocket","raft"],S:["suv","skate","segway","suzuki","scooter","sous marin","speedboat"],T:["tank","taxi","tram","train","tracteur"],U:["uber"],V:["van","velo","vespa","viking"],W:["watercraft"],Z:["zeppelin"]},
-  capital:{A:["apia","alger","amman","accra","abou dabi","abuja","addis abeba","andorre la vielle","ankara","antananarivo","ashgabat","assouan","astana","asmara","athens"],B:["berne","bagdad","berlin","bamako","banjul","bangui","belmopan","belgrade","beyrouth","bishkek","bissau","bogota","brasilia","bratislava","brazzaville","bridgetown","bruxelles","bujumbura","budapest"],C:["cairo","colombo","conakry","caracas","canberra","castries","chisinau","copenhague"],D:["doha","dili","dacca","dakar","dhaka","djibouti","dodoma","douglas"],E:["erevan","edinburgh"],F:["funafuti","freetown"],G:["gaborone","georgetown","guatemala city"],H:["harare","havane","honiara","helsinki"],I:["islamabad"],J:["jakarta","jerusalem","jamestown"],K:["kiev","kaboul","kigali","kampala","katmandou","khartoum","kingston","kinshasa","kuala lumpur"],L:["lima","lome","luanda","lusaka","la paz","libreville","lilongwe","lisbonne","londres","la valette"],M:["male","minsk","madrid","moscou","managua","manille","maputo","maseru","mbabane","mogadiscio","monrovia","montevideo","moroni","muscat"],N:["nassau","niamey","nairobi","nicosia","ndjamena","naypyidaw","nukualofa","nueva delhi"],O:["oslo","ottawa"],P:["paris","prague","panama","palikir","phnom penh","port au prince","port moresby","porto novo","pretoria"],Q:["quito"],R:["riad","rome","riga","rabat","reykjavik"],S:["suva","seoul","sofia","skopje","san jose","santiago","santo domingo","sao tome","sarajevo","singapour","stockholm","sucre"],T:["tokyo","tunis","tirana","teheran","taipei","tachkent","tbilissi","tegucigalpa","thimphu","tripoli","tallinn"],U:["ulu","ulaanbaatar"],V:["vaduz","vienne","vilnius","valleta"],W:["varsovie","washington","windhoek"],Y:["yaounde","yangon"],Z:["zagreb","zamboanga"]},
-  monument:{A:["agra","alta","agora","arche","alhambra","angkor","arc de triomphe"],B:["big ben","beffroi","basilique","borobudur","buckingham"],C:["chora","cluny","cheops","crypte","colisee","christ the redeemer"],D:["delphi","dolmen","dome du rocher","dome des rochers"],E:["ephese","escorial","tour eiffel","easter island"],F:["forum romain","fortification","forbidden city","fontaine de trevi"],G:["gaudi","grotte","glacier","golden gate","grande pyramide","grande muraille"],H:["himeji","hadrien","hradcany","hollywood","hagia sophia"],I:["invalides"],J:["jardin","jerash","jungfrau"],K:["kaaba","karnak","kremlin","kilimanjaro"],L:["luxor","louvre","leptis magna","leaning tower"],M:["moai","minar","minaret","mosquee","machu picchu","mont saint michel"],N:["nazca","niagara","notre dame"],O:["olympe"],P:["petra","pompei","pagode","pergame","parthenon","pyramides"],Q:["qoqand"],R:["rialto","rempart","red fort","reichstag"],S:["sphinx","sistine","sigiriya","serengeti","stonehenge","sagrada familia","statue de la liberte"],T:["tour","torii","temple","tianmen","taj mahal"],V:["vatican","versailles","victoria falls"]},
-  langue:{A:["akan","arabe","azeri","aymara","afrikaans","albanais","amharique","armenien"],B:["birman","basque","breton","buryat","bengali","bosnien","bulgare","bielorusse"],C:["corse","coreen","croate","chinois","catalan","cantonnais"],D:["dari","danois","dzongkha","dialecte"],E:["ewe","espagnol","estonien","esperanto","anglais"],F:["farsi","frison","finnois","fidjien","flamand","francais"],G:["grec","gallois","guarani","georgien","gujarati","gaelique"],H:["hindi","hebrew","hebreu","haoussa","hongrois"],I:["igbo","italien","islandais","indonesien"],J:["japonais","javanais"],K:["khmer","kongo","kurde","kazakh","kinyarwanda","kirghiz"],L:["latin","letton","luganda","lituanien","laotien"],M:["malais","mongol","maltais","marathi","macedonien","mandarin"],N:["nepalais","norvegien"],O:["ourdou","occitan"],P:["persan","pashto","punjabi","polonais","portugais"],Q:["quechua"],R:["russe","roumain"],S:["serbe","somali","sindhi","suedois","swahili","slovaque","slovene"],T:["turc","thai","tatar","tamoul","tibetain","telougou"],U:["ukrainien","ouzbek"],V:["valencien","vietnamien"],W:["wolof","welsh"],X:["xhosa"],Y:["yoruba"],Z:["zoulou"]},
-  instrument:{A:["alto","arpa","appeau","alphorn","accordeon"],B:["banjo","basse","bongo","bugle","basson","berimbau","bouzouki"],C:["cor","cajon","caixa","clave","clarinette","clavecin","cello"],D:["daf","dre","dhol","didgeridoo","djembe","dulcimer"],E:["epinette","euphonium"],F:["fife","flute","fifre","flageolet","fiddle"],G:["gong","gaita","geige","guitare","gamelan","glockenspiel"],H:["harpe","helicon","hautbois","harmonica","harmoniume","harpe","harpsichord"],I:["imbila"],J:["jouhikko","jews harp"],K:["koto","kora","kazoo","kecak","kalimba"],L:["lur","lir","luth","lyre"],M:["mbira","maracas","melodeon","melodica","mandoline","marimba"],N:["nay","ngoni","nyckelharpa"],O:["orgue","oboe"],P:["pipa","piano","piccolo","psalterion","pan flute"],Q:["quena"],R:["rebab","rebec","rubab","recorder"],S:["saxo","sitar","sarod","sanza","synthé","steel drum"],T:["tar","tuba","tabla","tiple","trompette","trombone","triangle","tambour"],U:["ukulele"],V:["viol","viole","viola","veena","violon","vibraphone"],X:["xylophone"],Z:["zither"]},
+  capital:{A:["apia","alger","amman","accra","abou dabi","abuja","addis abeba","andorre la vielle","ankara","antananarivo","ashgabat","assouan","astana","asmara","athens"],B:["berne","bagdad","berlin","bamako","banjul","bangui","belmopan","belgrade","beyrouth","bishkek","bissau","bogota","brasilia","bratislava","brazzaville","bridgetown","bruxelles","bujumbura","budapest"],C:["cairo","colombo","conakry","caracas","canberra","castries","chisinau","copenhague"],D:["doha","dili","dacca","dakar","dhaka","djibouti","dodoma","douglas"],E:["erevan","edinburgh"],F:["funafuti","freetown"],G:["gaborone","georgetown","guatemala city"],H:["harare","havane","honiara","helsinki"],I:["islamabad"],J:["jakarta","jerusalem","jamestown"],K:["kiev","kaboul","kigali","kampala","katmandou","khartoum","kingston","kinshasa","kuala lumpur"],L:["lima","lome","luanda","lusaka","la paz","libreville","lilongwe","lisbonne","londres","la valette"],M:["male","minsk","madrid","moscou","managua","manille","maputo","maseru","mbabane","mogadiscio","monrovia","montevideo","moroni","muscat"],N:["nassau","niamey","nairobi","nicosia","ndjamena","naypyidaw","nukualofa","nueva delhi"],O:["oslo","ottawa"],P:["paris","prague","panama","palikir","phnom penh","port au prince","port moresby","porto novo","pretoria"],Q:["quito"],R:["riad","rome","riga","rabat","reykjavik"],S:["suva","seoul","sofia","skopje","san jose","santiago","santo domingo","sao tome","sarajevo","singapour","stockholm","sucre"],T:["tokyo","tunis","tirana","teheran","taipei","tachkent","tbilissi","tegucigalpa","thimphu","tripoli","tallinn"],U:["ulu","ulaanbaatar"],V:["vaduz","vienne","vilnius","valleta"],W:["washington","windhoek","wellington"],Y:["yaounde","yangon"],Z:["zagreb","zamboanga"]},
+  monument:{A:["agra","alta","agora","arche","alhambra","angkor","arc de triomphe"],B:["big ben","beffroi","basilique","borobudur","buckingham"],C:["chora","cluny","cheops","crypte","colisee","christ the redeemer"],D:["delphi","dolmen","dome du rocher","dome des rochers"],E:["ephese","escorial","easter island","empire state"],F:["forum romain","fortification","forbidden city","fontaine de trevi"],G:["gaudi","grotte","glacier","golden gate","grande pyramide","grande muraille"],H:["himeji","hadrien","hradcany","hollywood","hagia sophia"],I:["invalides"],J:["jardin","jerash","jungfrau"],K:["kaaba","karnak","kremlin","kilimanjaro"],L:["luxor","louvre","leptis magna","leaning tower"],M:["moai","minar","minaret","mosquee","machu picchu","mont saint michel"],N:["nazca","niagara","notre dame"],O:["olympe"],P:["petra","pompei","pagode","pergame","parthenon","pyramides"],Q:["qoqand"],R:["rialto","rempart","red fort","reichstag"],S:["sphinx","sistine","sigiriya","serengeti","stonehenge","sagrada familia","statue de la liberte"],T:["tour","torii","temple","tianmen","taj mahal"],V:["vatican","versailles","victoria falls"]},
+  langue:{A:["akan","arabe","azeri","aymara","afrikaans","albanais","amharique","armenien"],B:["birman","basque","breton","buryat","bengali","bosnien","bulgare","bielorusse"],C:["corse","coreen","croate","chinois","catalan","cantonnais"],D:["dari","danois","dzongkha","dialecte"],E:["ewe","espagnol","estonien","esperanto","evenki"],F:["farsi","frison","finnois","fidjien","flamand","francais"],G:["grec","gallois","guarani","georgien","gujarati","gaelique"],H:["hindi","hebrew","hebreu","haoussa","hongrois"],I:["igbo","italien","islandais","indonesien"],J:["japonais","javanais"],K:["khmer","kongo","kurde","kazakh","kinyarwanda","kirghiz"],L:["latin","letton","luganda","lituanien","laotien"],M:["malais","mongol","maltais","marathi","macedonien","mandarin"],N:["nepalais","norvegien"],O:["ourdou","occitan"],P:["persan","pashto","punjabi","polonais","portugais"],Q:["quechua"],R:["russe","roumain"],S:["serbe","somali","sindhi","suedois","swahili","slovaque","slovene"],T:["turc","thai","tatar","tamoul","tibetain","telougou"],U:["ukrainien","uyghur"],V:["valencien","vietnamien"],W:["wolof","welsh"],X:["xhosa"],Y:["yoruba"],Z:["zoulou"]},
+  instrument:{A:["alto","arpa","appeau","alphorn","accordeon"],B:["banjo","basse","bongo","bugle","basson","berimbau","bouzouki"],C:["cor","cajon","caixa","clave","clarinette","clavecin","cello"],D:["daf","dre","dhol","didgeridoo","djembe","dulcimer"],E:["epinette","euphonium"],F:["fife","flute","fifre","flageolet","fiddle"],G:["gong","gaita","geige","guitare","gamelan","glockenspiel"],H:["harpe","helicon","hautbois","harmonica","harmonium","harpsichord"],I:["imbila"],J:["jouhikko","jews harp"],K:["koto","kora","kazoo","kecak","kalimba"],L:["lur","lir","luth","lyre"],M:["mbira","maracas","melodeon","melodica","mandoline","marimba"],N:["nay","ngoni","nyckelharpa"],O:["orgue","oboe"],P:["pipa","piano","piccolo","psalterion","pan flute"],Q:["quena"],R:["rebab","rebec","rubab","recorder"],S:["saxo","sitar","sarod","sanza","synthé","steel drum"],T:["tar","tuba","tabla","tiple","trompette","trombone","triangle","tambour"],U:["ukulele"],V:["viol","viole","viola","veena","violon","vibraphone"],X:["xylophone"],Z:["zither"]},
   vetement:{A:["aube","abaya","afgha","amice"],B:["body","burqa","beret","boxer"],C:["cape","ciré","cire","caban"],D:["dastar","dos nu","dashiki","doudoune"],E:["echarpe","espadrille","epaulieres","epaulettes"],F:["frac","fanon","foulard"],G:["gilet","gants","guetres"],H:["haïk","haik","haori","habit"],I:["impermeable"],J:["jean","jupe","jogging","jambières"],K:["kilt","kimono","kaftan","kameez"],L:["lin","legging","lingerie","leg warmers"],M:["manteau","maillot","mitaines","mariniere"],N:["niqab"],O:["overall","overcoat"],P:["pull","polo","parka","pareo"],R:["robe","raincoat","redingote","robe de chambre"],S:["slip","sari","sweat","short"],T:["toge","toga","trench","turban"],V:["vest","veste","voile","veston"]},
   emotion:{A:["aise","amour","ardeur","audace"],B:["bonte","beaute","bluffe","bonheur"],C:["calme","colere","cafard","charme"],D:["desir","deuil","dedain","degoût"],E:["epic","ennui","envie","effroi"],F:["fierte","fureur","frayeur","fierete"],G:["gene","gêne","genie","gaite"],H:["honte","haine","hargne","horreur"],I:["ivresse","inertie","intensite","inquietude"],J:["joie","jubile","jalousie","jouissance"],K:["kinesthesie"],L:["larmes","liberte","loyaute","legerete"],M:["mepris","misere","malaise","modestie"],N:["nostalgie","nervosité","nonchalance"],O:["orgueil","outrage","obstination"],P:["peur","paix","pitie","peine"],R:["rage","regret","rancune","renonce"],S:["stupeur","solitude","saintete","serenite"],T:["terreur","trouble","torpeur","timidite"],V:["vanite","vertige","vigueur","vexation"]},
   mythologie:{A:["ares","ajax","aedes","amour"],B:["borée","boree","bacchus","briares"],C:["circe","cerere","cronos","cronus"],D:["dieu","diana","dieux","diane"],E:["echo","eros","erebe","europe"],F:["faune","fates","furies"],G:["gaia","graces","gorgone","gorgones"],H:["hera","hades","hydre","hygie"],I:["iris","icare","ithaque"],J:["juno","jason","janus","jupiter"],K:["kronos"],L:["lethe","laocoon","licorne","lachesis"],M:["mars","midas","medee","muses"],N:["nike","neptune","nymphes","narcisse"],O:["orphee","olympe","oracle","odyssee"],P:["paris","persee","pegase","pluton"],R:["rhea","romulus","rhadamanthe"],S:["styx","sphinx","saturne","sisyphe"],T:["titans","thesee","themis","triton"],V:["venus","vulcain"]},
@@ -5268,16 +5268,22 @@ export default function App() {
   }
 
   function enterOnlineGame(roomCode, roomData) {
-    const activeCats = (roomData.settings.categories || []).map(id =>
+    const allCats = (roomData.settings.categories || []).map(id =>
       ALL_BASE.find(c => c.id === id)
     ).filter(Boolean);
+    // Mort subite: appliquer les catégories actives du 1er round si broadcastées
+    const activeCatIds = roomData.activeCategoryIds;
+    const activeCats = activeCatIds
+      ? activeCatIds.map(id => ALL_BASE.find(c => c.id === id)).filter(Boolean)
+      : allCats;
     setGameState({
       mode: roomData.settings?.gameMode || "online",
       roomCode,
       difficulty: roomData.settings.difficulty || "medium",
       totalTime: DIFFICULTY[roomData.settings.difficulty || "medium"].time,
       timeLeft: DIFFICULTY[roomData.settings.difficulty || "medium"].time,
-      categories: activeCats,
+      categories: allCats,
+      activeCategories: activeCats,
       players: Object.values(roomData.players || {}).map(p => ({ ...p, id: p.uid || p.id })),
       totalRounds: roomData.settings.totalRounds || 5,
       currentRound: 1,
@@ -5297,6 +5303,7 @@ export default function App() {
       isHost: roomData.hostId === uid,
       lang: lang, // BUG 6 FIX: include lang in online game state
       usedLetters: roomData.usedLetters || [], // BUG 3 FIX: restaurer les lettres déjà utilisées
+      mortCatCount: roomData.settings?.mortCatCount || null, // Mort subite: nb cats/manche
     });
     setScreen("game");
   }
@@ -6320,7 +6327,7 @@ function OnlineScreen({
         const newRoom = {
           code, type: "public", country,
           hostId: myUid, status: "waiting",
-          settings: { difficulty: settings.difficulty, categories: settings.categories, totalRounds: settings.totalRounds, gameMode: gameMode || "solo" },
+          settings: { difficulty: settings.difficulty, categories: settings.categories, totalRounds: settings.totalRounds, gameMode: gameMode || "solo", mortCatCount: settings.mortCatCount || 3 },
           players: { [myUid]: { uid: myUid, name: playerName, country, isHost: true, ready: true, connected: true } },
           currentRound: 0, spinnerIndex: 0, phase: "waiting",
           cumulativeScores: { [myUid]: 0 },
@@ -6346,7 +6353,7 @@ function OnlineScreen({
       const newRoom = {
         code, type: "private", country,
         hostId: myUid, status: "waiting",
-        settings: { difficulty: hostDiff, categories: finalCats, totalRounds: hostRounds, gameMode: gameMode || "solo" },
+        settings: { difficulty: hostDiff, categories: finalCats, totalRounds: hostRounds, gameMode: gameMode || "solo", mortCatCount: settings.mortCatCount || 3 },
         players: { [myUid]: { uid: myUid, name: playerName, country, isHost: true, ready: true, connected: true } },
         currentRound: 0, spinnerIndex: 0, phase: "waiting",
         cumulativeScores: { [myUid]: 0 },
@@ -6434,6 +6441,15 @@ function OnlineScreen({
       }
     }
 
+    // Pour mort subite: choisir les catégories actives du 1er round
+    const mortCatCountOnline = room.settings?.mortCatCount || null;
+    const allCatIds = room.settings?.categories || [];
+    let firstRoundCatIds = allCatIds;
+    if (room.settings?.gameMode === "mort" && mortCatCountOnline) {
+      const shuffled = [...allCatIds].sort(() => Math.random() - 0.5);
+      firstRoundCatIds = shuffled.slice(0, Math.min(mortCatCountOnline, shuffled.length));
+    }
+
     // phase: "roulette" → déclenche la roulette de lettre
     await FB.updateRoom(roomCode, {
       status: "playing",
@@ -6443,6 +6459,7 @@ function OnlineScreen({
       currentRound: 1,
       letter: null,
       startedAt: Date.now(),
+      activeCategoryIds: firstRoundCatIds,
       ...(teams2v2 ? { teams: teams2v2 } : {}),
     });
   }
@@ -6957,6 +6974,10 @@ function GameScreen({
         let next = g;
         // Sync retour à la roulette (nouvelle manche – signal de l'hôte)
         if (room.phase === "roulette" && g.phase !== "roulette") {
+          // Mort subite: reconstruire les catégories actives depuis les IDs broadcastés par l'hôte
+          const nextActiveCats = room.activeCategoryIds
+            ? room.activeCategoryIds.map(id => (g.categories || []).find(c => c.id === id)).filter(Boolean)
+            : (g.activeCategories || g.categories || []);
           next = { ...next, phase: "roulette",
             spinnerOrder: room.spinnerOrder || g.spinnerOrder,
             spinnerIndex: room.spinnerIndex != null ? room.spinnerIndex : g.spinnerIndex,
@@ -6964,7 +6985,8 @@ function GameScreen({
             pendingLetter: null,
             letter: null,
             usedLetters: room.usedLetters || g.usedLetters || [],
-            answers: Object.fromEntries((g.activeCategories || g.categories || []).map(c => [c.id, ""])),
+            activeCategories: nextActiveCats,
+            answers: Object.fromEntries(nextActiveCats.map(c => [c.id, ""])),
             players: g.players.map(p => ({ ...p, answers: {}, done: false })),
           };
         }
@@ -7266,6 +7288,8 @@ function GameScreen({
           letter: null,
           playerAnswers: null,
           playerDone: null,
+          // Mort subite: syncer les catégories actives du prochain round
+          activeCategoryIds: nextActiveCats.map(c => c.id),
         }).catch(() => {});
       }
     }} lang={lang} />
