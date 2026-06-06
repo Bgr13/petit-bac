@@ -4941,11 +4941,24 @@ const DAILY_CAT_POOL = [
 ];
 
 // ─── SOUND FX ─────────────────────────────────────────────────────────────
+// Singleton AudioContext — évite la limite mobile (~6 contextes simultanés)
+let _audioCtx = null;
+function getAudioCtx() {
+  if (!_audioCtx || _audioCtx.state === "closed") {
+    _audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  }
+  // Résoudre la suspension auto sur iOS/Chrome (requiert un geste utilisateur au préalable)
+  if (_audioCtx.state === "suspended") {
+    _audioCtx.resume().catch(() => {});
+  }
+  return _audioCtx;
+}
+
 const SoundFX = {
   play: (sound) => {
     try {
       if (typeof AudioContext === "undefined" && typeof webkitAudioContext === "undefined") return;
-      const ctx = new (window.AudioContext || window.webkitAudioContext)();
+      const ctx = getAudioCtx();
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
       osc.connect(gain);
@@ -5319,11 +5332,12 @@ export default function App() {
       phase: "roulette",
       cumulativeScores: roomData.cumulativeScores || {},
       myId: uid,
-      teams: roomData.settings?.gameMode === "2v2" ? (() => {
+      // Utiliser les équipes broadcastées par l'hôte via Firebase (évite la divergence 2v2)
+      teams: roomData.teams || (roomData.settings?.gameMode === "2v2" ? (() => {
         const playerIds = Object.keys(roomData.players || {});
         const half = Math.ceil(playerIds.length / 2);
         return { team0: playerIds.slice(0, half), team1: playerIds.slice(half) };
-      })() : null,
+      })() : null),
       isHost: roomData.hostId === uid,
       lang: lang, // BUG 6 FIX: include lang in online game state
       usedLetters: roomData.usedLetters || [], // BUG 3 FIX: restaurer les lettres déjà utilisées
@@ -5392,22 +5406,30 @@ export default function App() {
       return newXp;
     });
 
-    // Check for new badges
-    setStats(currentStats => {
+    // Vérifier les badges APRÈS la mise à jour de stats (pas d'imbrication setStats → évite stale closure)
+    // On utilise les stats finales déjà calculées plutôt que les passer via setStats imbriqué
+    const finalStats = {
+      played: (stats.played || 0) + 1,
+      won: (stats.won || 0) + (myScore >= Math.max(...Object.values(gs.cumulativeScores || {})) && Object.values(gs.cumulativeScores || {}).filter(s => s === myScore).length === 1 ? 1 : 0),
+      best: Math.max(stats.best || 0, myScore),
+      total: (stats.total || 0) + myScore,
+      streak: myScore >= Math.max(...Object.values(gs.cumulativeScores || {})) && Object.values(gs.cumulativeScores || {}).filter(s => s === myScore).length === 1 ? (stats.streak || 0) + 1 : 0,
+      totalWords: (stats.totalWords || 0) + newWords.length,
+      uniqueWords: (stats.uniqueWords || 0) + new Set(newWords).size,
+    };
+    setUnlockedBadges(prev => {
       const newlyUnlockedDefs = BADGE_DEFS.filter(b =>
-        !unlockedBadges.includes(b.id) && b.check(currentStats)
+        !prev.includes(b.id) && b.check(finalStats)
       );
-      const newlyUnlocked = newlyUnlockedDefs.map(b => b.id);
-      if (newlyUnlocked.length > 0) {
-        setUnlockedBadges(prev => {
-          const updated = [...new Set([...prev, ...newlyUnlocked])];
-          try { localStorage.setItem("pb_badges", JSON.stringify(updated)); } catch { /* ignore */ }
-          return updated;
-        });
-        setNewBadges(newlyUnlockedDefs); // Pass full badge objects for notification display
+      if (newlyUnlockedDefs.length > 0) {
+        const newlyUnlocked = newlyUnlockedDefs.map(b => b.id);
+        const updated = [...new Set([...prev, ...newlyUnlocked])];
+        try { localStorage.setItem("pb_badges", JSON.stringify(updated)); } catch { /* ignore */ }
+        setNewBadges(newlyUnlockedDefs);
         setTimeout(() => setNewBadges([]), 4000);
+        return updated;
       }
-      return currentStats;
+      return prev;
     });
 
     // Mark daily as played
@@ -5533,12 +5555,17 @@ function HomeScreen({ onSolo, onOnline, on2v2, onMort, onOnline2v2, onDaily, onT
   const bl = tier === TIER.VIP ? t("vip_label") : tier === TIER.PRO ? t("pro_label") : "◇";
   const initials = (playerName || "J").charAt(0).toUpperCase();
   const canPro = tier === TIER.PRO || tier === TIER.VIP;
-  const [, setTick] = useState(0);
+  const [tick, setTick] = useState(0);
   useEffect(() => {
     const timerId = setInterval(() => setTick(n => n + 1), 1000);
     return () => clearInterval(timerId);
   }, []);
   const alreadyPlayed = dailyPlayed?.todayKey === daily.todayKey;
+  // Recalculer les compteurs de temps à chaque tick (daily/tournament sont figés par useMemo)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const liveDaily = useMemo(() => getDailyChallenge(), [tick]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const liveTournament = useMemo(() => getTournamentWeek(), [tick]);
 
   return (
     <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
@@ -5627,7 +5654,7 @@ function HomeScreen({ onSolo, onOnline, on2v2, onMort, onOnline2v2, onDaily, onT
             </div>
             {!alreadyPlayed && (
               <div style={{ marginTop:6, fontSize:11, fontFamily:"monospace", opacity:.85, display:"flex", alignItems:"center", gap:4 }}>
-                ⏱ {String(daily.hoursLeft).padStart(2,"0")}:{String(daily.minsLeft).padStart(2,"0")}:{String(daily.secsLeft).padStart(2,"0")}
+                ⏱ {String(liveDaily.hoursLeft).padStart(2,"0")}:{String(liveDaily.minsLeft).padStart(2,"0")}:{String(liveDaily.secsLeft).padStart(2,"0")}
               </div>
             )}
             {!canPro && !alreadyPlayed && (
@@ -5643,7 +5670,7 @@ function HomeScreen({ onSolo, onOnline, on2v2, onMort, onOnline2v2, onDaily, onT
               <div style={{ fontSize: 10, opacity: .8, letterSpacing: 1, textTransform: "uppercase", marginBottom: 2 }}>{t("tournament_label2")}</div>
               <div style={{ fontSize: 15, fontWeight: 700, marginBottom: 2 }}>{t("tournament_title2")}</div>
               <div style={{ fontSize: 11, opacity: .85, marginBottom:6 }}>
-                {tournament.daysLeft > 0 ? `${tournament.daysLeft} ${t("tournament_days","jours restants")}` : `${String(tournament.hoursLeft).padStart(2,"0")}h${String(tournament.minsLeft).padStart(2,"0")}m`}
+                {liveTournament.daysLeft > 0 ? `${liveTournament.daysLeft} ${t("tournament_days","jours restants")}` : `${String(liveTournament.hoursLeft).padStart(2,"0")}h${String(liveTournament.minsLeft).padStart(2,"0")}m`}
               </div>
               <div style={{ fontSize:11, background:"rgba(255,255,255,0.15)", borderRadius:8, padding:"4px 8px", marginBottom:4 }}>
                 🏆 {t("tournament_prize","Gagnant = 1 mois VIP offert !")}
@@ -6325,8 +6352,13 @@ function OnlineScreen({
     try {
       const existingCode = await FB.findPublicRoom(country);
       if (existingCode) {
-        // Join existing room
+        // Join existing room — re-fetch to confirm it is still waiting (could have started)
         const room = await FB.getRoom(existingCode);
+        if (!room || room.status !== "waiting") {
+          // Salle démarrée entre-temps : en créer une nouvelle
+          setError("");
+          return doMatchmaking();
+        }
         await FB.updateRoom(existingCode, {
           players: { ...room.players, [myUid]: { uid: myUid, name: sanitizeName(playerName), country, isHost: false, ready: false, connected: true } },
         });
@@ -6356,7 +6388,7 @@ function OnlineScreen({
         });
         // Vrai matchmaking Firebase — pas de simulation
       }
-    } catch (e) { setError(e.message); }
+    } catch (e) { cleanup(); setError(e.message); }
     setLoading(false);
   }
 
@@ -6706,9 +6738,6 @@ function OnlineScreen({
             const assigned = customTeams || {};
             const unassigned = players.filter(p => !Object.values(assigned).includes(p.uid));
             function assignPlayer(uid, teamKey) {
-              // retirer d'une autre équipe si besoin
-              const next = {};
-              Object.entries(assigned).forEach(([tid, pid]) => { if (pid !== uid) next[tid+"_"+pid] = pid; });
               setCustomTeams(prev => {
                 const n = {...(prev||{})};
                 // Remove uid from all team slots
@@ -7092,16 +7121,19 @@ function GameScreen({
       const a = {}; activeCategories.forEach(cat => { a[cat.id] = p.answers?.[cat.id] || getAiAnswer(cat.id, gameState.letter, gameState?.lang || lang); });
       return { ...p, answers: a, done: true };
     });
-    // En mode online: pousser les réponses + signaler la fin du round à tous les clients
+    // En mode online: pousser les réponses d'abord, puis signaler la fin du round.
+    // Séparer les deux écritures évite que les autres clients reçoivent "round_ended"
+    // avant d'avoir les réponses du joueur (race condition).
     if (gameState.roomCode && gameState.myId) {
-      try {
+      FB.updateRoom(gameState.roomCode, {
+        [`playerAnswers/${gameState.myId}`]: gameState.answers || {},
+        [`playerDone/${gameState.myId}`]: true,
+      }).then(() =>
         FB.updateRoom(gameState.roomCode, {
-          [`playerAnswers/${gameState.myId}`]: gameState.answers || {},
-          [`playerDone/${gameState.myId}`]: true,
           phase: "round_ended",
           roundEndedAt: Date.now(),
-        });
-      } catch { /* ignore */ }
+        })
+      ).catch(() => {});
       // Le listener Firebase synce les réponses de tous et déclenche computeRoundScores
       return;
     }
@@ -8017,7 +8049,7 @@ function FinalResultsScreen({ gameState, onPlayAgain, onHome, uid, lang }) {
         {/* ── CLASSEMENT CRÉATIVITÉ ── */}
         {activeTab === "inventif" && (
           <div className="card">
-            <div className="ctitle" style={{ marginBottom:6 }}>🎨 {t("award_inventif","Le plus inventif")}</div>
+            <div className="ctitle" style={{ marginBottom:6 }}>🎨 {t("award_creative","Le plus inventif")}</div>
             <div style={{ fontSize:12, color:"var(--txm)", marginBottom:10 }}>{t("inventif_desc","Celui qui utilise les mots les plus longs et rares")}</div>
             <div style={{ display:"flex", flexDirection:"column", gap:6 }}>
               {rankingInventif.map((p, i) => (
@@ -8180,6 +8212,8 @@ function LeaderboardScreen({ onClose, xp, playerName, lang, uid }) {
   }, []);
 
   // Charger classements Firebase (modular API)
+  // Sauvegarder le profil dans le leaderboard uniquement si XP ou nom a changé (évite les écritures inutiles)
+  const leaderboardWrittenRef = useRef({ xp: -1, name: "" });
   useEffect(() => {
     if (!uid || !FB.db) {
       // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -8188,16 +8222,21 @@ function LeaderboardScreen({ onClose, xp, playerName, lang, uid }) {
       setLoading(false);
       return;
     }
-    // Sauvegarder le joueur courant dans le classement global
-    try {
-      dbSet(dbRef(FB.db, "leaderboard/" + uid), {
-        name: sanitizeName(playerName),
-        xp: xp || 0,
-        badge: levelInfo.badge,
-        country: "🌍",
-        updatedAt: Date.now(),
-      });
-    } catch { /* ignore */ }
+    // N'écrire que si les valeurs ont changé depuis la dernière ouverture
+    const didChange = leaderboardWrittenRef.current.xp !== (xp || 0) ||
+                      leaderboardWrittenRef.current.name !== sanitizeName(playerName);
+    if (didChange) {
+      leaderboardWrittenRef.current = { xp: xp || 0, name: sanitizeName(playerName) };
+      try {
+        dbSet(dbRef(FB.db, "leaderboard/" + uid), {
+          name: sanitizeName(playerName),
+          xp: xp || 0,
+          badge: levelInfo.badge,
+          country: "🌍",
+          updatedAt: Date.now(),
+        });
+      } catch { /* ignore */ }
+    }
 
     const loadData = async () => {
       setLoading(true);
@@ -8895,9 +8934,11 @@ function ProfilePhotoModal({ onClose, onSave, currentPhoto, playerName, lang }) 
 
           {tab === "photo" && (
             <div style={{ textAlign:"center", marginBottom:16 }}>
+              {/* Deux inputs séparés : l'un avec capture (caméra), l'autre sans (galerie) */}
               <input ref={fileRef} type="file" accept="image/*" capture="user" onChange={handleFile} style={{ display:"none" }} />
+              <input ref={el => { if (el) el._galleryRef = true; }} id="pb-gallery-input" type="file" accept="image/*" onChange={handleFile} style={{ display:"none" }} />
               <button className="btn bp" onClick={() => fileRef.current?.click()} style={{ marginBottom:8 }}>{t("photo_title")}</button>
-              <button className="btn bs" onClick={() => { fileRef.current.removeAttribute("capture"); fileRef.current?.click(); }}>🖼 {t("legal_licenses","Galerie")}</button>
+              <button className="btn bs" onClick={() => document.getElementById("pb-gallery-input")?.click()}>🖼 {t("legal_licenses","Galerie")}</button>
             </div>
           )}
 
@@ -9005,10 +9046,10 @@ function BottomNav({ tab, setTab, setScreen, setGameState, onLeaderboard, lang }
       <button className={`nb ${tab==="home"?"active":""}`} onClick={() => { setTab("home"); setScreen("home"); }}>
         <span className="ni">🏠</span>{t("nav_home")}
       </button>
-      {/* BUG 12 FIX: "play" sets gameState.mode to "solo" before going to setup */}
+      {/* Aller en setup solo — initialiser gameState avec mode="solo" sans spreader un état potentiellement null */}
       <button className={`nb ${tab==="play"?"active":""}`} onClick={() => {
         setTab("play");
-        if (setGameState) setGameState(prev => ({ ...prev, mode: "solo" }));
+        if (setGameState) setGameState({ mode: "solo" });
         setScreen("setup");
       }}>
         <span className="ni">🎮</span>{t("nav_play")}
