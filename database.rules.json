@@ -2,15 +2,38 @@
   "rules": {
     "rooms": {
       ".read": true,
-      ".write": "auth != null"
+      "$roomId": {
+        ".write": "auth != null",
+        "players": {
+          "$uid": {
+            ".write": "auth != null && (auth.uid === $uid || data.parent().parent().child('hostId').val() === auth.uid)"
+          }
+        },
+        "playerAnswers": {
+          "$uid": {
+            ".write": "auth != null && auth.uid === $uid"
+          }
+        },
+        "playerDone": {
+          "$uid": {
+            ".write": "auth != null && auth.uid === $uid"
+          }
+        }
+      }
     },
     "leaderboard": {
       ".read": true,
-      ".write": "auth != null"
+      "$uid": {
+        ".write": "auth != null && auth.uid === $uid"
+      }
     },
     "tournoi": {
       ".read": true,
-      ".write": "auth != null"
+      "$weekKey": {
+        "$uid": {
+          ".write": "auth != null && auth.uid === $uid"
+        }
+      }
     },
     "users": {
       "$uid": {
