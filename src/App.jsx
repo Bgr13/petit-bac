@@ -6355,6 +6355,39 @@ function OnlineScreen({
   const unsubRef = useRef(null);
 
   function cleanup() { if (unsubRef.current) { unsubRef.current(); unsubRef.current = null; } }
+
+  // Retirer le joueur de la room Firebase avant de quitter la salle d'attente
+  // pour éviter les joueurs fantômes (ghost players) qui gonflent le compteur
+  async function leaveRoom() {
+    if (roomCode && myUid && FB.db) {
+      try {
+        const room = await FB.getRoom(roomCode);
+        if (room && room.status === "waiting") {
+          const updatedPlayers = { ...(room.players || {}) };
+          delete updatedPlayers[myUid];
+          const updatedScores = { ...(room.cumulativeScores || {}) };
+          delete updatedScores[myUid];
+          // Si plus aucun joueur (hôte parti seul), supprimer la room entièrement
+          if (Object.keys(updatedPlayers).length === 0) {
+            await FB.updateRoom(roomCode, { status: "finished", finishedAt: Date.now() });
+          } else {
+            // Passer l'hôte au prochain joueur si c'est moi qui pars
+            const wasHost = room.hostId === myUid;
+            const nextHostId = wasHost ? Object.keys(updatedPlayers)[0] : room.hostId;
+            const nextPlayers = wasHost
+              ? { ...updatedPlayers, [nextHostId]: { ...updatedPlayers[nextHostId], isHost: true } }
+              : updatedPlayers;
+            await FB.updateRoom(roomCode, {
+              players: nextPlayers,
+              cumulativeScores: updatedScores,
+              ...(wasHost ? { hostId: nextHostId } : {}),
+            });
+          }
+        }
+      } catch { /* ignore — ne pas bloquer la navigation */ }
+    }
+  }
+
   useEffect(() => cleanup, []);
 
   async function doMatchmaking(retries = 0) {
@@ -6574,7 +6607,7 @@ function OnlineScreen({
   if (step === "matchmaking") return (
     <div style={{ display: "flex", flexDirection: "column", height: "100dvh" }}>
       <div className="hdr">
-        <button className="btn bs bsm" onClick={() => { cleanup(); setStep("choose"); }} style={{ width: "auto" }}>{t("cancel2")}</button>
+        <button className="btn bs bsm" onClick={() => { leaveRoom(); cleanup(); setStep("choose"); }} style={{ width: "auto" }}>{t("cancel2")}</button>
         <span style={{ fontWeight: 700, fontSize: 14 }}>{t("search_ellipsis")}</span>
         <div style={{ width: 55 }} />
       </div>
@@ -6710,7 +6743,7 @@ function OnlineScreen({
   if (step === "waiting") return (
     <div style={{ display: "flex", flexDirection: "column", height: "100dvh" }}>
       <div className="hdr">
-        <button className="btn bs bsm" onClick={() => { cleanup(); setStep("choose"); }} style={{ width: "auto" }}>✕</button>
+        <button className="btn bs bsm" onClick={() => { leaveRoom(); cleanup(); setStep("choose"); }} style={{ width: "auto" }}>✕</button>
         <span style={{ fontWeight: 700, fontSize: 14 }}>{roomData?.type === "private" ? t("private_room") : "🌍 Public"} · {gameMode === "2v2" ? "🤝 2v2" : gameMode === "mort" ? "💀 Mort Subite" : "🌍 Multijoueur"}</span>
         <div style={{ width: 40 }} />
       </div>
@@ -7771,7 +7804,9 @@ function FinalResultsScreen({ gameState, onPlayAgain, onHome, uid, lang }) {
   const max = cumulativeScores[sorted[0]?.id] || 0;
   const myId = gameState.myId || uid;
   const myScore = cumulativeScores[myId] || 0;
-  const iWon = myScore === max;
+  // Victoire exclusive : mon score est le max ET personne d'autre n'a le même score
+  const allScores = Object.values(cumulativeScores || {});
+  const iWon = myScore === max && allScores.filter(s => s === max).length === 1;
 
   // ── Compute awards per player ────────────────────────────────────
   function computeAwards() {
