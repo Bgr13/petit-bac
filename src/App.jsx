@@ -5842,7 +5842,6 @@ function FriendsPanel({ uid, myFriendCode, playerName, friends, friendRequests, 
     const code = addCode.trim().toUpperCase();
     if (!code) return;
     if (code === myFriendCode) { setAddStatus("self"); return; }
-    if (Object.keys(friends || {}).some(fuid => (friends[fuid]?.code === code))) { setAddStatus("already"); return; }
     setAddStatus("sending");
     try {
       const targetUid = await FB.lookupByFriendCode(code);
@@ -8319,7 +8318,7 @@ function LeaderboardScreen({ onClose, xp, playerName, lang, uid }) {
       });
     } catch { /* ignore */ }
     return () => { isMounted = false; if (tournoiUnsub) tournoiUnsub(); };
-  }, [uid, xp, playerName, tab]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [uid, xp, playerName]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const myRank = entries.findIndex(e => e.isMe) + 1;
   const myTournoiRank = tournoiEntries.findIndex(e => e.isMe) + 1;
