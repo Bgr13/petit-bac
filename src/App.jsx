@@ -7383,7 +7383,10 @@ function GameScreen({
       }
       const nextRound = gameState.currentRound + 1;
       const activePlayers = gameState.players.filter(p => !p.eliminated);
-      const nextSpinner = activePlayers.length > 0 ? (gameState.spinnerIndex + 1) % activePlayers.length : 0;
+      // En mode online, spinnerOrder contient TOUS les joueurs (y compris éliminés) — utiliser sa longueur comme modulo
+      // pour éviter un index hors-bornes qui saute des spinners ou lève une exception côté LetterRoulette.
+      const spinnerPoolLength = gameState.spinnerOrder ? gameState.spinnerOrder.length : activePlayers.length;
+      const nextSpinner = spinnerPoolLength > 0 ? (gameState.spinnerIndex + 1) % spinnerPoolLength : 0;
       setGameState(g => ({
         ...g,
         currentRound: nextRound,
