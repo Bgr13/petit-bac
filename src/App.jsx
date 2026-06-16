@@ -6612,6 +6612,7 @@ function OnlineScreen({
         <div style={{ width: 55 }} />
       </div>
       <div className="cnt">
+        {error && <div style={{ padding: "10px 14px", background: "rgba(248,113,113,.1)", border: "1px solid rgba(248,113,113,.25)", borderRadius: "var(--rs)", marginBottom: 12, fontSize: 12, color: "var(--rd)" }}>{error}</div>}
         <div className="mm-box">
           <div className="mm-spinner" />
           <div className="mm-title">{t("searching_players")}</div>
