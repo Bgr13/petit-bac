@@ -5457,6 +5457,14 @@ export default function App() {
     }
 
     logEvent("game_end", { uid, mode: gs.mode, score: myScore, won });
+
+    // ROOM CLEANUP FIX: marquer la room comme terminée pour éviter qu'elle
+    // apparaisse dans le matchmaking et pollue findPublicRoom.
+    if (gs.roomCode && FB.db) {
+      try {
+        FB.updateRoom(gs.roomCode, { status: "finished", finishedAt: Date.now() }).catch(() => {});
+      } catch { /* ignore */ }
+    }
   }
 
   return (
@@ -7131,22 +7139,35 @@ function GameScreen({
     // Séparer les deux écritures évite que les autres clients reçoivent "round_ended"
     // avant d'avoir les réponses du joueur (race condition).
     if (gameState.roomCode && gameState.myId) {
-      // Mark local human player as done immediately (UI feedback)
-      setGameState(g => ({
-        ...g,
-        players: g.players.map(p =>
-          (p.id === g.myId || p.uid === g.myId) ? { ...p, done: true } : p
-        ),
-      }));
-      FB.updateRoom(gameState.roomCode, {
-        [`playerAnswers/${gameState.myId}`]: gameState.answers || {},
-        [`playerDone/${gameState.myId}`]: true,
-      }).then(() =>
-        FB.updateRoom(gameState.roomCode, {
-          phase: "round_ended",
-          roundEndedAt: Date.now(),
-        })
-      ).catch(() => {});
+      // Lire les réponses depuis le state fonctionnel pour éviter la stale closure
+      setGameState(g => {
+        const latestAnswers = g.answers || {};
+        const myId = g.myId;
+        // Mark local human player as done immediately (UI feedback)
+        const updatedPlayers = g.players.map(p =>
+          (p.id === myId || p.uid === myId) ? { ...p, done: true } : p
+        );
+        // Pousser les réponses sur Firebase puis signaler la fin du round.
+        // RACE CONDITION FIX: seul le premier joueur à finir écrit "round_ended".
+        // Les autres joueurs ne font qu'écrire leurs réponses — le listener Firebase
+        // détecte "round_ended" et déclenche computeRoundScores côté local.
+        FB.updateRoom(g.roomCode, {
+          [`playerAnswers/${myId}`]: latestAnswers,
+          [`playerDone/${myId}`]: true,
+        }).then(() => {
+          // Vérifier si la room est déjà en round_ended avant d'écrire
+          return FB.getRoom(g.roomCode).then(room => {
+            if (room && room.phase === "playing") {
+              return FB.updateRoom(g.roomCode, {
+                phase: "round_ended",
+                roundEndedAt: Date.now(),
+              });
+            }
+            // Déjà round_ended (un autre joueur plus rapide) — pas d'écriture
+          });
+        }).catch(() => {});
+        return { ...g, players: updatedPlayers };
+      });
       // Le listener Firebase synce les réponses de tous et déclenche computeRoundScores
       return;
     }
@@ -7328,7 +7349,8 @@ function GameScreen({
         nextActiveCats = shuffled.slice(0, Math.min(gameState.mortCatCount, shuffled.length));
       }
       const nextRound = gameState.currentRound + 1;
-      const nextSpinner = (gameState.spinnerIndex + 1) % gameState.players.filter(p => !p.eliminated).length;
+      const activePlayers = gameState.players.filter(p => !p.eliminated);
+      const nextSpinner = activePlayers.length > 0 ? (gameState.spinnerIndex + 1) % activePlayers.length : 0;
       setGameState(g => ({
         ...g,
         currentRound: nextRound,
@@ -8255,7 +8277,9 @@ function LeaderboardScreen({ onClose, xp, playerName, lang, uid }) {
       } catch { /* ignore */ }
     }
 
+    let isMounted = true;
     const loadData = async () => {
+      if (!isMounted) return;
       setLoading(true);
       try {
         // Classement global
@@ -8264,7 +8288,7 @@ function LeaderboardScreen({ onClose, xp, playerName, lang, uid }) {
         const list = Object.entries(data)
           .map(([id, v]) => ({ ...v, id, isMe: id === uid }))
           .sort((a, b) => b.xp - a.xp);
-        setEntries(list);
+        if (isMounted) setEntries(list);
         // Classement tournoi de la semaine
         const weekKey = "week_" + tournament.weekNum;
         const tSnap = await dbGet(dbQuery(dbRef(FB.db, "tournoi/" + weekKey), orderByChild("score"), limitToLast(50)));
@@ -8272,12 +8296,12 @@ function LeaderboardScreen({ onClose, xp, playerName, lang, uid }) {
         const tList = Object.entries(tData)
           .map(([id, v]) => ({ ...v, id, isMe: id === uid }))
           .sort((a, b) => b.score - a.score);
-        setTournoiEntries(tList);
+        if (isMounted) setTournoiEntries(tList);
       } catch {
-        setEntries(getMockLeaderboard(uid, playerName, xp, levelInfo));
-        setTournoiEntries([]);
+        if (isMounted) setEntries(getMockLeaderboard(uid, playerName, xp, levelInfo));
+        if (isMounted) setTournoiEntries([]);
       }
-      setLoading(false);
+      if (isMounted) setLoading(false);
     };
     loadData();
 
@@ -8286,6 +8310,7 @@ function LeaderboardScreen({ onClose, xp, playerName, lang, uid }) {
     try {
       const weekKey = "week_" + tournament.weekNum;
       tournoiUnsub = dbOnValue(dbQuery(dbRef(FB.db, "tournoi/" + weekKey), orderByChild("score"), limitToLast(50)), snap => {
+        if (!isMounted) return;
         const data = snap.val() || {};
         const list = Object.entries(data)
           .map(([id, v]) => ({ ...v, id, isMe: id === uid }))
@@ -8293,7 +8318,7 @@ function LeaderboardScreen({ onClose, xp, playerName, lang, uid }) {
         setTournoiEntries(list);
       });
     } catch { /* ignore */ }
-    return () => { if (tournoiUnsub) tournoiUnsub(); };
+    return () => { isMounted = false; if (tournoiUnsub) tournoiUnsub(); };
   }, [uid, xp, playerName, tab]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const myRank = entries.findIndex(e => e.isMe) + 1;
