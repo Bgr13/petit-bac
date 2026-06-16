@@ -7749,7 +7749,7 @@ function RoundResultsOverlay({
           const humanId = gameState.myId || players.find(p=>!p.isBot)?.id || "";
           return (
             <div style={{ textAlign: "center", padding: "8px 0", fontSize: 13, color: "var(--ac)", fontWeight: 700 }}>
-              +{Math.max(5, (currentRoundData?.scores?.[humanId] || 0) * 3 + 5)} {t("xp")} ⚡
+              +{calcXpGain(currentRoundData?.scores?.[humanId] || 0, false, gameState.totalRounds || 1)} {t("xp")} ⚡
             </div>
           );
         })()}
@@ -8242,7 +8242,7 @@ function LeaderboardScreen({ onClose, xp, playerName, lang, uid }) {
   const [entries, setEntries] = useState([]);
   const [tournoiEntries, setTournoiEntries] = useState([]);
   const [loading, setLoading] = useState(true);
-  const tournament = getTournamentWeek();
+  const tournament = useMemo(() => getTournamentWeek(), []); // eslint-disable-line react-hooks/exhaustive-deps
   const levelInfo = getLevelInfo(xp || 0, lang);
   const [, setTick] = useState(0);
 
