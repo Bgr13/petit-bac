@@ -5402,8 +5402,8 @@ export default function App() {
     });
 
     const xpGain = calcXpGain(myScore, won, gs.totalRounds || 1);
-    setXp(prev => {
-      const newXp = (prev || 0) + xpGain;
+    const newXp = (xp || 0) + xpGain;
+    setXp(() => {
       try { localStorage.setItem("pb_xp", String(newXp)); } catch { /* ignore */ }
       return newXp;
     });
@@ -5437,7 +5437,7 @@ export default function App() {
 
     // Mark daily as played
     if (gs.isDaily) {
-      const { todayKey } = daily;
+      const { todayKey } = getDailyChallenge();
       const entry = { todayKey, score: myScore };
       setDailyPlayed(entry);
       try { localStorage.setItem("pb_daily", JSON.stringify(entry)); } catch { /* ignore */ }
@@ -5450,7 +5450,7 @@ export default function App() {
         dbSet(dbRef(FB.db, `tournoi/${weekKey}/${uid}`), {
           name: settings.playerName || "Joueur",
           score: myScore,
-          xp: xp || 0,
+          xp: newXp,
           updatedAt: Date.now(),
         });
       } catch { /* ignore */ }
@@ -7514,9 +7514,12 @@ function VotePhase({ gameState, onVoteDone, lang }) {
     setVotes(prev => ({ ...prev, [`${myId}:${catId}:${targetId}`]: v }));
   }
 
-  // Vérifier si le joueur humain a voté sur toutes les réponses des autres
+  // Vérifier si le joueur humain a voté sur toutes les réponses non-vides des autres
   const pendingHumanVotes = customCats.flatMap(cat =>
-    players.filter(p => p.id !== myId).filter(p => !votes[`${myId}:${cat.id}:${p.id}`])
+    players
+      .filter(p => p.id !== myId)
+      .filter(p => (currentRoundData.answers?.[cat.id]?.[p.id] || "").trim())
+      .filter(p => !votes[`${myId}:${cat.id}:${p.id}`])
   );
   const canSubmit = pendingHumanVotes.length === 0;
 
@@ -7867,10 +7870,10 @@ function FinalResultsScreen({ gameState, onPlayAgain, onHome, uid, lang }) {
     });
   }
 
-  const awards = computeAwards();
+  const awards = useMemo(() => computeAwards(), [rounds, players, myId, lang]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // ── Classements spéciaux ───────────────────────────────────
-  const rankingFastest = [...players]
+  const rankingFastest = useMemo(() => [...players]
     .filter(p => !p.eliminated)
     .map(p => {
       // Plus rapide = celui qui a appelé STOP (le plus de réponses uniques = proxy)
@@ -7879,9 +7882,9 @@ function FinalResultsScreen({ gameState, onPlayAgain, onHome, uid, lang }) {
       }, 0);
       return { ...p, uniqueCount };
     })
-    .sort((a, b) => b.uniqueCount - a.uniqueCount);
+    .sort((a, b) => b.uniqueCount - a.uniqueCount), [players, rounds]);
 
-  const rankingInventif = [...players]
+  const rankingInventif = useMemo(() => [...players]
     .filter(p => !p.eliminated)
     .map(p => {
       // Plus inventif = mots les plus longs en moyenne
@@ -7891,11 +7894,11 @@ function FinalResultsScreen({ gameState, onPlayAgain, onHome, uid, lang }) {
       const avgLen = answers.length ? answers.reduce((s, a) => s + a.length, 0) / answers.length : 0;
       return { ...p, avgLen: Math.round(avgLen * 10) / 10 };
     })
-    .sort((a, b) => b.avgLen - a.avgLen);
+    .sort((a, b) => b.avgLen - a.avgLen), [players, rounds]);
 
-  const rankingScore = [...players]
+  const rankingScore = useMemo(() => [...players]
     .map(p => ({ ...p, score: gameState.cumulativeScores[p.id] || 0 }))
-    .sort((a, b) => b.score - a.score);
+    .sort((a, b) => b.score - a.score), [players, gameState.cumulativeScores]);
 
   const [activeTab, setActiveTab] = useState("scores");
   const podium = sorted.slice(0, 3);
