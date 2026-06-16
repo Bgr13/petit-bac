@@ -5172,6 +5172,7 @@ export default function App() {
   }
 
   function startTournamentGame() {
+    const tournament = getTournamentWeek(); // recompute to avoid stale value after midnight
     const activeCats = tournament.cats;
     const players = [
       { id: uid || "human", name: settings.playerName || "Joueur", isBot: false, answers: {}, done: false },
@@ -5200,6 +5201,7 @@ export default function App() {
   }
 
   function startDailyChallenge() {
+    const daily = getDailyChallenge(); // recompute to avoid stale value after midnight
     const { cats, letter } = daily;
     // Daily uses special categories + hard difficulty + 1 round
     const activeCats = cats.map(c => ({ ...c, tier: "pro" }));
@@ -5408,12 +5410,13 @@ export default function App() {
 
     // Vérifier les badges APRÈS la mise à jour de stats (pas d'imbrication setStats → évite stale closure)
     // On utilise les stats finales déjà calculées plutôt que les passer via setStats imbriqué
+    // Réutiliser `won` calculé plus haut pour éviter toute divergence entre les deux endroits
     const finalStats = {
       played: (stats.played || 0) + 1,
-      won: (stats.won || 0) + (myScore >= Math.max(...Object.values(gs.cumulativeScores || {})) && Object.values(gs.cumulativeScores || {}).filter(s => s === myScore).length === 1 ? 1 : 0),
+      won: (stats.won || 0) + (won ? 1 : 0),
       best: Math.max(stats.best || 0, myScore),
       total: (stats.total || 0) + myScore,
-      streak: myScore >= Math.max(...Object.values(gs.cumulativeScores || {})) && Object.values(gs.cumulativeScores || {}).filter(s => s === myScore).length === 1 ? (stats.streak || 0) + 1 : 0,
+      streak: won ? (stats.streak || 0) + 1 : 0,
       totalWords: (stats.totalWords || 0) + newWords.length,
       uniqueWords: (stats.uniqueWords || 0) + new Set(newWords).size,
     };
@@ -6476,8 +6479,8 @@ function OnlineScreen({
         // Convertir les assignments en groupes d'équipes
         const tg = { team0: [], team1: [], team2: [] };
         Object.entries(customTeams).forEach(([key, pid]) => {
-          const t = key.split("_")[0];
-          if (tg[t]) tg[t].push(pid);
+          const teamId = key.split("_")[0];
+          if (tg[teamId]) tg[teamId].push(pid);
         });
         // Ne garder que les équipes non-vides
         teams2v2 = Object.fromEntries(Object.entries(tg).filter(([, v]) => v.length > 0));
@@ -6742,8 +6745,8 @@ function OnlineScreen({
                 const n = {...(prev||{})};
                 // Remove uid from all team slots
                 Object.keys(n).forEach(k => { if (n[k] === uid) delete n[k]; });
-                // Add to new slot
-                n[teamKey + "_" + uid] = uid;
+                // Add to new slot only if assigning to a real team (not "none")
+                if (teamKey !== "none") n[teamKey + "_" + uid] = uid;
                 return n;
               });
             }
@@ -6940,6 +6943,9 @@ function LetterRoulette({
   // Pool de lettres disponibles (sans les lettres déjà utilisées)
   const availableAlphabet = ALPHABET.filter(l => !(usedLetters || []).includes(l));
   const pool = availableAlphabet.length > 0 ? availableAlphabet : ALPHABET;
+  // Keep a ref to always have the latest pool inside the setInterval closure
+  const poolRef = useRef(pool);
+  poolRef.current = pool;
 
   const spinnerId = spinnerOrder ? spinnerOrder[spinnerIndex % spinnerOrder.length] : players[spinnerIndex % players.length]?.id;
   const spinner = players.find(p => p.id === spinnerId || p.uid === spinnerId) || players[0];
@@ -6947,13 +6953,13 @@ function LetterRoulette({
 
   useEffect(() => {
     ivRef.current = setInterval(() => {
-      setCur(pool[Math.floor(Math.random() * pool.length)]);
+      setCur(poolRef.current[Math.floor(Math.random() * poolRef.current.length)]);
       SoundFX.play("tick");
     }, 75);
     // Non-spinner en solo : stop aléatoire local
     // En ligne non-spinner : attendre forcedLetter depuis Firebase (ne pas faire de stop aléatoire)
     if (!isMyTurn && !isOnline) {
-      setTimeout(() => { if (!lockedRef.current) doStop(pool[Math.floor(Math.random() * pool.length)]); }, 1400 + Math.random() * 800);
+      setTimeout(() => { if (!lockedRef.current) doStop(poolRef.current[Math.floor(Math.random() * poolRef.current.length)]); }, 1400 + Math.random() * 800);
     }
     return () => clearInterval(ivRef.current);
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
@@ -7125,6 +7131,13 @@ function GameScreen({
     // Séparer les deux écritures évite que les autres clients reçoivent "round_ended"
     // avant d'avoir les réponses du joueur (race condition).
     if (gameState.roomCode && gameState.myId) {
+      // Mark local human player as done immediately (UI feedback)
+      setGameState(g => ({
+        ...g,
+        players: g.players.map(p =>
+          (p.id === g.myId || p.uid === g.myId) ? { ...p, done: true } : p
+        ),
+      }));
       FB.updateRoom(gameState.roomCode, {
         [`playerAnswers/${gameState.myId}`]: gameState.answers || {},
         [`playerDone/${gameState.myId}`]: true,
@@ -7466,6 +7479,8 @@ function VotePhase({ gameState, onVoteDone, lang }) {
     players.filter(p => p.isBot).forEach(bot => {
       customCats.forEach(cat => {
         players.filter(p => p.id !== bot.id).forEach(target => {
+          const ans = currentRoundData.answers?.[cat.id]?.[target.id] || "";
+          if (!ans.trim()) return; // skip blank answers — no vote needed
           const key = `${bot.id}:${cat.id}:${target.id}`;
           botVotes[key] = Math.random() > 0.3 ? "yes" : "no";
         });
@@ -7706,8 +7721,8 @@ function RoundResultsOverlay({
         ))}
         {/* XP gained this round */}
         {(() => {
-          const humanPlayer = players.find(p=>!p.isBot);
-          const humanId = humanPlayer?.id || humanPlayer?.uid || "";
+          // Use myId from gameState (set correctly for both solo and online modes)
+          const humanId = gameState.myId || players.find(p=>!p.isBot)?.id || "";
           return (
             <div style={{ textAlign: "center", padding: "8px 0", fontSize: 13, color: "var(--ac)", fontWeight: 700 }}>
               +{Math.max(5, (currentRoundData?.scores?.[humanId] || 0) * 3 + 5)} {t("xp")} ⚡
@@ -8131,6 +8146,7 @@ function OnboardingScreen({ onDone, lang }) {
   const t = useT(lang || "fr");
   const [step, setStep] = useState(0);
   const [name, setName] = useState("");
+  const nameInputRef = useRef(null);
   const steps = [
     { icon: "🎯", title: t("ob1_title"), desc: t("ob1_desc"), action: t("ob_next") },
     { icon: "🎰", title: t("ob2_title"), desc: t("ob2_desc"), action: t("ob_next") },
@@ -8158,6 +8174,7 @@ function OnboardingScreen({ onDone, lang }) {
 
         {s.input && (
           <input
+            ref={nameInputRef}
             className="inp"
             value={name}
             onChange={e => setName(e.target.value)}
@@ -8173,7 +8190,7 @@ function OnboardingScreen({ onDone, lang }) {
           onClick={() => {
             if (isLast) {
               if (!name.trim()) {
-                document.querySelector(".inp") && document.querySelector(".inp").focus();
+                nameInputRef.current?.focus();
                 return;
               }
               onDone(name.trim());
@@ -8277,7 +8294,7 @@ function LeaderboardScreen({ onClose, xp, playerName, lang, uid }) {
       });
     } catch { /* ignore */ }
     return () => { if (tournoiUnsub) tournoiUnsub(); };
-  }, [uid, xp, tab]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [uid, xp, playerName, tab]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const myRank = entries.findIndex(e => e.isMe) + 1;
   const myTournoiRank = tournoiEntries.findIndex(e => e.isMe) + 1;
