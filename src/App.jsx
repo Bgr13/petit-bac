@@ -7411,6 +7411,8 @@ function GameScreen({
           playerDone: null,
           // Mort subite: syncer les catégories actives du prochain round
           activeCategoryIds: nextActiveCats.map(c => c.id),
+          // Syncer les lettres déjà utilisées pour que LetterRoulette les exclue côté clients
+          usedLetters: [...(gameState.usedLetters || []), gameState.letter].filter(Boolean),
         }).catch(() => {});
       }
     }} lang={lang} />
