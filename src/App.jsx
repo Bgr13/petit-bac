@@ -6357,7 +6357,8 @@ function OnlineScreen({
   function cleanup() { if (unsubRef.current) { unsubRef.current(); unsubRef.current = null; } }
   useEffect(() => cleanup, []);
 
-  async function doMatchmaking() {
+  async function doMatchmaking(retries = 0) {
+    if (retries > 3) { setError(t("room_not_found","Impossible de trouver une salle. Réessaie.")); setLoading(false); return; }
     setLoading(true); setError("");
     try {
       const existingCode = await FB.findPublicRoom(country);
@@ -6367,7 +6368,7 @@ function OnlineScreen({
         if (!room || room.status !== "waiting") {
           // Salle démarrée entre-temps : en créer une nouvelle
           setError("");
-          return doMatchmaking();
+          return doMatchmaking(retries + 1);
         }
         await FB.updateRoom(existingCode, {
           players: { ...room.players, [myUid]: { uid: myUid, name: sanitizeName(playerName), country, isHost: false, ready: false, connected: true } },
