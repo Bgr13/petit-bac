@@ -6224,6 +6224,9 @@ function GameScreen({
   if (phase === "round_results") {
     return (
     <RoundResultsOverlay gameState={gameState} onNext={() => {
+      // En mode online, seul l'hôte avance le round — les non-hôtes attendent le listener Firebase
+      if (gameState.roomCode && !gameState.isHost) return;
+
       // Calculer le prochain état ici pour pouvoir écrire sur Firebase
       let nextActiveCats = gameState.activeCategories || gameState.categories;
       if (gameState.mode === "mort" && gameState.mortCatCount) {
@@ -6642,10 +6645,16 @@ function RoundResultsOverlay({
             </div>
           );
         })()}
-        {/* BUG 8 FIX: use t("round_label") instead of hardcoded "Round" */}
-        <button className="btn bp" style={{ marginTop: 8 }} onClick={onNext}>
-          ▶ {t("round_label")} {currentRound + 1} / {totalRounds}
-        </button>
+        {/* En mode online, seul l'hôte peut avancer — les autres voient un message d'attente */}
+        {gameState.roomCode && !gameState.isHost ? (
+          <div style={{ textAlign: "center", padding: "10px 0", fontSize: 12, color: "var(--txm)" }} className="pulse">
+            ⏳ {t("waiting_host","En attente de l'hôte…")}
+          </div>
+        ) : (
+          <button className="btn bp" style={{ marginTop: 8 }} onClick={onNext}>
+            ▶ {t("round_label")} {currentRound + 1} / {totalRounds}
+          </button>
+        )}
       </div>
     </div>
   );
