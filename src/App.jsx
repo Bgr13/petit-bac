@@ -6264,7 +6264,8 @@ function GameScreen({
           // Mort subite: syncer les catégories actives du prochain round
           activeCategoryIds: nextActiveCats.map(c => c.id),
           // Syncer les lettres déjà utilisées pour que LetterRoulette les exclue côté clients
-          usedLetters: [...(gameState.usedLetters || []), gameState.letter].filter(Boolean),
+          // NB: gameState.usedLetters already contains gameState.letter (added in onLetterChosen)
+          usedLetters: (gameState.usedLetters || []).filter(Boolean),
         }).catch(() => {});
       }
     }} lang={lang} />
