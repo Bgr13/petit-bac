@@ -2,7 +2,7 @@
   "rules": {
     "rooms": {
       ".read": true,
-      ".write": true,
+      ".write": "auth != null",
       ".indexOn": ["status"]
     },
     "leaderboard": {
