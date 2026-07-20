@@ -3571,10 +3571,13 @@ const FB = (() => {
 
     async signIn() {
       if (auth) {
+        if (auth.currentUser) return { uid: auth.currentUser.uid };
         try {
           const result = await signInAnonymously(auth);
           return { uid: result.user.uid };
-        } catch { /* ignore */ }
+        } catch (e) {
+          console.warn("[Firebase] Auth anonyme échouée:", e.code || e.message, "— mode local");
+        }
       }
       return { uid: "local_" + Math.random().toString(36).substring(2, 9) };
     },
@@ -5240,10 +5243,12 @@ function OnlineScreen({
 
   useEffect(() => cleanup, []);
 
-  async function doMatchmaking(retries = 0) {
+  async function doMatchmaking(retries = 0, resolvedUid = null) {
     if (retries > 3) { setError(t("room_not_found","Impossible de trouver une salle. Réessaie.")); setLoading(false); return; }
     setLoading(true); setError("");
     try {
+      const realUid = resolvedUid || (await FB.signIn()).uid;
+      if (!resolvedUid && realUid !== uid) setUid(realUid);
       const existingCode = await FB.findPublicRoom(country);
       if (existingCode) {
         // Join existing room — re-fetch to confirm it is still waiting (could have started)
@@ -5251,12 +5256,11 @@ function OnlineScreen({
         if (!room || room.status !== "waiting") {
           // Salle démarrée entre-temps : en créer une nouvelle
           setError("");
-          return doMatchmaking(retries + 1);
+          return doMatchmaking(retries + 1, realUid);
         }
-        // Multi-path update: n'écrire que notre propre entrée (règles Firebase players/$uid)
         await FB.updateRoom(existingCode, {
-          [`players/${myUid}`]: { uid: myUid, name: sanitizeName(playerName), country, isHost: false, ready: false, connected: true },
-          [`cumulativeScores/${myUid}`]: 0,
+          [`players/${realUid}`]: { uid: realUid, name: sanitizeName(playerName), country, isHost: false, ready: false, connected: true },
+          [`cumulativeScores/${realUid}`]: 0,
         });
         setRoomCode(existingCode);
         setStep("waiting");
@@ -5269,11 +5273,11 @@ function OnlineScreen({
         const code = genCode();
         const newRoom = {
           code, type: "public", country,
-          hostId: myUid, status: "waiting",
+          hostId: realUid, status: "waiting",
           settings: { difficulty: settings.difficulty, categories: settings.categories, totalRounds: settings.totalRounds, gameMode: gameMode || "solo", mortCatCount: settings.mortCatCount || 3 },
-          players: { [myUid]: { uid: myUid, name: sanitizeName(playerName), country, isHost: true, ready: true, connected: true } },
+          players: { [realUid]: { uid: realUid, name: sanitizeName(playerName), country, isHost: true, ready: true, connected: true } },
           currentRound: 0, spinnerIndex: 0, phase: "waiting",
-          cumulativeScores: { [myUid]: 0 },
+          cumulativeScores: { [realUid]: 0 },
         };
         await FB.createRoom(code, newRoom);
         setRoomCode(code);
@@ -5282,7 +5286,6 @@ function OnlineScreen({
           setRoomData(rd);
           if (rd.status === "playing") { cleanup(); onEnterGame(code, rd); }
         });
-        // Vrai matchmaking Firebase — pas de simulation
       }
     } catch (e) { cleanup(); setError(e.message); }
     setLoading(false);
@@ -5291,15 +5294,17 @@ function OnlineScreen({
   async function createPrivate() {
     setLoading(true); setError("");
     try {
+      const realUid = (await FB.signIn()).uid;
+      if (realUid !== uid) setUid(realUid);
       const code = genCode();
       const finalCats = hostCats.length > 0 ? hostCats : settings.categories;
       const newRoom = {
         code, type: "private", country,
-        hostId: myUid, status: "waiting",
+        hostId: realUid, status: "waiting",
         settings: { difficulty: hostDiff, categories: finalCats, totalRounds: hostRounds, gameMode: gameMode || "solo", mortCatCount: settings.mortCatCount || 3 },
-        players: { [myUid]: { uid: myUid, name: sanitizeName(playerName), country, isHost: true, ready: true, connected: true } },
+        players: { [realUid]: { uid: realUid, name: sanitizeName(playerName), country, isHost: true, ready: true, connected: true } },
         currentRound: 0, spinnerIndex: 0, phase: "waiting",
-        cumulativeScores: { [myUid]: 0 },
+        cumulativeScores: { [realUid]: 0 },
       };
       await FB.createRoom(code, newRoom);
       setRoomCode(code);
@@ -5317,7 +5322,8 @@ function OnlineScreen({
     if (code.length < 4) return;
     setLoading(true); setError("");
     try {
-      // Attendre que Firebase soit prêt (max 3s)
+      const realUid = (await FB.signIn()).uid;
+      if (realUid !== uid) setUid(realUid);
       let room = null;
       let attempts = 0;
       while (attempts < 3) {
@@ -5339,11 +5345,10 @@ function OnlineScreen({
       if (room.status !== "waiting") {
         throw new Error(t("game_in_progress", "La partie a déjà commencé."));
       }
-      const myPlayer = { uid: myUid, name: sanitizeName(playerName || settings.playerName), country, isHost: false, ready: true, connected: true };
-      // Multi-path update: n'écrire que notre propre entrée (règles Firebase players/$uid)
+      const myPlayer = { uid: realUid, name: sanitizeName(playerName || settings.playerName), country, isHost: false, ready: true, connected: true };
       await FB.updateRoom(code, {
-        [`players/${myUid}`]: myPlayer,
-        [`cumulativeScores/${myUid}`]: 0,
+        [`players/${realUid}`]: myPlayer,
+        [`cumulativeScores/${realUid}`]: 0,
       });
       setRoomCode(code);
       setStep("waiting");

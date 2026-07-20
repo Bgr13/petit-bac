@@ -2,61 +2,28 @@
   "rules": {
     "rooms": {
       ".read": true,
-      ".indexOn": ["status"],
-      "$roomId": {
-        ".write": "auth != null",
-        "players": {
-          "$uid": {
-            ".write": "auth != null && (auth.uid === $uid || data.parent().parent().child('hostId').val() === auth.uid)"
-          }
-        },
-        "playerAnswers": {
-          "$uid": {
-            ".write": "auth != null && auth.uid === $uid"
-          }
-        },
-        "playerDone": {
-          "$uid": {
-            ".write": "auth != null && auth.uid === $uid"
-          }
-        }
-      }
+      ".write": true,
+      ".indexOn": ["status"]
     },
     "leaderboard": {
       ".read": true,
-      "$uid": {
-        ".write": "auth != null && auth.uid === $uid"
-      }
+      "$uid": { ".write": "auth != null && auth.uid === $uid" }
     },
     "tournoi": {
       ".read": true,
       "$weekKey": {
-        "$uid": {
-          ".write": "auth != null && auth.uid === $uid"
-        }
+        "$uid": { ".write": "auth != null && auth.uid === $uid" }
       }
     },
     "users": {
-      "$uid": {
-        ".read": true,
-        ".write": "auth != null && auth.uid === $uid"
-      }
+      "$uid": { ".read": true, ".write": "auth != null && auth.uid === $uid" }
     },
-    "friendCodes": {
-      ".read": "auth != null",
-      ".write": "auth != null"
-    },
+    "friendCodes": { ".read": "auth != null", ".write": "auth != null" },
     "friends": {
-      "$uid": {
-        ".read": "auth != null && auth.uid === $uid",
-        ".write": "auth != null"
-      }
+      "$uid": { ".read": "auth != null && auth.uid === $uid", ".write": "auth != null" }
     },
     "friendRequests": {
-      "$uid": {
-        ".read": "auth != null && auth.uid === $uid",
-        ".write": "auth != null"
-      }
+      "$uid": { ".read": "auth != null && auth.uid === $uid", ".write": "auth != null" }
     }
   }
 }
