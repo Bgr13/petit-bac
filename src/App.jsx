@@ -5220,17 +5220,18 @@ function OnlineScreen({
           if (Object.keys(updatedPlayers).length === 0) {
             await FB.updateRoom(roomCode, { status: "finished", finishedAt: Date.now() });
           } else {
-            // Passer l'hôte au prochain joueur si c'est moi qui pars
+            // Multi-path update: supprimer notre entrée + transférer l'hôte si nécessaire
             const wasHost = room.hostId === myUid;
-            const nextHostId = wasHost ? Object.keys(updatedPlayers)[0] : room.hostId;
-            const nextPlayers = wasHost
-              ? { ...updatedPlayers, [nextHostId]: { ...updatedPlayers[nextHostId], isHost: true } }
-              : updatedPlayers;
-            await FB.updateRoom(roomCode, {
-              players: nextPlayers,
-              cumulativeScores: updatedScores,
-              ...(wasHost ? { hostId: nextHostId } : {}),
-            });
+            const nextHostId = wasHost ? Object.keys(updatedPlayers)[0] : null;
+            const updates = {
+              [`players/${myUid}`]: null,
+              [`cumulativeScores/${myUid}`]: null,
+            };
+            if (wasHost && nextHostId) {
+              updates[`players/${nextHostId}/isHost`] = true;
+              updates.hostId = nextHostId;
+            }
+            await FB.updateRoom(roomCode, updates);
           }
         }
       } catch { /* ignore — ne pas bloquer la navigation */ }
@@ -5252,8 +5253,10 @@ function OnlineScreen({
           setError("");
           return doMatchmaking(retries + 1);
         }
+        // Multi-path update: n'écrire que notre propre entrée (règles Firebase players/$uid)
         await FB.updateRoom(existingCode, {
-          players: { ...room.players, [myUid]: { uid: myUid, name: sanitizeName(playerName), country, isHost: false, ready: false, connected: true } },
+          [`players/${myUid}`]: { uid: myUid, name: sanitizeName(playerName), country, isHost: false, ready: false, connected: true },
+          [`cumulativeScores/${myUid}`]: 0,
         });
         setRoomCode(existingCode);
         setStep("waiting");
@@ -5337,9 +5340,10 @@ function OnlineScreen({
         throw new Error(t("game_in_progress", "La partie a déjà commencé."));
       }
       const myPlayer = { uid: myUid, name: sanitizeName(playerName || settings.playerName), country, isHost: false, ready: true, connected: true };
+      // Multi-path update: n'écrire que notre propre entrée (règles Firebase players/$uid)
       await FB.updateRoom(code, {
-        players: { ...room.players, [myUid]: myPlayer },
-        cumulativeScores: { ...(room.cumulativeScores || {}), [myUid]: 0 },
+        [`players/${myUid}`]: myPlayer,
+        [`cumulativeScores/${myUid}`]: 0,
       });
       setRoomCode(code);
       setStep("waiting");
