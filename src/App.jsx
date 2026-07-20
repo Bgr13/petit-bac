@@ -3565,6 +3565,8 @@ const FB = (() => {
 
   // ── Fallback local (même appareil) ──────────────────────────
   const local = { rooms: {}, listeners: {} };
+  // uid stable quand l'auth Firebase échoue — généré une seule fois
+  let localFallbackUid = null;
 
   return {
     db,  // Exposed for direct modular API usage (Leaderboard etc.)
@@ -3579,7 +3581,8 @@ const FB = (() => {
           console.warn("[Firebase] Auth anonyme échouée:", e.code || e.message, "— mode local");
         }
       }
-      return { uid: "local_" + Math.random().toString(36).substring(2, 9) };
+      if (!localFallbackUid) localFallbackUid = "local_" + Math.random().toString(36).substring(2, 9);
+      return { uid: localFallbackUid };
     },
 
     async createRoom(code, data) {
