@@ -5248,7 +5248,6 @@ function OnlineScreen({
     setLoading(true); setError("");
     try {
       const realUid = resolvedUid || (await FB.signIn()).uid;
-      if (!resolvedUid && realUid !== uid) setUid(realUid);
       const existingCode = await FB.findPublicRoom(country);
       if (existingCode) {
         // Join existing room — re-fetch to confirm it is still waiting (could have started)
@@ -5295,7 +5294,6 @@ function OnlineScreen({
     setLoading(true); setError("");
     try {
       const realUid = (await FB.signIn()).uid;
-      if (realUid !== uid) setUid(realUid);
       const code = genCode();
       const finalCats = hostCats.length > 0 ? hostCats : settings.categories;
       const newRoom = {
@@ -5323,7 +5321,6 @@ function OnlineScreen({
     setLoading(true); setError("");
     try {
       const realUid = (await FB.signIn()).uid;
-      if (realUid !== uid) setUid(realUid);
       let room = null;
       let attempts = 0;
       while (attempts < 3) {
