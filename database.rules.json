@@ -7,12 +7,12 @@
     },
     "leaderboard": {
       ".read": true,
-      "$uid": { ".write": "auth != null && auth.uid === $uid" }
+      "$uid": { ".write": true }
     },
     "tournoi": {
       ".read": true,
       "$weekKey": {
-        "$uid": { ".write": "auth != null && auth.uid === $uid" }
+        "$uid": { ".write": true }
       }
     },
     "users": {

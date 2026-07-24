@@ -4161,7 +4161,7 @@ export default function App() {
     logEvent("game_start", { uid, mode: cfg.mode, difficulty: cfg.difficulty });
   }
 
-  function enterOnlineGame(roomCode, roomData) {
+  function enterOnlineGame(roomCode, roomData, myUid) {
     const allCats = (roomData.settings.categories || []).map(id =>
       ALL_BASE.find(c => c.id === id)
     ).filter(Boolean);
@@ -4188,14 +4188,18 @@ export default function App() {
       answers: Object.fromEntries(activeCats.map(c => [c.id, ""])),
       phase: "roulette",
       cumulativeScores: roomData.cumulativeScores || {},
-      myId: uid,
+      // BUG FIX: utiliser l'uid résolu au moment de créer/rejoindre la room (myUid),
+      // pas le state top-level "uid" qui peut ne pas encore avoir résolu (async signIn).
+      // Sinon myId reste null → handleStop bascule silencieusement en mode offline
+      // et n'écrit jamais les réponses du joueur sur Firebase.
+      myId: myUid || uid,
       // Utiliser les équipes broadcastées par l'hôte via Firebase (évite la divergence 2v2)
       teams: roomData.teams || (roomData.settings?.gameMode === "2v2" ? (() => {
         const playerIds = Object.keys(roomData.players || {});
         const half = Math.ceil(playerIds.length / 2);
         return { team0: playerIds.slice(0, half), team1: playerIds.slice(half) };
       })() : null),
-      isHost: roomData.hostId === uid,
+      isHost: roomData.hostId === (myUid || uid),
       lang: lang, // BUG 6 FIX: include lang in online game state
       usedLetters: roomData.usedLetters || [], // BUG 3 FIX: restaurer les lettres déjà utilisées
       mortCatCount: roomData.settings?.mortCatCount || null, // Mort subite: nb cats/manche
@@ -5268,7 +5272,7 @@ function OnlineScreen({
         setStep("waiting");
         unsubRef.current = FB.listenRoom(existingCode, rd => {
           setRoomData(rd);
-          if (rd.status === "playing") { cleanup(); onEnterGame(existingCode, rd); }
+          if (rd.status === "playing") { cleanup(); onEnterGame(existingCode, rd, realUid); }
         });
       } else {
         // Create public room
@@ -5286,7 +5290,7 @@ function OnlineScreen({
         setStep("waiting");
         unsubRef.current = FB.listenRoom(code, rd => {
           setRoomData(rd);
-          if (rd.status === "playing") { cleanup(); onEnterGame(code, rd); }
+          if (rd.status === "playing") { cleanup(); onEnterGame(code, rd, realUid); }
         });
       }
     } catch (e) { cleanup(); setError(e.message); }
@@ -5312,7 +5316,7 @@ function OnlineScreen({
       setStep("waiting");
       unsubRef.current = FB.listenRoom(code, rd => {
         setRoomData(rd);
-        if (rd.status === "playing") { cleanup(); onEnterGame(code, rd); }
+        if (rd.status === "playing") { cleanup(); onEnterGame(code, rd, realUid); }
       });
     } catch (e) { setError(e.message); }
     setLoading(false);
@@ -5355,7 +5359,7 @@ function OnlineScreen({
       unsubRef.current = FB.listenRoom(code, rd => {
         if (!rd) return;
         setRoomData(rd);
-        if (rd.status === "playing") { cleanup(); onEnterGame(code, rd); }
+        if (rd.status === "playing") { cleanup(); onEnterGame(code, rd, realUid); }
       });
     } catch (e) {
       setError(e.message || t("room_not_found", "Impossible de rejoindre. Réessaie."));
@@ -6040,23 +6044,29 @@ function GameScreen({
           (p.id === myId || p.uid === myId) ? { ...p, done: true } : p
         );
         // Pousser les réponses sur Firebase puis signaler la fin du round.
-        // RACE CONDITION FIX: seul le premier joueur à finir écrit "round_ended".
-        // Les autres joueurs ne font qu'écrire leurs réponses — le listener Firebase
-        // détecte "round_ended" et déclenche computeRoundScores côté local.
+        // RACE CONDITION FIX: ne déclencher "round_ended" que lorsque TOUS les
+        // joueurs encore présents dans la room ont soumis (playerDone[uid] === true).
+        // Sinon deux clients peuvent calculer les scores à des instants différents
+        // avec des réponses partielles → scores divergents entre joueurs.
+        // Garde-fou: si le round dure depuis plus que le temps imparti + marge,
+        // on force la fin malgré tout (joueur déconnecté sans avoir répondu).
         FB.updateRoom(g.roomCode, {
           [`playerAnswers/${myId}`]: latestAnswers,
           [`playerDone/${myId}`]: true,
-        }).then(() => {
-          // Vérifier si la room est déjà en round_ended avant d'écrire
-          return FB.getRoom(g.roomCode).then(room => {
-            if (room && room.phase === "playing") {
-              return FB.updateRoom(g.roomCode, {
-                phase: "round_ended",
-                roundEndedAt: Date.now(),
-              });
-            }
-            // Déjà round_ended (un autre joueur plus rapide) — pas d'écriture
-          });
+        }).then(() => FB.getRoom(g.roomCode)).then(room => {
+          if (!room || room.phase !== "playing") return; // déjà avancé par un autre client
+          const playerIds = Object.keys(room.players || {});
+          const allDone = playerIds.every(pid => room.playerDone?.[pid] === true);
+          const elapsedMs = room.letterChosenAt ? Date.now() - room.letterChosenAt : 0;
+          const graceMs = (g.totalTime + 10) * 1000;
+          if (allDone || elapsedMs > graceMs) {
+            return FB.updateRoom(g.roomCode, {
+              phase: "round_ended",
+              roundEndedAt: Date.now(),
+            });
+          }
+          // Pas encore tout le monde — le dernier joueur à finir (ou le garde-fou
+          // du prochain à écrire) déclenchera round_ended.
         }).catch(() => {});
         return { ...g, players: updatedPlayers };
       });
