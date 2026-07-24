@@ -1660,7 +1660,7 @@ const VALID_WORDS_EN = {
     U:["ukraine","united kingdom","united states","uruguay","uzbekistan"],
     V:["vanuatu","venezuela","vietnam"],
     Z:["zambia","zimbabwe"]
-  },
+  ,O:["oman"]},
   ville:{
 
     A:["amsterdam","athens","atlanta","austin","adelaide","algiers","ankara","abu dhabi","accra","addis ababa","alexandria","amman","antananarivo","asmara","astana","asuncion","auckland"],
@@ -1834,7 +1834,7 @@ const VALID_WORDS_EN = {
     T:["table","telescope","thermometer","ticket","torch","toothbrush"],
     U:["umbrella","urn"],
     V:["vase"],
-    W:["wallet","watch","wheel"],},
+    W:["wallet","watch","wheel"],O:["oven"]},
   film:{
 
     A:["alien","amadeus","amelie","apocalypse now","avatar","avengers","a beautiful mind","arrival"],
@@ -1881,7 +1881,7 @@ const VALID_WORDS_EN = {
     U:["under armour","uniqlo"],
     V:["versace","volkswagen","vans"],
     Z:["zara"]
-  },
+  ,O:["opel"]},
   anatomie:{
 
     A:["abdomen","achilles tendon","aorta","appendix","arm","artery","atlas"],
@@ -1949,7 +1949,7 @@ const VALID_WORDS_EN = {
     R:["ramen","risotto","roast"],
     S:["sashimi","spaghetti","steak","sushi","smoothie"],
     T:["tacos","tapas","tiramisu","toast"],
-    W:["waffle","wrap"],},
+    W:["waffle","wrap"],O:["omelette"],V:["vindaloo"]},
   vehicule:{
 
     A:["airplane","ambulance","armored car"],
@@ -1972,7 +1972,7 @@ const VALID_WORDS_EN = {
     T:["tank","taxi","tractor","train","tram","truck"],
     U:["uber"],
     V:["van"],
-    W:["watercraft"],},
+    W:["watercraft"],N:["narrowboat"]},
   capital:{
 
     A:["abu dhabi","abuja","accra","addis ababa","algiers","amman","andorra la vella","ankara","antananarivo","apia","ashgabat","asuncion","astana","athens","asmara"],
@@ -2016,7 +2016,7 @@ const VALID_WORDS_EN = {
     S:["sagrada familia","sistine chapel","sphinx","statue of liberty","stonehenge"],
     T:["taj mahal"],
     V:["vatican"],
-    W:["white house"],},
+    W:["white house"],D:["dolmen"],I:["ice hotel"],J:["jetty"],O:["obelisk"]},
   langue:{
 
     A:["afrikaans","albanian","amharic","arabic","armenian"],
@@ -2040,7 +2040,7 @@ const VALID_WORDS_EN = {
     U:["ukrainian","urdu","uzbek"],
     V:["vietnamese"],
     W:["welsh"],
-    Y:["yoruba"],},
+    Y:["yoruba"],O:["occitan"]},
   instrument:{
 
     A:["accordion","alpine horn"],
@@ -2064,7 +2064,7 @@ const VALID_WORDS_EN = {
     V:["vibraphone","viola","violin"],
     X:["xylophone"],
     Z:["zither"]
-  },
+  ,J:["jaw harp"],N:["nose flute"]},
   vetement:{
 
     A:["apron"],
@@ -2087,7 +2087,7 @@ const VALID_WORDS_EN = {
     T:["tights","top","trench coat","trousers","tuxedo"],
     U:["uniform"],
     V:["vest","veil"],
-    W:["waistcoat"],},
+    W:["waistcoat"],I:["inverness"]},
   emotion:{
 
     A:["admiration","adoration","affection","agony","aggression","ambivalence","anger","anguish","anxiety","apathy","awe"],
@@ -2108,7 +2108,7 @@ const VALID_WORDS_EN = {
     S:["sadness","serenity","shame","shock","sorrow","sympathy","surprise"],
     T:["terror","tenderness","trust"],
     V:["vanity","vulnerability"],
-    W:["wonder","wrath"],},
+    W:["wonder","wrath"],O:["outrage"]},
   mythologie:{
 
     A:["achilles","acheron","agamemnon","ajax","amphitrite","andromeda","antaeus","aphrodite","apollo","ares","argonauts","ariadne","artemis","asclepius","atlas"],
@@ -2132,7 +2132,7 @@ const VALID_WORDS_EN = {
     U:["ulysses"],
     V:["venus","vulcan"],
     Z:["zeus"]
-  },
+  ,F:["fates"]},
   espace:{
 
     A:["asteroid","astronaut","astronomy","atmosphere","aurora"],
