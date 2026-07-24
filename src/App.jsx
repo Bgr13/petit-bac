@@ -6364,8 +6364,8 @@ function GameScreen({
                     <span className="cat-emoji">{cat.emoji}</span>
                     <span className="cat-label">{getCatLabel(cat.id, lang || "fr")}</span>
                     <span className={`past-answer ${vc}`}>
-                      {ans || "—"}{ans && v !== -1 && <span style={{ fontSize: 10, opacity: .7 }}> +{Math.max(0, v)}</span>}
-                      {ans && v === -1 && <span style={{ fontSize: 10 }}> ❌</span>}
+                      {ans.trim() ? ans : "—"}{ans.trim() && v !== -1 && <span style={{ fontSize: 10, opacity: .7 }}> +{Math.max(0, v)}</span>}
+                      {ans.trim() && v === -1 && <span style={{ fontSize: 10 }}> ❌</span>}
                     </span>
                   </div>
                 );
@@ -6624,7 +6624,7 @@ function RoundResultsOverlay({
                       return (
                         <td key={p.id}>
                           <div style={{ fontSize: 11, textDecoration: invalid ? "line-through" : "none", color: invalid ? "var(--rd)" : "inherit" }}>
-                            {ans || <em style={{ color: "var(--txm)" }}>—</em>}
+                            {ans.trim() ? ans : <em style={{ color: "var(--txm)" }}>—</em>}
                           </div>
                           <div className={`td-pts ${cc}`}>
                             {invalid ? "❌" : `+${Math.max(0,pts)}pt`}
