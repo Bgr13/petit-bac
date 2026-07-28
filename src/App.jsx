@@ -6058,6 +6058,34 @@ function GameScreen({
     computeRoundScores(gameState);
   }, [gameState.phase]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  // ── GARDE-FOU PÉRIODIQUE: une manche ne doit jamais rester bloquée en
+  // "playing" indéfiniment si un joueur disparaît (déconnexion, tab fermé)
+  // sans avoir soumis ses réponses. Le garde-fou dans handleStop() ne se
+  // vérifie qu'une fois, au moment où CHAQUE joueur soumet — si tous les
+  // joueurs encore présents soumettent avant l'expiration du délai de grâce,
+  // personne ne revérifie plus tard et la manche reste bloquée pour toujours.
+  // Ce watchdog tourne en continu tant qu'on est en phase "playing" (que ce
+  // client ait déjà soumis ou non) et force la fin de manche si le délai de
+  // grâce est dépassé, peu importe qui a fini.
+  useEffect(() => {
+    if (!gameState.roomCode || gameState.phase !== "playing") return;
+    const interval = setInterval(async () => {
+      try {
+        const room = await FB.getRoom(gameState.roomCode);
+        if (!room || room.phase !== "playing" || !room.letterChosenAt) return;
+        const elapsedMs = Date.now() - room.letterChosenAt;
+        const graceMs = (gameState.totalTime + 10) * 1000;
+        if (elapsedMs > graceMs) {
+          await FB.updateRoom(gameState.roomCode, {
+            phase: "round_ended",
+            roundEndedAt: Date.now(),
+          });
+        }
+      } catch { /* ignore */ }
+    }, 5000);
+    return () => clearInterval(interval);
+  }, [gameState.roomCode, gameState.phase, gameState.totalTime]);
+
   useEffect(() => { aiRef.current = false; doneRef.current = false; }, [currentRound]);
 
   useEffect(() => {

@@ -3,27 +3,59 @@
     "rooms": {
       ".read": true,
       ".write": true,
-      ".indexOn": ["status"]
+      ".indexOn": ["status"],
+      "$roomId": {
+        "status": {
+          ".validate": "newData.val() == 'waiting' || newData.val() == 'playing' || newData.val() == 'finished'"
+        },
+        "phase": {
+          ".validate": "newData.val() == 'waiting' || newData.val() == 'roulette' || newData.val() == 'playing' || newData.val() == 'round_ended'"
+        },
+        "type": {
+          ".validate": "newData.val() == 'public' || newData.val() == 'private'"
+        },
+        "code": {
+          ".validate": "newData.isString() && newData.val() == $roomId"
+        },
+        "hostId": {
+          ".validate": "newData.isString()"
+        }
+      }
     },
     "leaderboard": {
       ".read": true,
-      "$uid": { ".write": true }
+      ".indexOn": ["xp"],
+      "$uid": {
+        ".write": true,
+        ".validate": "newData.val() == null || newData.hasChildren(['name','xp'])",
+        "name": { ".validate": "newData.isString() && newData.val().length <= 30" },
+        "xp": { ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 1000000" }
+      }
     },
     "tournoi": {
       ".read": true,
       "$weekKey": {
-        "$uid": { ".write": true }
+        ".indexOn": ["score"],
+        "$uid": {
+          ".write": true,
+          ".validate": "newData.val() == null || newData.hasChildren(['name','score'])",
+          "name": { ".validate": "newData.isString() && newData.val().length <= 30" },
+          "score": { ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 100000" }
+        }
       }
     },
     "users": {
-      "$uid": { ".read": true, ".write": "auth != null && auth.uid === $uid" }
+      "$uid": {
+        ".read": true,
+        ".write": true
+      }
     },
-    "friendCodes": { ".read": "auth != null", ".write": "auth != null" },
+    "friendCodes": { ".read": true, ".write": true },
     "friends": {
-      "$uid": { ".read": "auth != null && auth.uid === $uid", ".write": "auth != null" }
+      "$uid": { ".read": true, ".write": true }
     },
     "friendRequests": {
-      "$uid": { ".read": "auth != null && auth.uid === $uid", ".write": "auth != null" }
+      "$uid": { ".read": true, ".write": true }
     }
   }
 }
