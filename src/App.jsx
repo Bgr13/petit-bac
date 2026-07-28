@@ -3892,7 +3892,14 @@ class ErrorBoundary extends Component {
 export default function App() {
   const [tab, setTab] = useState("home");
   const [screen, setScreen] = useState("home");
-  const [tier, setTier] = useState("free"); // TIER.FREE = "free"
+  // BUG FIX: persister le tier PRO/VIP — sans ça, un abonnement (même en mode
+  // démo) redevenait "gratuit" à chaque rechargement de page.
+  const [tier, setTier] = useState(() => {
+    try { return localStorage.getItem("pb_tier") || "free"; } catch { return "free"; }
+  });
+  useEffect(() => {
+    try { localStorage.setItem("pb_tier", tier); } catch { /* ignore */ }
+  }, [tier]);
   const [theme, setTheme] = useState(() => { try { return localStorage.getItem("pb_theme") || "light"; } catch { return "light"; } });
   const [lang, setLang] = useState(() => {
     try {
