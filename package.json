@@ -11,9 +11,11 @@
   },
   "dependencies": {
     "firebase": "^12.13.0",
+    "firebase-admin": "^14.2.0",
     "qrcode": "^1.5.4",
     "react": "^19.2.5",
-    "react-dom": "^19.2.5"
+    "react-dom": "^19.2.5",
+    "stripe": "^22.3.2"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

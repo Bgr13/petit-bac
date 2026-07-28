@@ -47,8 +47,14 @@
     "users": {
       "$uid": {
         ".read": true,
-        ".write": true
+        "name": { ".write": true, ".validate": "newData.isString() && newData.val().length <= 30" },
+        "xp": { ".write": true, ".validate": "newData.isNumber() && newData.val() >= 0" },
+        "updatedAt": { ".write": true },
+        "friendCode": { ".write": true, ".validate": "newData.isString()" }
       }
+    },
+    "stripeCustomers": {
+      "$customerId": {}
     },
     "friendCodes": { ".read": true, ".write": true },
     "friends": {

@@ -3756,6 +3756,16 @@ const FB = (() => {
       } catch { cb({}); return () => {}; }
     },
 
+    // Tier PRO/VIP réel, écrit uniquement par le webhook Stripe côté serveur
+    // (Admin SDK, contourne les règles) — jamais par le client (cf. rules).
+    listenUserTier(uid, cb) {
+      if (!db) return () => {};
+      try {
+        const ref = dbRef(db, `users/${uid}/tier`);
+        return dbOnValue(ref, snap => cb(snap.val() || null));
+      } catch { return () => {}; }
+    },
+
     async removeFriend(myUid, friendUid) {
       if (!db) return;
       await Promise.all([
@@ -3989,6 +3999,19 @@ export default function App() {
     signedInRef.current = true;
     FB.signIn().then(u => setUid(u.uid));
   }, []);
+
+  // Le tier PRO/VIP réel est décidé par le webhook Stripe côté serveur
+  // (users/{uid}/tier, non modifiable par le client — cf. database.rules.json).
+  // On l'écoute en temps réel pour refléter un vrai paiement confirmé, en plus
+  // du mode démo local (pb_tier) utilisé quand aucune souscription Stripe
+  // réelle n'existe encore pour cet uid.
+  useEffect(() => {
+    if (!uid || !FB.db) return;
+    const unsub = FB.listenUserTier?.(uid, (serverTier) => {
+      if (serverTier) setTier(serverTier);
+    });
+    return () => { if (unsub) unsub(); };
+  }, [uid]);
 
   // Apply theme whenever it changes
   useEffect(() => { applyTheme(theme); }, [theme]);
@@ -4395,7 +4418,7 @@ export default function App() {
           }} onHome={() => setScreen("home")} uid={uid} lang={lang} />}
         {screen !== "game" && <BottomNav tab={tab} setTab={setTab} setScreen={setScreen} setGameState={setGameState} onLeaderboard={() => setShowLeaderboard(true)} lang={lang} />}
       </div>
-      {showTier && <TierModal current={tier} onSelect={t => { setTier(t); setShowTier(false); }} onClose={() => setShowTier(false)} lang={lang} />}
+      {showTier && <TierModal current={tier} uid={uid} onSelect={t => { setTier(t); setShowTier(false); }} onClose={() => setShowTier(false)} lang={lang} />}
       {showProfile && <ProfilePanel stats={stats} xp={xp} playerName={settings.playerName} wordHistory={wordHistory} catHistory={catHistory} tier={tier} unlockedBadges={unlockedBadges} onClose={() => setShowProfile(false)} onLeaderboard={() => { setShowProfile(false); setShowLeaderboard(true); }} onThemes={() => { setShowProfile(false); setShowThemes(true); }} onEditProfile={() => { setShowProfile(false); setShowProfilePhoto(true); }}
           onShare={() => { setShowProfile(false); setShowShare(true); }}
           onRateApp={() => { setShowProfile(false); setShowRateApp(true); }}
@@ -8128,52 +8151,66 @@ function BottomNav({ tab, setTab, setScreen, setGameState, onLeaderboard, lang }
 
 // ─── TIER MODAL ───────────────────────────────────────────────────
 function TierModal({
-  current, onSelect, onClose, lang
+  current, uid, onSelect, onClose, lang
 }) {
   const t = useT(lang || "fr");
   const [sel, setSel] = useState(current);
   const [loading, setLoading] = useState(false);
+  const [payError, setPayError] = useState("");
 
   const tiers = [
     {
       id: TIER.FREE, name: t("free_label","Gratuit"), price: "0€",
       cls: "tc-free", period: "",
       features: [t("tier_free_f1","6 catégories"), t("tier_free_f2","2 thèmes"), t("tier_free_f3","Solo vs IA")],
-      stripe: null,
     },
     {
       id: TIER.PRO, name: "PRO ◆", price: "4,99€",
       cls: "tc-pro", period: t("per_month","/mois"),
       features: [t("tier_pro_f1","30 catégories"), t("tier_pro_f2","10 thèmes"), t("tier_pro_f3","Multijoueur illimité"), t("tier_pro_f4","Défi quotidien")],
-      stripe: "https://buy.stripe.com/test_00waEW85F1dE1fZ7Wj6g800",
     },
     {
       id: TIER.VIP, name: "VIP ★", price: "14,99€",
       cls: "tc-vip", period: t("per_month","/mois"),
       features: [t("tier_vip_f1","Tout PRO +"), t("tier_vip_f2","12 thèmes exclusifs"), t("tier_vip_f3","Tournois VIP"), t("tier_vip_f4","Badge exclusif ★")],
-      stripe: "https://buy.stripe.com/test_8x2dR8gCbbSi0bVdgD6g801",
     },
   ];
 
-  function handleSelect(tier_item) {
+  async function handleSelect(tier_item) {
     if (tier_item.id === TIER.FREE) {
       onSelect(TIER.FREE);
       onClose();
       return;
     }
-    // Ouvrir Stripe dans un nouvel onglet
-    if (tier_item.stripe && tier_item.stripe.includes("buy.stripe.com") && !tier_item.stripe.includes("test_")) {
-      setLoading(true);
-      window.open(tier_item.stripe, "_blank");
-      // Simuler l'activation après 2s (mode démo)
-      setTimeout(() => { onSelect(tier_item.id); onClose(); }, 1500);
-      setTimeout(() => { setLoading(false); }, 2000);
-    } else {
-      // Mode démo: activer directement
+    setLoading(true);
+    setPayError("");
+    // Paiement réel via Stripe Checkout (fonction serverless). En dev local sans
+    // fonctions Netlify actives (ou si Stripe n'est pas configuré côté serveur),
+    // on retombe en mode démo pour ne pas bloquer le développement.
+    try {
+      const resp = await fetch("/.netlify/functions/create-checkout-session", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          uid,
+          tier: tier_item.id,
+          successUrl: window.location.origin + "/?checkout=success",
+          cancelUrl: window.location.origin + "/?checkout=cancel",
+        }),
+      });
+      if (!resp.ok) throw new Error("checkout indisponible");
+      const data = await resp.json();
+      if (!data.url) throw new Error("URL de paiement manquante");
+      logEvent("subscription_click", { tier: tier_item.id });
+      window.location.href = data.url; // redirection vers la vraie page Stripe Checkout
+    } catch (e) {
+      console.warn("[Stripe] Checkout indisponible, mode démo:", e.message);
+      setPayError(t("stripe_test_mode","Mode démo : abonnement activé pour la présentation !"));
       onSelect(tier_item.id);
-      onClose();
+      setTimeout(() => onClose(), 1200);
+    } finally {
+      setLoading(false);
     }
-    logEvent("subscription_click", { tier: tier_item.id });
   }
 
   return (
@@ -8231,6 +8268,9 @@ function TierModal({
              t("subscribe_btn","S'abonner") + " " + (sel === TIER.PRO ? "PRO" : "VIP")}
           </button>
           <button className="btn bs" onClick={onClose}>{t("cancel3","Annuler")}</button>
+          {payError && (
+            <div style={{ textAlign: "center", marginTop: 8, fontSize: 11, color: "var(--yw)" }}>{payError}</div>
+          )}
           <div style={{ textAlign: "center", marginTop: 10, fontSize: 10, color: "var(--txd)" }}>
             {t("stripe_secure","Paiement sécurisé par Stripe • Annulable à tout moment")}
           </div>
