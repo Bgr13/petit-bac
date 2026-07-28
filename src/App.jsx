@@ -3581,7 +3581,18 @@ const FB = (() => {
           console.warn("[Firebase] Auth anonyme échouée:", e.code || e.message, "— mode local");
         }
       }
-      if (!localFallbackUid) localFallbackUid = "local_" + Math.random().toString(36).substring(2, 9);
+      if (!localFallbackUid) {
+        // Persister dans localStorage pour garder la même identité après un rechargement
+        // de page — sinon un joueur qui recharge en pleine partie change d'uid et ne peut
+        // plus jamais reprendre sa place (l'ancienne entrée devient un fantôme orphelin).
+        try {
+          localFallbackUid = localStorage.getItem("pb_local_uid") || null;
+        } catch { /* ignore */ }
+        if (!localFallbackUid) {
+          localFallbackUid = "local_" + Math.random().toString(36).substring(2, 9);
+          try { localStorage.setItem("pb_local_uid", localFallbackUid); } catch { /* ignore */ }
+        }
+      }
       return { uid: localFallbackUid };
     },
 
@@ -4170,23 +4181,35 @@ export default function App() {
     const activeCats = activeCatIds
       ? activeCatIds.map(id => ALL_BASE.find(c => c.id === id)).filter(Boolean)
       : allCats;
+    const totalTime = DIFFICULTY[roomData.settings.difficulty || "medium"].time;
+    // RECONNEXION: si la partie est déjà en cours (round_ended/vote_phase/playing),
+    // reprendre à l'écran de jeu plutôt que de toujours repartir de la roulette —
+    // sinon un joueur qui rejoint après un rechargement de page revit une roulette
+    // fantôme au lieu de reprendre le round réellement en cours.
+    const resumePhase = roomData.phase === "roulette" ? "roulette" : "playing";
+    let timeLeft = totalTime;
+    if (resumePhase === "playing" && roomData.letterChosenAt) {
+      const elapsedSec = Math.floor((Date.now() - roomData.letterChosenAt) / 1000);
+      timeLeft = Math.max(5, totalTime - elapsedSec);
+    }
     setGameState({
       mode: roomData.settings?.gameMode || "online",
       roomCode,
       difficulty: roomData.settings.difficulty || "medium",
-      totalTime: DIFFICULTY[roomData.settings.difficulty || "medium"].time,
-      timeLeft: DIFFICULTY[roomData.settings.difficulty || "medium"].time,
+      totalTime,
+      timeLeft,
       categories: allCats,
       activeCategories: activeCats,
       players: Object.values(roomData.players || {}).map(p => ({ ...p, id: p.uid || p.id })),
       totalRounds: roomData.settings.totalRounds || 5,
-      currentRound: 1,
+      currentRound: roomData.currentRound || 1,
       spinnerIndex: roomData.spinnerIndex || 0,
       spinnerOrder: roomData.spinnerOrder || null,
       rounds: [],
-      letter: null,
-      answers: Object.fromEntries(activeCats.map(c => [c.id, ""])),
-      phase: "roulette",
+      letter: resumePhase === "playing" ? (roomData.letter || null) : null,
+      pendingLetter: roomData.letter || null,
+      answers: Object.fromEntries(activeCats.map(c => [c.id, roomData.playerAnswers?.[myUid]?.[c.id] || ""])),
+      phase: resumePhase,
       cumulativeScores: roomData.cumulativeScores || {},
       // BUG FIX: utiliser l'uid résolu au moment de créer/rejoindre la room (myUid),
       // pas le state top-level "uid" qui peut ne pas encore avoir résolu (async signIn).
@@ -4209,6 +4232,8 @@ export default function App() {
 
   // BUG 2 FIX: handleGameEnd updates stats, XP, badges and persists to localStorage
   function handleGameEnd(gs) {
+    // La partie est réellement terminée — ne plus proposer de la reprendre au reload
+    try { localStorage.removeItem("pb_active_room"); } catch { /* ignore */ }
     setGameState(gs);
     setScreen("results");
 
@@ -5215,6 +5240,16 @@ function OnlineScreen({
 
   function cleanup() { if (unsubRef.current) { unsubRef.current(); unsubRef.current = null; } }
 
+  // RECONNEXION: si une room active a été mémorisée (reload de page en pleine
+  // partie), tenter de reprendre automatiquement plutôt que de forcer le joueur
+  // à retaper le code de salon.
+  useEffect(() => {
+    let stored;
+    try { stored = localStorage.getItem("pb_active_room"); } catch { stored = null; }
+    if (stored) joinPrivate(stored);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   // Retirer le joueur de la room Firebase avant de quitter la salle d'attente
   // pour éviter les joueurs fantômes (ghost players) qui gonflent le compteur
   async function leaveRoom() {
@@ -5246,6 +5281,7 @@ function OnlineScreen({
         }
       } catch { /* ignore — ne pas bloquer la navigation */ }
     }
+    try { localStorage.removeItem("pb_active_room"); } catch { /* ignore */ }
   }
 
   useEffect(() => cleanup, []);
@@ -5269,6 +5305,7 @@ function OnlineScreen({
           [`cumulativeScores/${realUid}`]: 0,
         });
         setRoomCode(existingCode);
+        try { localStorage.setItem("pb_active_room", existingCode); } catch { /* ignore */ }
         setStep("waiting");
         unsubRef.current = FB.listenRoom(existingCode, rd => {
           setRoomData(rd);
@@ -5287,6 +5324,7 @@ function OnlineScreen({
         };
         await FB.createRoom(code, newRoom);
         setRoomCode(code);
+        try { localStorage.setItem("pb_active_room", code); } catch { /* ignore */ }
         setStep("waiting");
         unsubRef.current = FB.listenRoom(code, rd => {
           setRoomData(rd);
@@ -5313,6 +5351,7 @@ function OnlineScreen({
       };
       await FB.createRoom(code, newRoom);
       setRoomCode(code);
+      try { localStorage.setItem("pb_active_room", code); } catch { /* ignore */ }
       setStep("waiting");
       unsubRef.current = FB.listenRoom(code, rd => {
         setRoomData(rd);
@@ -5322,8 +5361,10 @@ function OnlineScreen({
     setLoading(false);
   }
 
-  async function joinPrivate() {
-    const code = joinCode.trim().toUpperCase();
+  async function joinPrivate(explicitCode) {
+    // Garde défensive: si jamais appelé directement en onClick, React passerait
+    // l'event en 1er argument plutôt qu'un code — ignorer tout ce qui n'est pas une string.
+    const code = (typeof explicitCode === "string" ? explicitCode : joinCode).trim().toUpperCase();
     if (code.length < 4) return;
     setLoading(true); setError("");
     try {
@@ -5346,8 +5387,29 @@ function OnlineScreen({
       if (!room) {
         throw new Error(t("room_not_found", "Salon introuvable. Vérifie le code (4 lettres majuscules)."));
       }
-      if (room.status !== "waiting") {
+      // RECONNEXION: si le joueur était déjà dans cette room (même uid stable, cf.
+      // FB.signIn) et que la partie a démarré entre-temps (reload de page, coupure),
+      // on le laisse reprendre directement là où en est la partie plutôt que de le
+      // bloquer avec "partie déjà en cours".
+      const alreadyInRoom = room.players && room.players[realUid];
+      if (room.status === "finished") {
+        try { localStorage.removeItem("pb_active_room"); } catch { /* ignore */ }
+        throw new Error(t("room_not_found", "Salon introuvable. Vérifie le code (4 lettres majuscules)."));
+      }
+      if (room.status !== "waiting" && !alreadyInRoom) {
         throw new Error(t("game_in_progress", "La partie a déjà commencé."));
+      }
+      if (room.status === "playing" && alreadyInRoom) {
+        setRoomCode(code);
+        try { localStorage.setItem("pb_active_room", code); } catch { /* ignore */ }
+        unsubRef.current = FB.listenRoom(code, rd => {
+          if (!rd) return;
+          setRoomData(rd);
+          if (rd.status === "playing") { cleanup(); onEnterGame(code, rd, realUid); }
+        });
+        onEnterGame(code, room, realUid);
+        setLoading(false);
+        return;
       }
       const myPlayer = { uid: realUid, name: sanitizeName(playerName || settings.playerName), country, isHost: false, ready: true, connected: true };
       await FB.updateRoom(code, {
@@ -5355,6 +5417,7 @@ function OnlineScreen({
         [`cumulativeScores/${realUid}`]: 0,
       });
       setRoomCode(code);
+      try { localStorage.setItem("pb_active_room", code); } catch { /* ignore */ }
       setStep("waiting");
       unsubRef.current = FB.listenRoom(code, rd => {
         if (!rd) return;
@@ -5594,7 +5657,7 @@ function OnlineScreen({
             <div className="ctitle">{t("join_with_code","Rejoindre avec un code")}</div>
             <input className="inp" value={joinCode} onChange={e => setJoinCode(e.target.value.toUpperCase())} placeholder="Ex: AB3C" maxLength={4}
               style={{ fontFamily: "'DM Mono',monospace", fontSize: 24, letterSpacing: 8, textAlign: "center", marginBottom: 12 }} />
-            <button className="btn bp" onClick={joinPrivate} disabled={joinCode.length < 4 || loading}>
+            <button className="btn bp" onClick={() => joinPrivate()} disabled={joinCode.length < 4 || loading}>
               {loading ? <span className="spin">⟳</span> : t("join_btn","Rejoindre")}
             </button>
           </div>
